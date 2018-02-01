@@ -7,7 +7,7 @@ public class DrumMachine : SoundModule {
 	private int currentMidiNote;
 
 	void Awake(){
-		base.Awake ();
+		//base.Awake ();
 		//contextMenu.Find ("MenuButtons").Find ("DrumPad").GetComponent<NewModuleButton> ().ModulePlaced += OnDrumPadPlaced;
 		currentMidiNote = 36;
 	}

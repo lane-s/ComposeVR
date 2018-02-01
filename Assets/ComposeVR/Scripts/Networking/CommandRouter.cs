@@ -15,10 +15,10 @@ public class DAWMessage {
 public class CommandRouter : MonoBehaviour {
 
 	private Dictionary<string, CommandReceiver> receiverDictionary;
+    private string incompleteCommand;
 
 	// Use this for initialization
 	void Awake () {
-		receiverDictionary = new Dictionary<string, CommandReceiver> ();
 	}
 	
 	// Update is called once per frame
@@ -26,18 +26,58 @@ public class CommandRouter : MonoBehaviour {
 		
 	}
 
+    private Dictionary<string, CommandReceiver> getReceiverDictionary() {
+        if(receiverDictionary == null) {
+            receiverDictionary = new Dictionary<string, CommandReceiver>();
+        }
+        return receiverDictionary;
+    }
+
 	public void routeCommand(string commandString){
+
+        int openBrackets = 0;
+        int closedBrackets = 0;
+
+        for(int i = 0; i < commandString.Length; i++) {
+            if(commandString[i] == '{') {
+                openBrackets += 1;
+            }
+
+            if (commandString[i] == '}') {
+                closedBrackets += 1;
+            }
+        }
+
+        if(openBrackets > closedBrackets) {
+            incompleteCommand = commandString;
+            return;
+        }
+        else if (openBrackets == 0 && closedBrackets == 0) {
+            incompleteCommand += commandString;
+            return;
+        }
+        else if(openBrackets < closedBrackets) {
+            commandString = incompleteCommand + commandString;
+            incompleteCommand = "";
+        }
+
+        Debug.Log(commandString);
+
 		DAWMessage command = JsonConvert.DeserializeObject<DAWMessage>(commandString);
 
-		if (receiverDictionary.ContainsKey (command.receiverID)) {
-			CommandReceiver receiver = receiverDictionary [command.receiverID];
+		if (getReceiverDictionary().ContainsKey (command.receiverID)) {
+			CommandReceiver receiver = getReceiverDictionary()[command.receiverID];
 			receiver.executeCommand (command);
 		}
 	}
 
 	public void addReceiver(string receiverID, CommandReceiver receiver){
-		receiverDictionary.Add (receiverID, receiver);
+        getReceiverDictionary().Add (receiverID, receiver);
 	}
+
+    public void removeReceiverIfPresent(string receiverID) {
+        getReceiverDictionary().Remove(receiverID);
+    }
 
 	public static byte[] packMessage(string message){
 		System.Int32 messageLength = message.Length;

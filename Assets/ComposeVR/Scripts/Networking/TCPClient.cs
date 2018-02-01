@@ -118,7 +118,6 @@ public class TCPClient : MonoBehaviour {
                 string[] commands = Regex.Split(command, @"(?<=[}])");
                 foreach (string c in commands) {
                     if (c.Length > 0) {
-                        Debug.Log(c);
                         GetComponent<CommandRouter>().routeCommand(c);
                     }
                 }

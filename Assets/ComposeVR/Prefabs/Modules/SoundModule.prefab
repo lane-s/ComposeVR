@@ -188,5 +188,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3768e07d901fafd4b8ecdc70299e5166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instrumentName: Drum Machine
+  instrumentName: Diva
   defaultPreset: 
