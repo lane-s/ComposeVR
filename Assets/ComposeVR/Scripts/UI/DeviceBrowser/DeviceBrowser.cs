@@ -60,11 +60,11 @@ public class DeviceBrowser : CommandReceiver {
 
     public void closeBrowser() {
         resultsColumn.gameObject.SetActive(false);
-        resultsColumn.setPage(0);
+        resultsColumn.resetColumn();
 
         foreach (BrowserColumn c in filterColumns) {
             c.gameObject.SetActive(false);
-            c.setPage(0);
+            c.resetColumn();
         }
     }
 

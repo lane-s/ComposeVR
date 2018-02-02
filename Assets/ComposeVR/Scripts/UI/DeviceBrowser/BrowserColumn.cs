@@ -35,6 +35,7 @@ public class BrowserColumn : CommandReceiver {
     public Transform resultButtonPrefab;
     public float resultSpacing = 0;
     public float resultStartOffset = 80;
+    public bool isFilterColumn = false;
 
     public event EventHandler<BrowserColumnEventArgs> ItemSelected;
     public event EventHandler<BrowserColumnEventArgs> PageChange;
@@ -45,9 +46,12 @@ public class BrowserColumn : CommandReceiver {
 
     private Button upArrow;
     private Button downArrow;
+    private Color normalColor;
 
-    private int currentPage = 0;
     private int numPages = 1;
+
+    private string selectedItemName;
+    private int selectedItemIndex;
     
 
     //TODO Call event PageChange when PageScrollBar changes page
@@ -65,6 +69,11 @@ public class BrowserColumn : CommandReceiver {
 
         downArrow = transform.Find("DownArrow").GetComponent<Button>();
         downArrow.onClick.AddListener(DownArrowClicked);
+
+        OnArrowVisibilityChanged(true, false);
+        OnArrowVisibilityChanged(false, false);
+
+        selectDefault(0, "Any " + gameObject.name);
     }
 
     // Use this for initialization
@@ -93,6 +102,8 @@ public class BrowserColumn : CommandReceiver {
     private void OnBrowserColumnChanged(int resultsPerPage, int totalResults, string[] results) {
 
         numPages = (totalResults + resultsPerPage - 1) / resultsPerPage;
+
+
         float buttonHeight = resultButtonPrefab.GetComponent<RectTransform>().localScale.y;
 
         //Resize canvas
@@ -116,6 +127,8 @@ public class BrowserColumn : CommandReceiver {
             newButton.localRotation = Quaternion.Euler(0, 0, 0);
 
             Button nb = newButton.GetComponent<Button>();
+            normalColor = nb.colors.normalColor;
+
             int buttonIndex = resultButtons.Count;
 
             //Set up pressed callback with index
@@ -145,6 +158,8 @@ public class BrowserColumn : CommandReceiver {
             resultButtons[i].gameObject.SetActive(true);
             Text buttonText = resultButtons[i].GetComponentInChildren<Text>();
             buttonText.text = results[i];
+
+            colorButtonIfSelected(i);
         }
 
         //Deactivate buttons not needed to display the results
@@ -152,11 +167,52 @@ public class BrowserColumn : CommandReceiver {
             resultButtons[i].gameObject.SetActive(false);
         }
 
-        UpdateArrowVisiblity();
+    }
+
+    public void selectDefault(int index, string name) {
+        if (isFilterColumn) {
+            selectedItemIndex = index;
+            selectedItemName = name;
+            colorButtonIfSelected(index);
+        }
+    }
+
+    private void colorButtonIfSelected(int buttonIndex) {
+        if (buttonIndex < 0 || buttonIndex >= resultButtons.Count) {
+            return;
+        }
+
+        //Color if selected
+        if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName) && buttonIndex == selectedItemIndex) {
+
+            ColorBlock cb = resultButtons[buttonIndex].colors;
+            cb.normalColor = cb.pressedColor;
+            resultButtons[buttonIndex].colors = cb;
+
+        }
+    }
+
+    private void deselectItem() {
+        if (selectedItemIndex < resultButtons.Count && selectedItemIndex >= 0) {
+            if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName)) {
+                Debug.Log("Reverting color");
+                ColorBlock cb = resultButtons[selectedItemIndex].colors;
+                cb.normalColor = normalColor;
+                resultButtons[selectedItemIndex].colors = cb;
+            }
+        }
+        selectedItemIndex = -1;
+        selectedItemName = "";
     }
 
     private void OnItemSelect(int itemIndex) {
         Debug.Log("Item " + itemIndex + " selected!");
+        deselectItem();
+
+        selectedItemIndex = itemIndex;
+        selectedItemName = resultButtons[itemIndex].GetComponentInChildren<Text>().text;
+        colorButtonIfSelected(itemIndex);
+
         if(ItemSelected != null) {
             BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, itemIndex, 0);
             ItemSelected(this, e);
@@ -171,34 +227,33 @@ public class BrowserColumn : CommandReceiver {
         OnPageChange(1);
     }
 
-    private void UpdateArrowVisiblity() {
-        if (currentPage == 0) {
-            upArrow.gameObject.SetActive(false);
-        }
-        else {
-            upArrow.gameObject.SetActive(true);
-        }
-
-        if (currentPage >= numPages - 1) {
-            currentPage = numPages - 1;
-            downArrow.gameObject.SetActive(false);
-        }
-        else {
-            downArrow.gameObject.SetActive(true);
-        }
+    public void ArrowVisibilityChanged(string[] args) {
+        OnArrowVisibilityChanged(bool.Parse(args[0]), bool.Parse(args[1]));
     }
 
-    public void setPage(int pg) {
-        currentPage = pg;
-        UpdateArrowVisiblity();
+    private void OnArrowVisibilityChanged(bool upArrow, bool visible) {
+        Debug.Log(gameObject.name);
+        Debug.Log(upArrow);
+        Debug.Log(visible);
+        if (upArrow) {
+            this.upArrow.gameObject.SetActive(visible);
+        }else{
+            this.downArrow.gameObject.SetActive(visible);
+        }
     }
 
     private void OnPageChange(int pageChange) {
-        setPage(currentPage + pageChange);
 
-        if(PageChange != null) {
+        if (PageChange != null) {
             BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, -1, pageChange);
             PageChange(this, e);
         }
+    }
+
+    public void resetColumn() {
+        selectDefault(0, "Any " + gameObject.name);
+        OnArrowVisibilityChanged(true, false);
+        OnArrowVisibilityChanged(false, false);
+        deselectItem();
     }
 }
