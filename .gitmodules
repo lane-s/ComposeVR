@@ -1,0 +1,3 @@
+[submodule "ComposeVRProtocol"]
+	path = ComposeVRProtocol
+	url = https://github.com/lane-s/ComposeVRProtocol.git
