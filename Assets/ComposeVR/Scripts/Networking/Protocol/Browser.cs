@@ -33,10 +33,11 @@ namespace ComposeVR.Protocol.Browser {
             "KAUiOwoQU2VsZWN0RmlsdGVySXRlbRITCgtjb2x1bW5fbmFtZRgBIAEoCRIS",
             "CgppdGVtX2luZGV4GAIgASgFIloKFk9uQnJvd3NlckNvbHVtbkNoYW5nZWQS",
             "GAoQcmVzdWx0c19wZXJfcGFnZRgBIAEoBRIVCg10b3RhbF9yZXN1bHRzGAIg",
-            "ASgFEg8KB3Jlc3VsdHMYAyADKAkiPQoYT25BcnJvd1Zpc2liaWxpdHlDaGFu",
-            "Z2VkEhAKCHVwX2Fycm93GAEgASgIEg8KB3Zpc2libGUYAiABKAhCPAodY29t",
-            "LmxhczR2Yy5jb21wb3NldnIucHJvdG9jb2yqAhpDb21wb3NlVlIuUHJvdG9j",
-            "b2wuQnJvd3NlcmIGcHJvdG8z"));
+            "ASgFEg8KB3Jlc3VsdHMYAyADKAkigAEKGE9uQXJyb3dWaXNpYmlsaXR5Q2hh",
+            "bmdlZBI4CgVhcnJvdxgBIAEoDjIpLkNvbXBvc2VWUi5PbkFycm93VmlzaWJp",
+            "bGl0eUNoYW5nZWQuQXJyb3cSDwoHdmlzaWJsZRgCIAEoCCIZCgVBcnJvdxIG",
+            "CgJVUBAAEggKBERPV04QAUI8Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90",
+            "b2NvbKoCGkNvbXBvc2VWUi5Qcm90b2NvbC5Ccm93c2VyYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
@@ -49,7 +50,7 @@ namespace ComposeVR.Protocol.Browser {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.ChangeFilterPage), global::ComposeVR.Protocol.Browser.ChangeFilterPage.Parser, new[]{ "ColumnName", "PageChange" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.SelectFilterItem), global::ComposeVR.Protocol.Browser.SelectFilterItem.Parser, new[]{ "ColumnName", "ItemIndex" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged), global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged.Parser, new[]{ "ResultsPerPage", "TotalResults", "Results" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged), global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Parser, new[]{ "UpArrow", "Visible" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged), global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Parser, new[]{ "Arrow", "Visible" }, null, new[]{ typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow) }, null)
           }));
     }
     #endregion
@@ -1290,7 +1291,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public OnArrowVisibilityChanged(OnArrowVisibilityChanged other) : this() {
-      upArrow_ = other.upArrow_;
+      arrow_ = other.arrow_;
       visible_ = other.visible_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1300,14 +1301,14 @@ namespace ComposeVR.Protocol.Browser {
       return new OnArrowVisibilityChanged(this);
     }
 
-    /// <summary>Field number for the "up_arrow" field.</summary>
-    public const int UpArrowFieldNumber = 1;
-    private bool upArrow_;
+    /// <summary>Field number for the "arrow" field.</summary>
+    public const int ArrowFieldNumber = 1;
+    private global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow arrow_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool UpArrow {
-      get { return upArrow_; }
+    public global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow Arrow {
+      get { return arrow_; }
       set {
-        upArrow_ = value;
+        arrow_ = value;
       }
     }
 
@@ -1335,7 +1336,7 @@ namespace ComposeVR.Protocol.Browser {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (UpArrow != other.UpArrow) return false;
+      if (Arrow != other.Arrow) return false;
       if (Visible != other.Visible) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1343,7 +1344,7 @@ namespace ComposeVR.Protocol.Browser {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (UpArrow != false) hash ^= UpArrow.GetHashCode();
+      if (Arrow != 0) hash ^= Arrow.GetHashCode();
       if (Visible != false) hash ^= Visible.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1358,9 +1359,9 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (UpArrow != false) {
+      if (Arrow != 0) {
         output.WriteRawTag(8);
-        output.WriteBool(UpArrow);
+        output.WriteEnum((int) Arrow);
       }
       if (Visible != false) {
         output.WriteRawTag(16);
@@ -1374,8 +1375,8 @@ namespace ComposeVR.Protocol.Browser {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (UpArrow != false) {
-        size += 1 + 1;
+      if (Arrow != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Arrow);
       }
       if (Visible != false) {
         size += 1 + 1;
@@ -1391,8 +1392,8 @@ namespace ComposeVR.Protocol.Browser {
       if (other == null) {
         return;
       }
-      if (other.UpArrow != false) {
-        UpArrow = other.UpArrow;
+      if (other.Arrow != 0) {
+        Arrow = other.Arrow;
       }
       if (other.Visible != false) {
         Visible = other.Visible;
@@ -1409,7 +1410,7 @@ namespace ComposeVR.Protocol.Browser {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            UpArrow = input.ReadBool();
+            arrow_ = (global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow) input.ReadEnum();
             break;
           }
           case 16: {
@@ -1419,6 +1420,18 @@ namespace ComposeVR.Protocol.Browser {
         }
       }
     }
+
+    #region Nested types
+    /// <summary>Container for nested types declared in the OnArrowVisibilityChanged message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static partial class Types {
+      public enum Arrow {
+        [pbr::OriginalName("UP")] Up = 0,
+        [pbr::OriginalName("DOWN")] Down = 1,
+      }
+
+    }
+    #endregion
 
   }
 

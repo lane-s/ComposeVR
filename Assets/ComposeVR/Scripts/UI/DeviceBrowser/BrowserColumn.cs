@@ -9,6 +9,8 @@ using Google.Protobuf.Collections;
 
 namespace ComposeVR {
 
+    using Arrow = Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow;
+        
     public class BrowserColumnEventArgs : EventArgs {
         public BrowserColumnEventArgs(BrowserColumn b, int selectionIndex, int pageChange) {
             col = b;
@@ -55,6 +57,7 @@ namespace ComposeVR {
 
         private string selectedItemName;
         private int selectedItemIndex;
+        
 
 
         //TODO Call event PageChange when PageScrollBar changes page
@@ -73,8 +76,8 @@ namespace ComposeVR {
             downArrow = transform.Find("DownArrow").GetComponent<Button>();
             downArrow.onClick.AddListener(DownArrowClicked);
 
-            arrowVisibilityChanged(true, false);
-            arrowVisibilityChanged(false, false);
+            arrowVisibilityChanged(Arrow.Up, false);
+            arrowVisibilityChanged(Arrow.Down, false);
 
             selectDefault(0, "Any " + gameObject.name);
         }
@@ -227,11 +230,11 @@ namespace ComposeVR {
         }
 
         public void OnArrowVisibilityChanged(Protocol.Event e) {
-            arrowVisibilityChanged(e.BrowserEvent.OnArrowVisibilityChangedEvent.UpArrow, e.BrowserEvent.OnArrowVisibilityChangedEvent.Visible);
+            arrowVisibilityChanged(e.BrowserEvent.OnArrowVisibilityChangedEvent.Arrow, e.BrowserEvent.OnArrowVisibilityChangedEvent.Visible);
         }
 
-        private void arrowVisibilityChanged(bool upArrow, bool visible) {
-            if (upArrow) {
+        private void arrowVisibilityChanged(Arrow arrow, bool visible) {
+            if (arrow == Arrow.Up) {
                 this.upArrow.gameObject.SetActive(visible);
             }
             else {
@@ -249,8 +252,8 @@ namespace ComposeVR {
 
         public void resetColumn() {
             selectDefault(0, "Any " + gameObject.name);
-            arrowVisibilityChanged(true, false);
-            arrowVisibilityChanged(false, false);
+            arrowVisibilityChanged(Arrow.Up, false);
+            arrowVisibilityChanged(Arrow.Down, false);
             deselectItem();
         }
     }

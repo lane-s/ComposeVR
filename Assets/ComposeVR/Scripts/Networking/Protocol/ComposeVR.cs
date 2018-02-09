@@ -366,6 +366,9 @@ namespace ComposeVR.Protocol {
     /// <summary>Field number for the "path" field.</summary>
     public const int PathFieldNumber = 1;
     private string path_ = "";
+    /// <summary>
+    ///For the front end, the path to a filter column is '/$column_name'. For the backend the path is /filter and the column name is supplied in the message
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string Path {
       get { return path_; }
