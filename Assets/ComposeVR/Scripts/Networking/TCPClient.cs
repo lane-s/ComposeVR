@@ -29,12 +29,14 @@ namespace ComposeVR {
         private MemoryStream lengthStream;
         private MemoryStream messageStream;
 
+        private int nextMessageLength;
+        private long messageStartLoc;
+
         private enum InputState { READING_LENGTH, READING_MESSAGE, COMPLETETING_PARTIAL_MESSAGE }
         private InputState inputState;
 
         private MemoryStream outStream;
 
-        private int nextMessageLength;
 
         // Use this for initialization
         void Start() {
@@ -77,14 +79,12 @@ namespace ComposeVR {
         /// This method parses an event from a stream and queues it
         /// </summary>
         /// <param name="s"> This stream should contain one complete event with no delimiter </param>
-        private void consumeMessage(MemoryStream s) {
+        private void queueNextMessage(MemoryStream s) {
             lock (eventQueueLock) {
-                s.Seek(0, SeekOrigin.Begin);
-                Protocol.Event incomingEvent = Protocol.Event.Parser.ParseFrom(s);
+                s.Seek(messageStartLoc, SeekOrigin.Begin);
+                Protocol.Event incomingEvent = Protocol.Event.Parser.ParseDelimitedFrom(s);
                 eventQueue.Enqueue(incomingEvent);
 
-                //Clear the stream
-                s.SetLength(0);
                 lengthStream.SetLength(0);
             }
         }
@@ -107,8 +107,6 @@ namespace ComposeVR {
                 int result = coded.ReadLength();
 
                 coded.Dispose();
-                lengthStream.SetLength(0);
-
                 return result;
             }
 
@@ -134,6 +132,8 @@ namespace ComposeVR {
                 inStream.Write(buffer, 0, bytesRead);
                 inStream.Seek(0, SeekOrigin.Begin);
 
+                messageStartLoc = 0;
+
                 while (inStream.Position < inStream.Length) {
 
                     long inputBytesRemaining = inStream.Length - inStream.Position;
@@ -147,16 +147,16 @@ namespace ComposeVR {
                             break;
                         case InputState.READING_MESSAGE:
                             if(nextMessageLength <= inputBytesRemaining) {
-                                for(int i = 0; i < nextMessageLength; i++) {
-                                    //Read the remaining message into the message stream
-                                    messageStream.WriteByte((byte)inStream.ReadByte());
-                                }
+                                queueNextMessage(inStream);
 
-                                consumeMessage(messageStream);
+                                messageStartLoc = inStream.Position;
                                 inputState = InputState.READING_LENGTH;
                             }
                             else {
-                                //We don't have the entire message yet, read the rest of the input into the message stream and wait for more input
+                                //We don't have the entire message yet, so store a partial message
+                                lengthStream.Seek(0, SeekOrigin.Begin);
+                                lengthStream.WriteTo(messageStream);
+
                                 while(inStream.Position < inStream.Length) {
                                     messageStream.WriteByte((byte)inStream.ReadByte());
                                 }
@@ -166,7 +166,7 @@ namespace ComposeVR {
 
                             break;
                         case InputState.COMPLETETING_PARTIAL_MESSAGE:
-                            long messageBytesRemaining = nextMessageLength - messageStream.Length;
+                            long messageBytesRemaining = nextMessageLength - (messageStream.Length - lengthStream.Length);
 
                             if(messageBytesRemaining <= inputBytesRemaining) {
                                 //We can complete the partial message
@@ -174,7 +174,10 @@ namespace ComposeVR {
                                     messageStream.WriteByte((byte)inStream.ReadByte());
                                 }
 
-                                consumeMessage(messageStream);
+                                queueNextMessage(messageStream);
+                                messageStream.SetLength(0);
+
+                                messageStartLoc = inStream.Position;
                                 inputState = InputState.READING_LENGTH;
                             }
                             else {

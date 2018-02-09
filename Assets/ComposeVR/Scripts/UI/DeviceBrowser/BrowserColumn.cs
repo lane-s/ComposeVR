@@ -177,6 +177,10 @@ namespace ComposeVR {
                 return;
             }
 
+            if(selectedItemIndex < 0 || selectedItemIndex >= resultButtons.Count) {
+                return;
+            }
+
             //Color if selected
             if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName) && buttonIndex == selectedItemIndex) {
 
