@@ -28,7 +28,7 @@ namespace ComposeVR.Protocol {
             "cm93c2VyLnByb3RvIocBCgVFdmVudBITCgttZXRob2RfbmFtZRgBIAEoCRIw",
             "Cg1icm93c2VyX2V2ZW50GAIgASgLMhcuQ29tcG9zZVZSLkJyb3dzZXJFdmVu",
             "dEgAEi4KDG1vZHVsZV9ldmVudBgDIAEoCzIWLkNvbXBvc2VWUi5Nb2R1bGVF",
-            "dmVudEgAQgcKBWV2ZW50IssFCgxCcm93c2VyRXZlbnQSDAoEcGF0aBgBIAEo",
+            "dmVudEgAQgcKBWV2ZW50IpUGCgxCcm93c2VyRXZlbnQSDAoEcGF0aBgBIAEo",
             "CRI/ChhjaGFuZ2VfZmlsdGVyX3BhZ2VfZXZlbnQYAiABKAsyGy5Db21wb3Nl",
             "VlIuQ2hhbmdlRmlsdGVyUGFnZUgAEj8KGHNlbGVjdF9maWx0ZXJfaXRlbV9l",
             "dmVudBgDIAEoCzIbLkNvbXBvc2VWUi5TZWxlY3RGaWx0ZXJJdGVtSAASQQoZ",
@@ -44,19 +44,20 @@ namespace ComposeVR.Protocol {
             "ABJQCiFvbl9hcnJvd192aXNpYmlsaXR5X2NoYW5nZWRfZXZlbnQYCiABKAsy",
             "Iy5Db21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkSAASNgoTY2xv",
             "c2VfYnJvd3Nlcl9ldmVudBgLIAEoCzIXLkNvbXBvc2VWUi5DbG9zZUJyb3dz",
-            "ZXJIAEIHCgVldmVudCLtAQoLTW9kdWxlRXZlbnQSEgoKaGFuZGxlcl9pZBgB",
-            "IAEoCRI0ChJvcGVuX2Jyb3dzZXJfZXZlbnQYAiABKAsyFi5Db21wb3NlVlIu",
-            "T3BlbkJyb3dzZXJIABJBChljcmVhdGVfc291bmRfbW9kdWxlX2V2ZW50GAMg",
-            "ASgLMhwuQ29tcG9zZVZSLkNyZWF0ZVNvdW5kTW9kdWxlSAASSAodb25fc291",
-            "bmRfbW9kdWxlX2NyZWF0ZWRfZXZlbnQYBCABKAsyHy5Db21wb3NlVlIuT25T",
-            "b3VuZE1vZHVsZUNyZWF0ZWRIAEIHCgVldmVudEI+Ch1jb20ubGFzNHZjLmNv",
-            "bXBvc2V2ci5wcm90b2NvbEIIUHJvdG9jb2yqAhJDb21wb3NlVlIuUHJvdG9j",
-            "b2xiBnByb3RvMw=="));
+            "ZXJIABJICh1vbl9icm93c2VyX2l0ZW1fY2hhbmdlZF9ldmVudBgMIAEoCzIf",
+            "LkNvbXBvc2VWUi5PbkJyb3dzZXJJdGVtQ2hhbmdlZEgAQgcKBWV2ZW50Iu0B",
+            "CgtNb2R1bGVFdmVudBISCgpoYW5kbGVyX2lkGAEgASgJEjQKEm9wZW5fYnJv",
+            "d3Nlcl9ldmVudBgCIAEoCzIWLkNvbXBvc2VWUi5PcGVuQnJvd3NlckgAEkEK",
+            "GWNyZWF0ZV9zb3VuZF9tb2R1bGVfZXZlbnQYAyABKAsyHC5Db21wb3NlVlIu",
+            "Q3JlYXRlU291bmRNb2R1bGVIABJICh1vbl9zb3VuZF9tb2R1bGVfY3JlYXRl",
+            "ZF9ldmVudBgEIAEoCzIfLkNvbXBvc2VWUi5PblNvdW5kTW9kdWxlQ3JlYXRl",
+            "ZEgAQgcKBWV2ZW50Qj4KHWNvbS5sYXM0dmMuY29tcG9zZXZyLnByb3RvY29s",
+            "QghQcm90b2NvbKoCEkNvbXBvc2VWUi5Qcm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ComposeVR.Protocol.Module.ModuleReflection.Descriptor, global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Event), global::ComposeVR.Protocol.Event.Parser, new[]{ "MethodName", "BrowserEvent", "ModuleEvent" }, new[]{ "Event" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.BrowserEvent), global::ComposeVR.Protocol.BrowserEvent.Parser, new[]{ "Path", "ChangeFilterPageEvent", "SelectFilterItemEvent", "ChangeResultsPageEvent", "LoadDeviceAtIndexEvent", "LoadDeviceWithNameEvent", "OnDeviceLoadedEvent", "OnDeviceNotFoundEvent", "OnBrowserColumnChangedEvent", "OnArrowVisibilityChangedEvent", "CloseBrowserEvent" }, new[]{ "Event" }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.BrowserEvent), global::ComposeVR.Protocol.BrowserEvent.Parser, new[]{ "Path", "ChangeFilterPageEvent", "SelectFilterItemEvent", "ChangeResultsPageEvent", "LoadDeviceAtIndexEvent", "LoadDeviceWithNameEvent", "OnDeviceLoadedEvent", "OnDeviceNotFoundEvent", "OnBrowserColumnChangedEvent", "OnArrowVisibilityChangedEvent", "CloseBrowserEvent", "OnBrowserItemChangedEvent" }, new[]{ "Event" }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.ModuleEvent), global::ComposeVR.Protocol.ModuleEvent.Parser, new[]{ "HandlerId", "OpenBrowserEvent", "CreateSoundModuleEvent", "OnSoundModuleCreatedEvent" }, new[]{ "Event" }, null, null)
           }));
     }
@@ -353,6 +354,9 @@ namespace ComposeVR.Protocol {
         case EventOneofCase.CloseBrowserEvent:
           CloseBrowserEvent = other.CloseBrowserEvent.Clone();
           break;
+        case EventOneofCase.OnBrowserItemChangedEvent:
+          OnBrowserItemChangedEvent = other.OnBrowserItemChangedEvent.Clone();
+          break;
       }
 
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -487,6 +491,17 @@ namespace ComposeVR.Protocol {
       }
     }
 
+    /// <summary>Field number for the "on_browser_item_changed_event" field.</summary>
+    public const int OnBrowserItemChangedEventFieldNumber = 12;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::ComposeVR.Protocol.Browser.OnBrowserItemChanged OnBrowserItemChangedEvent {
+      get { return eventCase_ == EventOneofCase.OnBrowserItemChangedEvent ? (global::ComposeVR.Protocol.Browser.OnBrowserItemChanged) event_ : null; }
+      set {
+        event_ = value;
+        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnBrowserItemChangedEvent;
+      }
+    }
+
     private object event_;
     /// <summary>Enum of possible cases for the "event" oneof.</summary>
     public enum EventOneofCase {
@@ -501,6 +516,7 @@ namespace ComposeVR.Protocol {
       OnBrowserColumnChangedEvent = 9,
       OnArrowVisibilityChangedEvent = 10,
       CloseBrowserEvent = 11,
+      OnBrowserItemChangedEvent = 12,
     }
     private EventOneofCase eventCase_ = EventOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -538,6 +554,7 @@ namespace ComposeVR.Protocol {
       if (!object.Equals(OnBrowserColumnChangedEvent, other.OnBrowserColumnChangedEvent)) return false;
       if (!object.Equals(OnArrowVisibilityChangedEvent, other.OnArrowVisibilityChangedEvent)) return false;
       if (!object.Equals(CloseBrowserEvent, other.CloseBrowserEvent)) return false;
+      if (!object.Equals(OnBrowserItemChangedEvent, other.OnBrowserItemChangedEvent)) return false;
       if (EventCase != other.EventCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -556,6 +573,7 @@ namespace ComposeVR.Protocol {
       if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) hash ^= OnBrowserColumnChangedEvent.GetHashCode();
       if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) hash ^= OnArrowVisibilityChangedEvent.GetHashCode();
       if (eventCase_ == EventOneofCase.CloseBrowserEvent) hash ^= CloseBrowserEvent.GetHashCode();
+      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) hash ^= OnBrowserItemChangedEvent.GetHashCode();
       hash ^= (int) eventCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -614,6 +632,10 @@ namespace ComposeVR.Protocol {
         output.WriteRawTag(90);
         output.WriteMessage(CloseBrowserEvent);
       }
+      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
+        output.WriteRawTag(98);
+        output.WriteMessage(OnBrowserItemChangedEvent);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -654,6 +676,9 @@ namespace ComposeVR.Protocol {
       }
       if (eventCase_ == EventOneofCase.CloseBrowserEvent) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(CloseBrowserEvent);
+      }
+      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnBrowserItemChangedEvent);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -729,6 +754,12 @@ namespace ComposeVR.Protocol {
             CloseBrowserEvent = new global::ComposeVR.Protocol.Browser.CloseBrowser();
           }
           CloseBrowserEvent.MergeFrom(other.CloseBrowserEvent);
+          break;
+        case EventOneofCase.OnBrowserItemChangedEvent:
+          if (OnBrowserItemChangedEvent == null) {
+            OnBrowserItemChangedEvent = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
+          }
+          OnBrowserItemChangedEvent.MergeFrom(other.OnBrowserItemChangedEvent);
           break;
       }
 
@@ -835,6 +866,15 @@ namespace ComposeVR.Protocol {
             }
             input.ReadMessage(subBuilder);
             CloseBrowserEvent = subBuilder;
+            break;
+          }
+          case 98: {
+            global::ComposeVR.Protocol.Browser.OnBrowserItemChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
+            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
+              subBuilder.MergeFrom(OnBrowserItemChangedEvent);
+            }
+            input.ReadMessage(subBuilder);
+            OnBrowserItemChangedEvent = subBuilder;
             break;
           }
         }

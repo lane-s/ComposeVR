@@ -40,6 +40,7 @@ namespace ComposeVR {
         public Transform resultButtonPrefab;
         public float resultSpacing = 0;
         public float resultStartOffset = 80;
+        public int initialSize = 0;
         public bool isFilterColumn = false;
 
         public event EventHandler<BrowserColumnEventArgs> ItemSelected;
@@ -52,8 +53,6 @@ namespace ComposeVR {
         private Button upArrow;
         private Button downArrow;
         private Color normalColor;
-
-        private int numPages = 1;
 
         private string selectedItemName;
         private int selectedItemIndex;
@@ -84,7 +83,7 @@ namespace ComposeVR {
 
         // Use this for initialization
         void Start() {
-
+            expandColumnToSize(15);
         }
 
         // Update is called once per frame
@@ -92,33 +91,42 @@ namespace ComposeVR {
 
         }
 
+        public void OnBrowserItemChanged(Protocol.Event e) {
+            int itemIndex = e.BrowserEvent.OnBrowserItemChangedEvent.ItemIndex;
+            string itemName = e.BrowserEvent.OnBrowserItemChangedEvent.ItemName;
+
+            //Label each button with result name
+            resultButtons[itemIndex].gameObject.SetActive(true);
+            Text buttonText = resultButtons[itemIndex].GetComponentInChildren<Text>();
+            buttonText.text = itemName;
+
+            if(itemName.Length == 0) {
+                resultButtons[itemIndex].gameObject.SetActive(false);
+                return;
+            }
+            else {
+                resultButtons[itemIndex].gameObject.SetActive(true);
+            }
+
+            colorButtonIfSelected(itemIndex);
+        }
+
         public void OnBrowserColumnChanged(Protocol.Event e) {
 
             int totalResults = e.BrowserEvent.OnBrowserColumnChangedEvent.TotalResults;
             int resultsPerPage = e.BrowserEvent.OnBrowserColumnChangedEvent.ResultsPerPage;
 
-            RepeatedField<string> results = e.BrowserEvent.OnBrowserColumnChangedEvent.Results;
+            expandColumnToSize(resultsPerPage);
+        }
 
-            numPages = (totalResults + resultsPerPage - 1) / resultsPerPage;
-
+        private void expandColumnToSize(int size) {
 
             float buttonHeight = resultButtonPrefab.GetComponent<RectTransform>().localScale.y;
-
-            //Resize canvas
-            //Vector3 newScale = GetComponent<RectTransform>().localScale;
-            //newScale.y = (buttonHeight + resultSpacing) * results.Length - resultSpacing;
-            //GetComponent<RectTransform>().localScale = newScale;
-
-            //Remove extra buttons
-            while (resultButtons.Count > resultsPerPage) {
-                Destroy(resultButtons[resultButtons.Count - 1].gameObject);
-                resultButtons.RemoveAt(resultButtons.Count - 1);
-            }
 
             //Add buttons as needed
             Vector3 buttonPosition = new Vector3(0, (buttonHeight + resultSpacing) * resultButtons.Count - resultStartOffset, 0);
 
-            while (resultButtons.Count < resultsPerPage) {
+            while (resultButtons.Count < size) {
                 Transform newButton = Instantiate(resultButtonPrefab) as Transform;
                 newButton.SetParent(transform);
                 newButton.localPosition = Vector3.zero;
@@ -149,22 +157,6 @@ namespace ComposeVR {
 
                 resultButtons.Add(nb);
             }
-
-
-            //Label each button with result name
-            for (int i = 0; i < results.Count; i++) {
-                resultButtons[i].gameObject.SetActive(true);
-                Text buttonText = resultButtons[i].GetComponentInChildren<Text>();
-                buttonText.text = results[i];
-
-                colorButtonIfSelected(i);
-            }
-
-            //Deactivate buttons not needed to display the results
-            for (int i = results.Count; i < resultButtons.Count; i++) {
-                resultButtons[i].gameObject.SetActive(false);
-            }
-
         }
 
         public void selectDefault(int index, string name) {

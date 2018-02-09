@@ -31,13 +31,14 @@ namespace ComposeVR.Protocol.Browser {
             "c3VsdHNQYWdlEhMKC3BhZ2VfY2hhbmdlGAEgASgFIjwKEENoYW5nZUZpbHRl",
             "clBhZ2USEwoLY29sdW1uX25hbWUYASABKAkSEwoLcGFnZV9jaGFuZ2UYAiAB",
             "KAUiOwoQU2VsZWN0RmlsdGVySXRlbRITCgtjb2x1bW5fbmFtZRgBIAEoCRIS",
-            "CgppdGVtX2luZGV4GAIgASgFIloKFk9uQnJvd3NlckNvbHVtbkNoYW5nZWQS",
-            "GAoQcmVzdWx0c19wZXJfcGFnZRgBIAEoBRIVCg10b3RhbF9yZXN1bHRzGAIg",
-            "ASgFEg8KB3Jlc3VsdHMYAyADKAkigAEKGE9uQXJyb3dWaXNpYmlsaXR5Q2hh",
-            "bmdlZBI4CgVhcnJvdxgBIAEoDjIpLkNvbXBvc2VWUi5PbkFycm93VmlzaWJp",
-            "bGl0eUNoYW5nZWQuQXJyb3cSDwoHdmlzaWJsZRgCIAEoCCIZCgVBcnJvdxIG",
-            "CgJVUBAAEggKBERPV04QAUI8Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90",
-            "b2NvbKoCGkNvbXBvc2VWUi5Qcm90b2NvbC5Ccm93c2VyYgZwcm90bzM="));
+            "CgppdGVtX2luZGV4GAIgASgFIj0KFE9uQnJvd3Nlckl0ZW1DaGFuZ2VkEhIK",
+            "Cml0ZW1faW5kZXgYASABKAUSEQoJaXRlbV9uYW1lGAIgASgJIkkKFk9uQnJv",
+            "d3NlckNvbHVtbkNoYW5nZWQSGAoQcmVzdWx0c19wZXJfcGFnZRgBIAEoBRIV",
+            "Cg10b3RhbF9yZXN1bHRzGAIgASgFIoABChhPbkFycm93VmlzaWJpbGl0eUNo",
+            "YW5nZWQSOAoFYXJyb3cYASABKA4yKS5Db21wb3NlVlIuT25BcnJvd1Zpc2li",
+            "aWxpdHlDaGFuZ2VkLkFycm93Eg8KB3Zpc2libGUYAiABKAgiGQoFQXJyb3cS",
+            "BgoCVVAQABIICgRET1dOEAFCPAodY29tLmxhczR2Yy5jb21wb3NldnIucHJv",
+            "dG9jb2yqAhpDb21wb3NlVlIuUHJvdG9jb2wuQnJvd3NlcmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
@@ -49,7 +50,8 @@ namespace ComposeVR.Protocol.Browser {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.ChangeResultsPage), global::ComposeVR.Protocol.Browser.ChangeResultsPage.Parser, new[]{ "PageChange" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.ChangeFilterPage), global::ComposeVR.Protocol.Browser.ChangeFilterPage.Parser, new[]{ "ColumnName", "PageChange" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.SelectFilterItem), global::ComposeVR.Protocol.Browser.SelectFilterItem.Parser, new[]{ "ColumnName", "ItemIndex" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged), global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged.Parser, new[]{ "ResultsPerPage", "TotalResults", "Results" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserItemChanged), global::ComposeVR.Protocol.Browser.OnBrowserItemChanged.Parser, new[]{ "ItemIndex", "ItemName" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged), global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged.Parser, new[]{ "ResultsPerPage", "TotalResults" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged), global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Parser, new[]{ "Arrow", "Visible" }, null, new[]{ typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow) }, null)
           }));
     }
@@ -1089,6 +1091,163 @@ namespace ComposeVR.Protocol.Browser {
 
   }
 
+  public sealed partial class OnBrowserItemChanged : pb::IMessage<OnBrowserItemChanged> {
+    private static readonly pb::MessageParser<OnBrowserItemChanged> _parser = new pb::MessageParser<OnBrowserItemChanged>(() => new OnBrowserItemChanged());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<OnBrowserItemChanged> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public OnBrowserItemChanged() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public OnBrowserItemChanged(OnBrowserItemChanged other) : this() {
+      itemIndex_ = other.itemIndex_;
+      itemName_ = other.itemName_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public OnBrowserItemChanged Clone() {
+      return new OnBrowserItemChanged(this);
+    }
+
+    /// <summary>Field number for the "item_index" field.</summary>
+    public const int ItemIndexFieldNumber = 1;
+    private int itemIndex_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int ItemIndex {
+      get { return itemIndex_; }
+      set {
+        itemIndex_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "item_name" field.</summary>
+    public const int ItemNameFieldNumber = 2;
+    private string itemName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string ItemName {
+      get { return itemName_; }
+      set {
+        itemName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as OnBrowserItemChanged);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(OnBrowserItemChanged other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (ItemIndex != other.ItemIndex) return false;
+      if (ItemName != other.ItemName) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (ItemIndex != 0) hash ^= ItemIndex.GetHashCode();
+      if (ItemName.Length != 0) hash ^= ItemName.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (ItemIndex != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(ItemIndex);
+      }
+      if (ItemName.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ItemName);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (ItemIndex != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemIndex);
+      }
+      if (ItemName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ItemName);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(OnBrowserItemChanged other) {
+      if (other == null) {
+        return;
+      }
+      if (other.ItemIndex != 0) {
+        ItemIndex = other.ItemIndex;
+      }
+      if (other.ItemName.Length != 0) {
+        ItemName = other.ItemName;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            ItemIndex = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            ItemName = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class OnBrowserColumnChanged : pb::IMessage<OnBrowserColumnChanged> {
     private static readonly pb::MessageParser<OnBrowserColumnChanged> _parser = new pb::MessageParser<OnBrowserColumnChanged>(() => new OnBrowserColumnChanged());
     private pb::UnknownFieldSet _unknownFields;
@@ -1097,7 +1256,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[8]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1116,7 +1275,6 @@ namespace ComposeVR.Protocol.Browser {
     public OnBrowserColumnChanged(OnBrowserColumnChanged other) : this() {
       resultsPerPage_ = other.resultsPerPage_;
       totalResults_ = other.totalResults_;
-      results_ = other.results_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1147,16 +1305,6 @@ namespace ComposeVR.Protocol.Browser {
       }
     }
 
-    /// <summary>Field number for the "results" field.</summary>
-    public const int ResultsFieldNumber = 3;
-    private static readonly pb::FieldCodec<string> _repeated_results_codec
-        = pb::FieldCodec.ForString(26);
-    private readonly pbc::RepeatedField<string> results_ = new pbc::RepeatedField<string>();
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<string> Results {
-      get { return results_; }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as OnBrowserColumnChanged);
@@ -1172,7 +1320,6 @@ namespace ComposeVR.Protocol.Browser {
       }
       if (ResultsPerPage != other.ResultsPerPage) return false;
       if (TotalResults != other.TotalResults) return false;
-      if(!results_.Equals(other.results_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1181,7 +1328,6 @@ namespace ComposeVR.Protocol.Browser {
       int hash = 1;
       if (ResultsPerPage != 0) hash ^= ResultsPerPage.GetHashCode();
       if (TotalResults != 0) hash ^= TotalResults.GetHashCode();
-      hash ^= results_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1203,7 +1349,6 @@ namespace ComposeVR.Protocol.Browser {
         output.WriteRawTag(16);
         output.WriteInt32(TotalResults);
       }
-      results_.WriteTo(output, _repeated_results_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1218,7 +1363,6 @@ namespace ComposeVR.Protocol.Browser {
       if (TotalResults != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalResults);
       }
-      size += results_.CalculateSize(_repeated_results_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1236,7 +1380,6 @@ namespace ComposeVR.Protocol.Browser {
       if (other.TotalResults != 0) {
         TotalResults = other.TotalResults;
       }
-      results_.Add(other.results_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1256,10 +1399,6 @@ namespace ComposeVR.Protocol.Browser {
             TotalResults = input.ReadInt32();
             break;
           }
-          case 26: {
-            results_.AddEntriesFrom(input, _repeated_results_codec);
-            break;
-          }
         }
       }
     }
@@ -1274,7 +1413,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[9]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
