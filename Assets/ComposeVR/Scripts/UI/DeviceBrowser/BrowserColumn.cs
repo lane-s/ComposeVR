@@ -5,255 +5,249 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using VRTK;
+using Google.Protobuf.Collections;
 
-public class BrowserColumnEventArgs : EventArgs {
-    public BrowserColumnEventArgs(BrowserColumn b, int selectionIndex, int pageChange) {
-        col = b;
-        selIndex = selectionIndex;
-        pgChange = pageChange;
+namespace ComposeVR {
+
+    public class BrowserColumnEventArgs : EventArgs {
+        public BrowserColumnEventArgs(BrowserColumn b, int selectionIndex, int pageChange) {
+            col = b;
+            selIndex = selectionIndex;
+            pgChange = pageChange;
+        }
+
+        private BrowserColumn col;
+        private int selIndex;
+        private int pgChange;
+
+        public BrowserColumn browserColumn {
+            get { return col; }
+        }
+
+        public int selectionIndex {
+            get { return selIndex; }
+        }
+
+        public int pageChange {
+            get { return pgChange; }
+        }
     }
 
-    private BrowserColumn col;
-    private int selIndex;
-    private int pgChange;
+    public class BrowserColumn : RemoteEventHandler {
 
-    public BrowserColumn browserColumn{
-        get { return col; }
-    }
+        public Transform resultButtonPrefab;
+        public float resultSpacing = 0;
+        public float resultStartOffset = 80;
+        public bool isFilterColumn = false;
 
-    public int selectionIndex {
-        get { return selIndex;  }
-    }
+        public event EventHandler<BrowserColumnEventArgs> ItemSelected;
+        public event EventHandler<BrowserColumnEventArgs> PageChange;
 
-    public int pageChange {
-        get { return pgChange; }
-    }
-}
+        private List<Button> resultButtons;
 
-public class BrowserColumn : CommandReceiver {
+        private UnityAction buttonPressed;
 
-    public Transform resultButtonPrefab;
-    public float resultSpacing = 0;
-    public float resultStartOffset = 80;
-    public bool isFilterColumn = false;
+        private Button upArrow;
+        private Button downArrow;
+        private Color normalColor;
 
-    public event EventHandler<BrowserColumnEventArgs> ItemSelected;
-    public event EventHandler<BrowserColumnEventArgs> PageChange;
+        private int numPages = 1;
 
-    private List<Button> resultButtons;
+        private string selectedItemName;
+        private int selectedItemIndex;
 
-    private UnityAction buttonPressed;
 
-    private Button upArrow;
-    private Button downArrow;
-    private Color normalColor;
+        //TODO Call event PageChange when PageScrollBar changes page
+        //TODO Call event PageChange when up/down button is pushed
+        //TODO Display list of results when UpdateColumn is called
+        //TODO Highlight result that is pointed at
+        //TODO When result is clicked, call ItemSelected event with scrollPosition + resultIndex
 
-    private int numPages = 1;
+        private void Awake() {
+            resultButtons = new List<Button>();
+            Register("browser/" + gameObject.name);
 
-    private string selectedItemName;
-    private int selectedItemIndex;
-    
+            upArrow = transform.Find("UpArrow").GetComponent<Button>();
+            upArrow.onClick.AddListener(UpArrowClicked);
 
-    //TODO Call event PageChange when PageScrollBar changes page
-    //TODO Call event PageChange when up/down button is pushed
-    //TODO Display list of results when UpdateColumn is called
-    //TODO Highlight result that is pointed at
-    //TODO When result is clicked, call ItemSelected event with scrollPosition + resultIndex
+            downArrow = transform.Find("DownArrow").GetComponent<Button>();
+            downArrow.onClick.AddListener(DownArrowClicked);
 
-    private void Awake() {
-        resultButtons = new List<Button>();
-        Register("browser/" + gameObject.name);
+            arrowVisibilityChanged(true, false);
+            arrowVisibilityChanged(false, false);
 
-        upArrow = transform.Find("UpArrow").GetComponent<Button>();
-        upArrow.onClick.AddListener(UpArrowClicked);
+            selectDefault(0, "Any " + gameObject.name);
+        }
 
-        downArrow = transform.Find("DownArrow").GetComponent<Button>();
-        downArrow.onClick.AddListener(DownArrowClicked);
+        // Use this for initialization
+        void Start() {
 
-        OnArrowVisibilityChanged(true, false);
-        OnArrowVisibilityChanged(false, false);
+        }
 
-        selectDefault(0, "Any " + gameObject.name);
-    }
+        // Update is called once per frame
+        void Update() {
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        }
 
-    public void BrowserColumnChanged(string[] args) {
-        string[] results = { };
+        public void OnBrowserColumnChanged(Protocol.Event e) {
 
-        if (args.Length > 2) {
-            results = new string[args.Length - 2];
-            for(int i = 2; i < args.Length; i++) {
-                results[i - 2] = args[i];
+            int totalResults = e.BrowserEvent.OnBrowserColumnChangedEvent.TotalResults;
+            int resultsPerPage = e.BrowserEvent.OnBrowserColumnChangedEvent.ResultsPerPage;
+
+            RepeatedField<string> results = e.BrowserEvent.OnBrowserColumnChangedEvent.Results;
+
+            numPages = (totalResults + resultsPerPage - 1) / resultsPerPage;
+
+
+            float buttonHeight = resultButtonPrefab.GetComponent<RectTransform>().localScale.y;
+
+            //Resize canvas
+            //Vector3 newScale = GetComponent<RectTransform>().localScale;
+            //newScale.y = (buttonHeight + resultSpacing) * results.Length - resultSpacing;
+            //GetComponent<RectTransform>().localScale = newScale;
+
+            //Remove extra buttons
+            while (resultButtons.Count > resultsPerPage) {
+                Destroy(resultButtons[resultButtons.Count - 1].gameObject);
+                resultButtons.RemoveAt(resultButtons.Count - 1);
+            }
+
+            //Add buttons as needed
+            Vector3 buttonPosition = new Vector3(0, (buttonHeight + resultSpacing) * resultButtons.Count - resultStartOffset, 0);
+
+            while (resultButtons.Count < resultsPerPage) {
+                Transform newButton = Instantiate(resultButtonPrefab) as Transform;
+                newButton.SetParent(transform);
+                newButton.localPosition = Vector3.zero;
+                newButton.localRotation = Quaternion.Euler(0, 0, 0);
+
+                Button nb = newButton.GetComponent<Button>();
+                normalColor = nb.colors.normalColor;
+
+                int buttonIndex = resultButtons.Count;
+
+                //Set up pressed callback with index
+                nb.onClick.AddListener(
+                    () => { OnItemSelect(buttonIndex); }
+                );
+
+                //Position button
+                RectTransform t = nb.GetComponent<RectTransform>();
+                t.position = Vector3.zero;
+                t.rotation = Quaternion.Euler(0, 0, 0);
+
+                t.localScale = Vector3.one;
+                t.localEulerAngles = Vector3.zero;
+                t.localPosition = Vector3.zero;
+                t.localRotation = Quaternion.Euler(0, 0, 0);
+                t.anchoredPosition = buttonPosition;
+
+                buttonPosition += Vector3.down * t.rect.height + Vector3.down * resultSpacing;
+
+                resultButtons.Add(nb);
+            }
+
+
+            //Label each button with result name
+            for (int i = 0; i < results.Count; i++) {
+                resultButtons[i].gameObject.SetActive(true);
+                Text buttonText = resultButtons[i].GetComponentInChildren<Text>();
+                buttonText.text = results[i];
+
+                colorButtonIfSelected(i);
+            }
+
+            //Deactivate buttons not needed to display the results
+            for (int i = results.Count; i < resultButtons.Count; i++) {
+                resultButtons[i].gameObject.SetActive(false);
+            }
+
+        }
+
+        public void selectDefault(int index, string name) {
+            if (isFilterColumn) {
+                selectedItemIndex = index;
+                selectedItemName = name;
+                colorButtonIfSelected(index);
             }
         }
 
-        OnBrowserColumnChanged(int.Parse(args[0]), int.Parse(args[1]), results);
-    }
+        private void colorButtonIfSelected(int buttonIndex) {
+            if (buttonIndex < 0 || buttonIndex >= resultButtons.Count) {
+                return;
+            }
 
-    private void OnBrowserColumnChanged(int resultsPerPage, int totalResults, string[] results) {
+            //Color if selected
+            if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName) && buttonIndex == selectedItemIndex) {
 
-        numPages = (totalResults + resultsPerPage - 1) / resultsPerPage;
+                ColorBlock cb = resultButtons[buttonIndex].colors;
+                cb.normalColor = cb.pressedColor;
+                resultButtons[buttonIndex].colors = cb;
 
-
-        float buttonHeight = resultButtonPrefab.GetComponent<RectTransform>().localScale.y;
-
-        //Resize canvas
-        //Vector3 newScale = GetComponent<RectTransform>().localScale;
-        //newScale.y = (buttonHeight + resultSpacing) * results.Length - resultSpacing;
-        //GetComponent<RectTransform>().localScale = newScale;
-
-        //Remove extra buttons
-        while(resultButtons.Count > resultsPerPage) {
-            Destroy(resultButtons[resultButtons.Count - 1].gameObject);
-            resultButtons.RemoveAt(resultButtons.Count - 1);
-        }
-
-        //Add buttons as needed
-        Vector3 buttonPosition = new Vector3(0, (buttonHeight + resultSpacing)*resultButtons.Count - resultStartOffset, 0);
-
-        while(resultButtons.Count < resultsPerPage) {
-            Transform newButton = Instantiate(resultButtonPrefab) as Transform;
-            newButton.SetParent(transform);
-            newButton.localPosition = Vector3.zero;
-            newButton.localRotation = Quaternion.Euler(0, 0, 0);
-
-            Button nb = newButton.GetComponent<Button>();
-            normalColor = nb.colors.normalColor;
-
-            int buttonIndex = resultButtons.Count;
-
-            //Set up pressed callback with index
-            nb.onClick.AddListener(
-                () => {OnItemSelect(buttonIndex);}
-            );
-
-            //Position button
-            RectTransform t = nb.GetComponent<RectTransform>();
-            t.position = Vector3.zero;
-            t.rotation = Quaternion.Euler(0, 0, 0);
-
-            t.localScale = Vector3.one;
-            t.localEulerAngles = Vector3.zero;
-            t.localPosition = Vector3.zero;
-            t.localRotation = Quaternion.Euler(0, 0, 0);
-            t.anchoredPosition = buttonPosition;
-
-            buttonPosition += Vector3.down * t.rect.height + Vector3.down * resultSpacing;
-
-            resultButtons.Add(nb);
-        }
-
-
-        //Label each button with result name
-        for(int i = 0; i < results.Length; i++) {
-            resultButtons[i].gameObject.SetActive(true);
-            Text buttonText = resultButtons[i].GetComponentInChildren<Text>();
-            buttonText.text = results[i];
-
-            colorButtonIfSelected(i);
-        }
-
-        //Deactivate buttons not needed to display the results
-        for(int i = results.Length; i < resultButtons.Count; i++) {
-            resultButtons[i].gameObject.SetActive(false);
-        }
-
-    }
-
-    public void selectDefault(int index, string name) {
-        if (isFilterColumn) {
-            selectedItemIndex = index;
-            selectedItemName = name;
-            colorButtonIfSelected(index);
-        }
-    }
-
-    private void colorButtonIfSelected(int buttonIndex) {
-        if (buttonIndex < 0 || buttonIndex >= resultButtons.Count) {
-            return;
-        }
-
-        //Color if selected
-        if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName) && buttonIndex == selectedItemIndex) {
-
-            ColorBlock cb = resultButtons[buttonIndex].colors;
-            cb.normalColor = cb.pressedColor;
-            resultButtons[buttonIndex].colors = cb;
-
-        }
-    }
-
-    private void deselectItem() {
-        if (selectedItemIndex < resultButtons.Count && selectedItemIndex >= 0) {
-            if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName)) {
-                Debug.Log("Reverting color");
-                ColorBlock cb = resultButtons[selectedItemIndex].colors;
-                cb.normalColor = normalColor;
-                resultButtons[selectedItemIndex].colors = cb;
             }
         }
-        selectedItemIndex = -1;
-        selectedItemName = "";
-    }
 
-    private void OnItemSelect(int itemIndex) {
-        Debug.Log("Item " + itemIndex + " selected!");
-        deselectItem();
-
-        selectedItemIndex = itemIndex;
-        selectedItemName = resultButtons[itemIndex].GetComponentInChildren<Text>().text;
-        colorButtonIfSelected(itemIndex);
-
-        if(ItemSelected != null) {
-            BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, itemIndex, 0);
-            ItemSelected(this, e);
+        private void deselectItem() {
+            if (selectedItemIndex < resultButtons.Count && selectedItemIndex >= 0) {
+                if (resultButtons[selectedItemIndex].GetComponentInChildren<Text>().text.Equals(selectedItemName)) {
+                    Debug.Log("Reverting color");
+                    ColorBlock cb = resultButtons[selectedItemIndex].colors;
+                    cb.normalColor = normalColor;
+                    resultButtons[selectedItemIndex].colors = cb;
+                }
+            }
+            selectedItemIndex = -1;
+            selectedItemName = "";
         }
-    }
 
-    private void UpArrowClicked() {
-        OnPageChange(-1);
-    }
+        private void OnItemSelect(int itemIndex) {
+            Debug.Log("Item " + itemIndex + " selected!");
+            deselectItem();
 
-    private void DownArrowClicked() {
-        OnPageChange(1);
-    }
+            selectedItemIndex = itemIndex;
+            selectedItemName = resultButtons[itemIndex].GetComponentInChildren<Text>().text;
+            colorButtonIfSelected(itemIndex);
 
-    public void ArrowVisibilityChanged(string[] args) {
-        OnArrowVisibilityChanged(bool.Parse(args[0]), bool.Parse(args[1]));
-    }
-
-    private void OnArrowVisibilityChanged(bool upArrow, bool visible) {
-        Debug.Log(gameObject.name);
-        Debug.Log(upArrow);
-        Debug.Log(visible);
-        if (upArrow) {
-            this.upArrow.gameObject.SetActive(visible);
-        }else{
-            this.downArrow.gameObject.SetActive(visible);
+            if (ItemSelected != null) {
+                BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, itemIndex, 0);
+                ItemSelected(this, e);
+            }
         }
-    }
 
-    private void OnPageChange(int pageChange) {
-
-        if (PageChange != null) {
-            BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, -1, pageChange);
-            PageChange(this, e);
+        private void UpArrowClicked() {
+            OnPageChange(-1);
         }
-    }
 
-    public void resetColumn() {
-        selectDefault(0, "Any " + gameObject.name);
-        OnArrowVisibilityChanged(true, false);
-        OnArrowVisibilityChanged(false, false);
-        deselectItem();
+        private void DownArrowClicked() {
+            OnPageChange(1);
+        }
+
+        public void OnArrowVisibilityChanged(Protocol.Event e) {
+            arrowVisibilityChanged(e.BrowserEvent.OnArrowVisibilityChangedEvent.UpArrow, e.BrowserEvent.OnArrowVisibilityChangedEvent.Visible);
+        }
+
+        private void arrowVisibilityChanged(bool upArrow, bool visible) {
+            if (upArrow) {
+                this.upArrow.gameObject.SetActive(visible);
+            }
+            else {
+                this.downArrow.gameObject.SetActive(visible);
+            }
+        }
+
+        private void OnPageChange(int pageChange) {
+
+            if (PageChange != null) {
+                BrowserColumnEventArgs e = new BrowserColumnEventArgs(this, -1, pageChange);
+                PageChange(this, e);
+            }
+        }
+
+        public void resetColumn() {
+            selectDefault(0, "Any " + gameObject.name);
+            arrowVisibilityChanged(true, false);
+            arrowVisibilityChanged(false, false);
+            deselectItem();
+        }
     }
 }

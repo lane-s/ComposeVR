@@ -1,19 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ComposeVR;
 
-public class DrumPadBackTrigger : MonoBehaviour {
+namespace ComposeVR {
 
-	// Use this for initialization
-	void OnTriggerEnter(Collider other){
-		if (other.GetComponent<MalletHead> ()) {
-			other.GetComponent<MalletHead> ().enteringFromBack = true;
-		}
-	}
+    public class DrumPadBackTrigger : MonoBehaviour {
 
-	void OnTriggerExit(Collider other){
-		if (other.GetComponent<MalletHead> ()) {
-			other.GetComponent<MalletHead> ().enteringFromBack = false;
-		}
-	}
+        // Use this for initialization
+        void OnTriggerEnter(Collider other) {
+            if (other.GetComponent<MalletHead>()) {
+                other.GetComponent<MalletHead>().enteringFromBack = true;
+            }
+        }
+
+        void OnTriggerExit(Collider other) {
+            if (other.GetComponent<MalletHead>()) {
+                other.GetComponent<MalletHead>().enteringFromBack = false;
+            }
+        }
+    }
 }

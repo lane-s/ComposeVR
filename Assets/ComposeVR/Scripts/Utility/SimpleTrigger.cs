@@ -2,31 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ComposeVR;
 
-public class SimpleTriggerEventArgs : EventArgs{
-	public SimpleTriggerEventArgs(Collider other){
-		this.other = other;
-	}
+namespace ComposeVR {
 
-	public Collider other {get;private set;}
-}
+    public class SimpleTriggerEventArgs : EventArgs {
+        public SimpleTriggerEventArgs(Collider other) {
+            this.other = other;
+        }
 
-public class SimpleTrigger : MonoBehaviour {
+        public Collider other { get; private set; }
+    }
 
-	public event EventHandler<SimpleTriggerEventArgs> TriggerEnter;
-	public event EventHandler <SimpleTriggerEventArgs> TriggerExit;
+    public class SimpleTrigger : MonoBehaviour {
 
-	void OnTriggerEnter(Collider other){
-		if (TriggerEnter != null) {
-			SimpleTriggerEventArgs args = new SimpleTriggerEventArgs (other);
-			TriggerEnter (this,args);
-		}
-	}
+        public event EventHandler<SimpleTriggerEventArgs> TriggerEnter;
+        public event EventHandler<SimpleTriggerEventArgs> TriggerExit;
 
-	void OnTriggerExit(Collider other){
-		if (TriggerExit != null) {
-			SimpleTriggerEventArgs args = new SimpleTriggerEventArgs (other);
-			TriggerExit(this,args);
-		}
-	}
+        void OnTriggerEnter(Collider other) {
+            if (TriggerEnter != null) {
+                SimpleTriggerEventArgs args = new SimpleTriggerEventArgs(other);
+                TriggerEnter(this, args);
+            }
+        }
+
+        void OnTriggerExit(Collider other) {
+            if (TriggerExit != null) {
+                SimpleTriggerEventArgs args = new SimpleTriggerEventArgs(other);
+                TriggerExit(this, args);
+            }
+        }
+    }
 }

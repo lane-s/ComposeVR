@@ -1,30 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ComposeVR;
 
-public class DrumMachine : SoundModule {
+namespace ComposeVR {
 
-	private int currentMidiNote;
+    public class DrumMachine : SoundModule {
 
-	void Awake(){
-		//base.Awake ();
-		//contextMenu.Find ("MenuButtons").Find ("DrumPad").GetComponent<NewModuleButton> ().ModulePlaced += OnDrumPadPlaced;
-		currentMidiNote = 36;
-	}
+        private int currentMidiNote;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        void Awake() {
+            //base.Awake ();
+            //contextMenu.Find ("MenuButtons").Find ("DrumPad").GetComponent<NewModuleButton> ().ModulePlaced += OnDrumPadPlaced;
+            currentMidiNote = 36;
+        }
 
-	void OnDrumPadPlaced(object sender, ModulePlacedEventArgs args){
-		args.obj.GetComponent<DrumPad> ().midiNoteNumber = currentMidiNote;
-		currentMidiNote++;
-	}
+        // Use this for initialization
+        void Start() {
 
+        }
+
+        // Update is called once per frame
+        void Update() {
+
+        }
+
+        void OnDrumPadPlaced(object sender, ModulePlacedEventArgs args) {
+            args.obj.GetComponent<DrumPad>().midiNoteNumber = currentMidiNote;
+            currentMidiNote++;
+        }
+
+    }
 }

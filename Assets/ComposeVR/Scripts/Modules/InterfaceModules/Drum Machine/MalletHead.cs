@@ -2,48 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
+using ComposeVR;
 
-public class MalletHead : MonoBehaviour {
+namespace ComposeVR {
 
-	public float minVelocity = 1f;
-	public float maxVelocity = 25.0f;
+    public class MalletHead : MonoBehaviour {
 
-	public bool enteringFromBack;
-	public bool struckPad;
-	public Transform controller;
+        public float minVelocity = 1f;
+        public float maxVelocity = 25.0f;
 
-	private VRTK_ControllerReference controllerReference;
-	private Vector3 controllerVelocity;
-	private Vector3 angularVelocity;
+        public bool enteringFromBack;
+        public bool struckPad;
+        public Transform controller;
 
-	private bool onCooldown = false;
-	private const float cooldownTime = 0.05f;
+        private VRTK_ControllerReference controllerReference;
+        private Vector3 controllerVelocity;
+        private Vector3 angularVelocity;
 
-	void Update(){
-		VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(controller.gameObject);
-		controllerVelocity = VRTK_DeviceFinder.GetControllerVelocity (controllerReference);
-		angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity (controllerReference);
-	}
+        private bool onCooldown = false;
+        private const float cooldownTime = 0.05f;
 
-	public int GetMalletVelocity(){
-		float vel = controllerVelocity.magnitude + angularVelocity.magnitude;
-		if (vel < minVelocity)
-			return 0;
+        void Update() {
+            VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(controller.gameObject);
+            controllerVelocity = VRTK_DeviceFinder.GetControllerVelocity(controllerReference);
+            angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(controllerReference);
+        }
 
-		return (int)Mathf.Clamp(vel.Remap (minVelocity, maxVelocity, 1, 127),0,127);
-	}
+        public int GetMalletVelocity() {
+            float vel = controllerVelocity.magnitude + angularVelocity.magnitude;
+            if (vel < minVelocity)
+                return 0;
 
-	IEnumerator cooldown(){
-		onCooldown = true;
-		yield return new WaitForSeconds (cooldownTime);
-		onCooldown = false;
-	}
+            return (int)Mathf.Clamp(vel.Remap(minVelocity, maxVelocity, 1, 127), 0, 127);
+        }
 
-	public void StartCooldown(){
-		StartCoroutine (cooldown ());
-	}
+        IEnumerator cooldown() {
+            onCooldown = true;
+            yield return new WaitForSeconds(cooldownTime);
+            onCooldown = false;
+        }
 
-	public bool IsOnCooldown(){
-		return onCooldown;
-	}
+        public void StartCooldown() {
+            StartCoroutine(cooldown());
+        }
+
+        public bool IsOnCooldown() {
+            return onCooldown;
+        }
+    }
 }

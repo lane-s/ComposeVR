@@ -1,60 +1,64 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ComposeVR;
 
-public class DrumPad : MonoBehaviour {
+namespace ComposeVR {
 
-	private byte noteByte;
+    public class DrumPad : MonoBehaviour {
 
-	public int midiNoteNumber{
-		get{return (int)noteByte;}
-		set{noteByte = (byte)value;}
-	}
+        private byte noteByte;
 
-	private UDPClient client;
-	private Color ogColor;
+        public int midiNoteNumber {
+            get { return (int)noteByte; }
+            set { noteByte = (byte)value; }
+        }
 
-	private bool onCooldown = false;
-	private const float cooldownTime = 0.3f;
+        private UDPClient client;
+        private Color ogColor;
 
-	// Use this for initialization
-	void Start () {
-		client = GameObject.FindGameObjectWithTag ("UDPClient").GetComponent<UDPClient> ();
-		ogColor = GetComponentInChildren<MeshRenderer> ().material.color;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        private bool onCooldown = false;
+        private const float cooldownTime = 0.3f;
 
-	void OnTriggerEnter(Collider other){
-		MalletHead head = other.GetComponent<MalletHead> ();
-		if (head) {
-			int noteVelocity = head.GetMalletVelocity ();
-			if (!head.enteringFromBack && !head.IsOnCooldown() && noteVelocity > 0) {
-				byte velocityByte = (byte)noteVelocity;
-				byte[] midiMessage = { 0x90, noteByte, velocityByte };
-				client.sendBytes (midiMessage);
-				head.struckPad = true;
-				GetComponentInChildren<MeshRenderer> ().material.color = new Color (0, 1, 0);
-			}
-		}
-	}
+        // Use this for initialization
+        void Start() {
+            client = GameObject.FindGameObjectWithTag("UDPClient").GetComponent<UDPClient>();
+            ogColor = GetComponentInChildren<MeshRenderer>().material.color;
+        }
 
-	void OnTriggerExit(Collider other){
-		MalletHead head = other.GetComponent<MalletHead> ();
-		if (head) {
-			if (head.struckPad) {
-				int noteVelocity = 110;
-				byte velocityByte = (byte)noteVelocity;
-				byte[] midiMessage = { 0x80, noteByte, velocityByte };
-				client.sendBytes (midiMessage);
-				head.struckPad = false;
-				head.StartCooldown ();
-			}
-			GetComponentInChildren<MeshRenderer> ().material.color = ogColor;
-		}
-	}
-		
+        // Update is called once per frame
+        void Update() {
+
+        }
+
+        void OnTriggerEnter(Collider other) {
+            MalletHead head = other.GetComponent<MalletHead>();
+            if (head) {
+                int noteVelocity = head.GetMalletVelocity();
+                if (!head.enteringFromBack && !head.IsOnCooldown() && noteVelocity > 0) {
+                    byte velocityByte = (byte)noteVelocity;
+                    byte[] midiMessage = { 0x90, noteByte, velocityByte };
+                    client.sendBytes(midiMessage);
+                    head.struckPad = true;
+                    GetComponentInChildren<MeshRenderer>().material.color = new Color(0, 1, 0);
+                }
+            }
+        }
+
+        void OnTriggerExit(Collider other) {
+            MalletHead head = other.GetComponent<MalletHead>();
+            if (head) {
+                if (head.struckPad) {
+                    int noteVelocity = 110;
+                    byte velocityByte = (byte)noteVelocity;
+                    byte[] midiMessage = { 0x80, noteByte, velocityByte };
+                    client.sendBytes(midiMessage);
+                    head.struckPad = false;
+                    head.StartCooldown();
+                }
+                GetComponentInChildren<MeshRenderer>().material.color = ogColor;
+            }
+        }
+
+    }
 }
