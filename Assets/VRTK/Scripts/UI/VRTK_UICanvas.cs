@@ -196,7 +196,10 @@ namespace VRTK
                 Destroy(canvasRigidBody);
             }
 
-            StopCoroutine(draggablePanelCreation);
+            if (draggablePanelCreation != null) {
+                StopCoroutine(draggablePanelCreation);
+            }
+
             var draggablePanel = canvas.transform.Find(CANVAS_DRAGGABLE_PANEL);
             if (draggablePanel)
             {

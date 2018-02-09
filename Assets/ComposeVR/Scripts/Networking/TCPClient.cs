@@ -259,7 +259,7 @@ namespace ComposeVR {
         }
 
         public void send(Protocol.Event outgoingEvent) {
-            Debug.Log("Sending event " + outgoingEvent.MethodName);
+            //Debug.Log("Sending event " + outgoingEvent.MethodName);
             NetworkStream networkStream = client.GetStream();
 
             //Clear the output stream

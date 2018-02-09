@@ -32,13 +32,14 @@ namespace ComposeVR.Protocol.Browser {
             "clBhZ2USEwoLY29sdW1uX25hbWUYASABKAkSEwoLcGFnZV9jaGFuZ2UYAiAB",
             "KAUiOwoQU2VsZWN0RmlsdGVySXRlbRITCgtjb2x1bW5fbmFtZRgBIAEoCRIS",
             "CgppdGVtX2luZGV4GAIgASgFIj0KFE9uQnJvd3Nlckl0ZW1DaGFuZ2VkEhIK",
-            "Cml0ZW1faW5kZXgYASABKAUSEQoJaXRlbV9uYW1lGAIgASgJIkkKFk9uQnJv",
+            "Cml0ZW1faW5kZXgYASABKAUSEQoJaXRlbV9uYW1lGAIgASgJIl4KFk9uQnJv",
             "d3NlckNvbHVtbkNoYW5nZWQSGAoQcmVzdWx0c19wZXJfcGFnZRgBIAEoBRIV",
-            "Cg10b3RhbF9yZXN1bHRzGAIgASgFIoABChhPbkFycm93VmlzaWJpbGl0eUNo",
-            "YW5nZWQSOAoFYXJyb3cYASABKA4yKS5Db21wb3NlVlIuT25BcnJvd1Zpc2li",
-            "aWxpdHlDaGFuZ2VkLkFycm93Eg8KB3Zpc2libGUYAiABKAgiGQoFQXJyb3cS",
-            "BgoCVVAQABIICgRET1dOEAFCPAodY29tLmxhczR2Yy5jb21wb3NldnIucHJv",
-            "dG9jb2yqAhpDb21wb3NlVlIuUHJvdG9jb2wuQnJvd3NlcmIGcHJvdG8z"));
+            "Cg10b3RhbF9yZXN1bHRzGAIgASgFEhMKC2RldmljZV90eXBlGAMgASgJIoAB",
+            "ChhPbkFycm93VmlzaWJpbGl0eUNoYW5nZWQSOAoFYXJyb3cYASABKA4yKS5D",
+            "b21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkLkFycm93Eg8KB3Zp",
+            "c2libGUYAiABKAgiGQoFQXJyb3cSBgoCVVAQABIICgRET1dOEAFCPAodY29t",
+            "LmxhczR2Yy5jb21wb3NldnIucHJvdG9jb2yqAhpDb21wb3NlVlIuUHJvdG9j",
+            "b2wuQnJvd3NlcmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
@@ -51,7 +52,7 @@ namespace ComposeVR.Protocol.Browser {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.ChangeFilterPage), global::ComposeVR.Protocol.Browser.ChangeFilterPage.Parser, new[]{ "ColumnName", "PageChange" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.SelectFilterItem), global::ComposeVR.Protocol.Browser.SelectFilterItem.Parser, new[]{ "ColumnName", "ItemIndex" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserItemChanged), global::ComposeVR.Protocol.Browser.OnBrowserItemChanged.Parser, new[]{ "ItemIndex", "ItemName" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged), global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged.Parser, new[]{ "ResultsPerPage", "TotalResults" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged), global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged.Parser, new[]{ "ResultsPerPage", "TotalResults", "DeviceType" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged), global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Parser, new[]{ "Arrow", "Visible" }, null, new[]{ typeof(global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow) }, null)
           }));
     }
@@ -1275,6 +1276,7 @@ namespace ComposeVR.Protocol.Browser {
     public OnBrowserColumnChanged(OnBrowserColumnChanged other) : this() {
       resultsPerPage_ = other.resultsPerPage_;
       totalResults_ = other.totalResults_;
+      deviceType_ = other.deviceType_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1305,6 +1307,17 @@ namespace ComposeVR.Protocol.Browser {
       }
     }
 
+    /// <summary>Field number for the "device_type" field.</summary>
+    public const int DeviceTypeFieldNumber = 3;
+    private string deviceType_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string DeviceType {
+      get { return deviceType_; }
+      set {
+        deviceType_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as OnBrowserColumnChanged);
@@ -1320,6 +1333,7 @@ namespace ComposeVR.Protocol.Browser {
       }
       if (ResultsPerPage != other.ResultsPerPage) return false;
       if (TotalResults != other.TotalResults) return false;
+      if (DeviceType != other.DeviceType) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1328,6 +1342,7 @@ namespace ComposeVR.Protocol.Browser {
       int hash = 1;
       if (ResultsPerPage != 0) hash ^= ResultsPerPage.GetHashCode();
       if (TotalResults != 0) hash ^= TotalResults.GetHashCode();
+      if (DeviceType.Length != 0) hash ^= DeviceType.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1349,6 +1364,10 @@ namespace ComposeVR.Protocol.Browser {
         output.WriteRawTag(16);
         output.WriteInt32(TotalResults);
       }
+      if (DeviceType.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(DeviceType);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1362,6 +1381,9 @@ namespace ComposeVR.Protocol.Browser {
       }
       if (TotalResults != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalResults);
+      }
+      if (DeviceType.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DeviceType);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1380,6 +1402,9 @@ namespace ComposeVR.Protocol.Browser {
       if (other.TotalResults != 0) {
         TotalResults = other.TotalResults;
       }
+      if (other.DeviceType.Length != 0) {
+        DeviceType = other.DeviceType;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1397,6 +1422,10 @@ namespace ComposeVR.Protocol.Browser {
           }
           case 16: {
             TotalResults = input.ReadInt32();
+            break;
+          }
+          case 26: {
+            DeviceType = input.ReadString();
             break;
           }
         }

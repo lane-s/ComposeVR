@@ -44,17 +44,19 @@ namespace ComposeVR {
         /// </summary>
         /// <param name="moduleID"> The module that the browser needs to browse for</param>
         /// <param name="browserAnchor"> The transform where the browser should display</param>
-        public void openBrowser(string moduleID, string contentType) {
+        public void openBrowser(string moduleID, string deviceType) {
+            resetAllColumns();
             RemoteEventEmitter.CloseBrowser(getClient());
-            RemoteEventEmitter.OpenBrowser(getClient(), moduleID, contentType);
 
+            RemoteEventEmitter.OpenBrowser(getClient(), moduleID, deviceType);
             resultsColumn.gameObject.SetActive(true);
+            resultsColumn.setTargetDeviceType(deviceType);
 
             foreach (BrowserColumn c in filterColumns) {
-                if (c.name.Equals("Tags") && contentType != "Presets") {
+                if (c.name.Equals("Tags") && deviceType != "Presets") {
                     continue;
                 }
-
+                c.setTargetDeviceType(deviceType);
                 c.gameObject.SetActive(true);
             }
 
@@ -71,24 +73,32 @@ namespace ComposeVR {
             }
         }
 
+        private void resetAllColumns() {
+            resultsColumn.resetColumn();
+
+            foreach(BrowserColumn c in filterColumns) {
+                c.resetColumn();
+            }
+        }
+
 
         public void OnPageChanged(object sender, BrowserColumnEventArgs e) {
-            if (e.browserColumn.name.Equals("Results") && e.pageChange != 0) {
-                RemoteEventEmitter.ChangeResultsPage(getClient(), e.pageChange);
+            if (e.BrowserColumn.name.Equals("Results") && e.PageChange != 0) {
+                RemoteEventEmitter.ChangeResultsPage(getClient(), e.PageChange);
             }
             else {
-                Debug.Log(e.browserColumn.name);
-                RemoteEventEmitter.ChangeFilterPage(getClient(), e.browserColumn.name, e.pageChange);
+                Debug.Log(e.BrowserColumn.name);
+                RemoteEventEmitter.ChangeFilterPage(getClient(), e.BrowserColumn.name, e.PageChange);
             }
         }
 
         public void OnItemSelected(object sender, BrowserColumnEventArgs e) {
-            if (e.browserColumn.name.Equals("Results")) {
-                RemoteEventEmitter.LoadDeviceAtIndex(getClient(), e.selectionIndex);
+            if (e.BrowserColumn.name.Equals("Results")) {
+                RemoteEventEmitter.LoadDeviceAtIndex(getClient(), e.SelectionIndex);
                 closeBrowser();
             }
             else {
-                RemoteEventEmitter.SelectFilterItem(getClient(), e.browserColumn.name, e.selectionIndex);
+                RemoteEventEmitter.SelectFilterItem(getClient(), e.BrowserColumn.name, e.SelectionIndex);
             }
         }
 

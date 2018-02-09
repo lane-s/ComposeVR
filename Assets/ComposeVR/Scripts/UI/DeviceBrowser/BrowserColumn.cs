@@ -22,15 +22,15 @@ namespace ComposeVR {
         private int selIndex;
         private int pgChange;
 
-        public BrowserColumn browserColumn {
+        public BrowserColumn BrowserColumn {
             get { return col; }
         }
 
-        public int selectionIndex {
+        public int SelectionIndex {
             get { return selIndex; }
         }
 
-        public int pageChange {
+        public int PageChange {
             get { return pgChange; }
         }
     }
@@ -45,6 +45,7 @@ namespace ComposeVR {
 
         public event EventHandler<BrowserColumnEventArgs> ItemSelected;
         public event EventHandler<BrowserColumnEventArgs> PageChange;
+        public event EventHandler<BrowserColumnEventArgs> DeviceTypeChange;
 
         private List<Button> resultButtons;
 
@@ -56,9 +57,10 @@ namespace ComposeVR {
 
         private string selectedItemName;
         private int selectedItemIndex;
+
+        private string targetDeviceType;
+        private bool deviceTypeIsTarget;
         
-
-
         //TODO Call event PageChange when PageScrollBar changes page
         //TODO Call event PageChange when up/down button is pushed
         //TODO Display list of results when UpdateColumn is called
@@ -100,7 +102,7 @@ namespace ComposeVR {
             Text buttonText = resultButtons[itemIndex].GetComponentInChildren<Text>();
             buttonText.text = itemName;
 
-            if(itemName.Length == 0) {
+            if(itemName.Length == 0 || !deviceTypeIsTarget) {
                 resultButtons[itemIndex].gameObject.SetActive(false);
                 return;
             }
@@ -116,7 +118,26 @@ namespace ComposeVR {
             int totalResults = e.BrowserEvent.OnBrowserColumnChangedEvent.TotalResults;
             int resultsPerPage = e.BrowserEvent.OnBrowserColumnChangedEvent.ResultsPerPage;
 
+            bool deviceTypeWasTarget = deviceTypeIsTarget;
+            deviceTypeIsTarget = e.BrowserEvent.OnBrowserColumnChangedEvent.DeviceType.Equals(targetDeviceType);
+
+            //We have the correct device type now, so display results
+            if (deviceTypeIsTarget != deviceTypeWasTarget) {
+                showHideAll(deviceTypeIsTarget);
+            }
+
             expandColumnToSize(resultsPerPage);
+        }
+
+        public void showHideAll(bool show) {
+            foreach (Button b in resultButtons) {
+                if (show && b.GetComponentInChildren<Text>().text.Length > 0) {
+                    b.gameObject.SetActive(true);
+                }
+                else {
+                    b.gameObject.SetActive(false);
+                }
+            }
         }
 
         private void expandColumnToSize(int size) {
@@ -154,6 +175,8 @@ namespace ComposeVR {
                 t.anchoredPosition = buttonPosition;
 
                 buttonPosition += Vector3.down * t.rect.height + Vector3.down * resultSpacing;
+
+                nb.gameObject.SetActive(false);
 
                 resultButtons.Add(nb);
             }
@@ -244,9 +267,19 @@ namespace ComposeVR {
 
         public void resetColumn() {
             selectDefault(0, "Any " + gameObject.name);
+            deviceTypeIsTarget = false;
+            showHideAll(false);
             arrowVisibilityChanged(Arrow.Up, false);
             arrowVisibilityChanged(Arrow.Down, false);
             deselectItem();
+        }
+
+        public void setTargetDeviceType(string deviceType) {
+            targetDeviceType = deviceType;
+        }
+
+        public void setDeviceTypeIsTarget(bool val) {
+            deviceTypeIsTarget = val;
         }
     }
 }
