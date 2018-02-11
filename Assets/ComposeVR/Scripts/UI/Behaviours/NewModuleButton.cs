@@ -58,7 +58,7 @@ namespace ComposeVR {
             if (placingObject) {
                 placingObject = false;
 
-                if (modulePlaceholder.gameObject.activeInHierarchy && !modulePlaceholder.GetComponent<ModulePlaceholder>().IsBlocked()) {
+                if (modulePlaceholder.gameObject.activeInHierarchy && !modulePlaceholder.GetComponent<ModulePlaceholderObject>().IsBlocked()) {
                     Transform newModule = Instantiate(modulePrefab) as Transform;
                     newModule.position = modulePlaceholder.position;
                     newModule.rotation = modulePlaceholder.rotation;

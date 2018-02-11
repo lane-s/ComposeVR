@@ -1,18 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ComposeVR {
     /// <summary>
     /// A collection of commands which can be sent to the connected DAW
     /// </summary>
-    public static class RemoteEventEmitter {
+    [Serializable]
+    public class RemoteEventEmitter {
+        private static RemoteEventEmitter instance;
+        private RemoteEventEmitter() { }
+
+        public static RemoteEventEmitter Instance {
+            get {
+                if(instance == null) {
+                    instance = new RemoteEventEmitter();
+                }
+                return instance;
+            }
+        }
+        
+
+        private IEventEmitter Emitter;
+
+        public void SetEmitter(IEventEmitter e) {
+            Emitter = e;
+        }
 
         /// <summary>
         /// Creates a new sound module (corresponding to a new track) on the DAW
         /// </summary>
         /// <param name="client"></param>
         /// <param name="senderID"> The id to give the sound module</param>
-        public static void CreateSoundModule(TCPClient client, string senderID) {
+        public void CreateSoundModule(string senderID) {
 
             Protocol.Module.CreateSoundModule createEvent = new Protocol.Module.CreateSoundModule {
                 SenderId = senderID
@@ -28,7 +48,7 @@ namespace ComposeVR {
                 MethodName = "CreateSoundModule"
             };
             
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
         /// <summary>
@@ -36,7 +56,7 @@ namespace ComposeVR {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="moduleID">The module to browse on</param>
-        public static void OpenBrowser(TCPClient client, string moduleID, string deviceType) {
+        public void OpenBrowser(string moduleID, string deviceType) {
             Protocol.Module.OpenBrowser openEvent = new Protocol.Module.OpenBrowser {
                 DeviceType = deviceType
             };
@@ -51,10 +71,10 @@ namespace ComposeVR {
                 MethodName = "OpenBrowser"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
-        public static void CloseBrowser(TCPClient client) {
+        public void CloseBrowser() {
             Protocol.Browser.CloseBrowser closeEvent = new Protocol.Browser.CloseBrowser {
                 Commit = true
             };
@@ -69,10 +89,10 @@ namespace ComposeVR {
                 MethodName = "CloseBrowser"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
-        public static void ChangeResultsPage(TCPClient client, int pageChange) {
+        public void ChangeResultsPage(int pageChange) {
             Protocol.Browser.ChangeResultsPage changeResultsEvent = new Protocol.Browser.ChangeResultsPage {
                 PageChange = pageChange
             };
@@ -87,10 +107,10 @@ namespace ComposeVR {
                 MethodName = "ChangeResultsPage"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
-        public static void LoadDeviceAtIndex(TCPClient client, int selectionIndex) {
+        public void LoadDeviceAtIndex(int selectionIndex) {
             Protocol.Browser.LoadDeviceAtIndex loadEvent = new Protocol.Browser.LoadDeviceAtIndex {
                 Index = selectionIndex
             };
@@ -105,10 +125,10 @@ namespace ComposeVR {
                 MethodName = "LoadDeviceAtIndex"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
-        public static void ChangeFilterPage(TCPClient client, string columnName, int pageChange) {
+        public void ChangeFilterPage(string columnName, int pageChange) {
             Protocol.Browser.ChangeFilterPage changeFilterEvent = new Protocol.Browser.ChangeFilterPage {
                 ColumnName = columnName,
                 PageChange = pageChange
@@ -124,10 +144,10 @@ namespace ComposeVR {
                 MethodName = "ChangeFilterPage"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
-        public static void SelectFilterItem(TCPClient client, string columnName, int selectionIndex) {
+        public void SelectFilterItem(string columnName, int selectionIndex) {
             Protocol.Browser.SelectFilterItem selectFilterEvent = new Protocol.Browser.SelectFilterItem {
                 ColumnName = columnName,
                 ItemIndex = selectionIndex
@@ -143,8 +163,9 @@ namespace ComposeVR {
                 MethodName = "SelectFilterItem"
             };
 
-            client.send(remoteEvent);
+            Emitter.EmitEvent(remoteEvent);
         }
 
     }
+
 }

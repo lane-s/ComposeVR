@@ -31,7 +31,7 @@ namespace ComposeVR {
 
         private bool placingModule = false;
 
-        private TCPClient client;
+        private TCPClientObject client;
 
         // Use this for initialization
         void Start() {
@@ -42,7 +42,7 @@ namespace ComposeVR {
             menuObject = transform.Find("MenuObject");
             instrumentBank = menuObject.Find("ModuleBank");
 
-            client = GameObject.FindGameObjectWithTag("TCPClient").GetComponent<TCPClient>();
+            client = GameObject.FindGameObjectWithTag("TCPClient").GetComponent<TCPClientObject>();
 
             contextObjects = new List<Transform>();
         }
@@ -87,7 +87,7 @@ namespace ComposeVR {
                 }
 
                 //If placeholder position is valid, replace with module instance
-                if (modulePlaceholder.gameObject.activeSelf && !modulePlaceholder.GetComponent<ModulePlaceholder>().IsBlocked()) {
+                if (modulePlaceholder.gameObject.activeSelf && !modulePlaceholder.GetComponent<ModulePlaceholderObject>().IsBlocked()) {
                     Transform newModule = Instantiate(module) as Transform;
                     newModule.transform.position = modulePlaceholder.position;
                     newModule.rotation = modulePlaceholder.rotation;
@@ -103,7 +103,7 @@ namespace ComposeVR {
         private void OnTouchpadAxisChanged(object sender, ControllerInteractionEventArgs e) {
             if (placingModule) {
                 Vector3 angularVelocity = new Vector3(0, -e.touchpadAxis.x * instrumentPlaceholderRotationSpeed, 0);
-                modulePlaceholder.GetComponent<ModulePlaceholder>().SetAngularVelocity(angularVelocity);
+                modulePlaceholder.GetComponent<ModulePlaceholderObject>().SetAngularVelocity(angularVelocity);
             }
         }
 

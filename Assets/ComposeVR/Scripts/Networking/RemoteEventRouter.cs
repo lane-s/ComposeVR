@@ -7,18 +7,26 @@ using ComposeVR.Protocol;
 
 namespace ComposeVR {
 
-    public class RemoteEventRouter : MonoBehaviour {
+    /// <summary>
+    /// Singleton responsible for delivering events coming in to the system to the intended handler
+    /// </summary>
+    [Serializable]
+    public class RemoteEventRouter {
+
+        private static RemoteEventRouter instance;
+        private RemoteEventRouter() { }
+
+        public static RemoteEventRouter Instance {
+            get {
+                if(instance == null) {
+                    instance = new RemoteEventRouter();
+                }
+                return instance;
+            }
+        }
+
 
         private Dictionary<string, RemoteEventHandler> handlerDictionary;
-
-        // Use this for initialization
-        void Awake() {
-        }
-
-        // Update is called once per frame
-        void Update() {
-
-        }
 
         private Dictionary<string, RemoteEventHandler> getHandlerDictionary() {
             if (handlerDictionary == null) {
@@ -27,7 +35,7 @@ namespace ComposeVR {
             return handlerDictionary;
         }
 
-        public void routeEvent(Protocol.Event e) {
+        public void RouteEvent(Protocol.Event e) {
             string receiverID = "";
 
             switch (e.EventCase) {
@@ -44,15 +52,15 @@ namespace ComposeVR {
 
             if (getHandlerDictionary().ContainsKey(receiverID)) {
                 RemoteEventHandler receiver = getHandlerDictionary()[receiverID];
-                receiver.handleEvent(e);
+                receiver.HandleEvent(e);
             }
         }
 
-        public void addReceiver(string receiverID, RemoteEventHandler receiver) {
+        public void AddReceiver(string receiverID, RemoteEventHandler receiver) {
             getHandlerDictionary().Add(receiverID, receiver);
         }
 
-        public void removeReceiverIfPresent(string receiverID) {
+        public void RemoveReceiver(string receiverID) {
             getHandlerDictionary().Remove(receiverID);
         }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using ComposeVR;
 
 namespace ComposeVR {
-    public class ModulePlaceholder : MonoBehaviour {
+    public class ModulePlaceholderObject : MonoBehaviour {
 
         public LayerMask ignoreLayers;
 

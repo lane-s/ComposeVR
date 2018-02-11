@@ -6,13 +6,16 @@ using UnityEngine;
 using ComposeVR.Protocol;
 
 namespace ComposeVR {
-    public class RemoteEventHandler : MonoBehaviour {
+
+    /// <summary>
+    /// A RemoteEventHandler has an id which is registered with the RemoteEventRouter. Any events intended for an object with the same id as a given RemoteEventHandler will be passed on to the RemoteEventHandler
+    /// </summary>
+    [Serializable]
+    public class RemoteEventHandler {
 
         protected string id;
-        private TCPClient client;
-        private RemoteEventRouter router;
 
-        public void handleEvent(Protocol.Event e) {
+        public void HandleEvent(Protocol.Event e) {
 
             Type thisType = this.GetType();
             MethodInfo theMethod = thisType.GetMethod(e.MethodName);
@@ -22,7 +25,7 @@ namespace ComposeVR {
             }
         }
 
-        public string getID() {
+        public string GetID() {
             if (id == null) {
                 id = Guid.NewGuid().ToString();
             }
@@ -30,36 +33,22 @@ namespace ComposeVR {
         }
 
         protected void Register() {
-            getRouter().addReceiver(getID(), this);
+            RemoteEventRouter.Instance.AddReceiver(GetID(), this);
         }
 
-        protected void Register(string newId) {
-            setID(newId);
+        protected void RegisterRemoteID(string newId) {
+            SetID(newId);
             Register();
         }
 
-        protected TCPClient getClient() {
-            if (client == null) {
-                client = GameObject.FindGameObjectWithTag("TCPClient").GetComponent<TCPClient>();
-            }
-            return client;
-        }
-
-        private RemoteEventRouter getRouter() {
-            if (router == null) {
-                router = getClient().GetComponent<RemoteEventRouter>();
-            }
-            return router;
-        }
-
-        private void setID(string newId) {
+        private void SetID(string newId) {
             if (this.id != null) {
-                getRouter().removeReceiverIfPresent(this.id);
+                RemoteEventRouter.Instance.RemoveReceiver(this.id);
             }
 
             this.id = newId;
         }
 
-
     }
+
 }
