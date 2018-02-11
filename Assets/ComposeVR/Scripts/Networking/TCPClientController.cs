@@ -34,7 +34,7 @@ namespace ComposeVR {
         }
 
         public TCPClientConfiguration Config;
-        private TCPClientState State;
+        private TCPClientState State = new TCPClientState();
 
         private int nextMessageLength;
         private long messageStartLoc;

@@ -1408,9 +1408,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resultButtonPrefab: {fileID: 224255367862291028, guid: 2e0c8ab2e7e3d2647ad599dda7f1c463,
     type: 2}
-  resultSpacing: 0
-  resultStartOffset: 65
-  isFilterColumn: 0
+  Controller:
+    Config:
+      Name: Results
+      Type: 0
+      DefaultSelection: ~
+      ResultSpacing: 0
+      ResultStartOffset: 65
+      InitialSize: 15
 --- !u!1 &81684431
 GameObject:
   m_ObjectHideFlags: 0
@@ -11174,6 +11179,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 930166651}
+  - component: {fileID: 930166652}
   m_Layer: 0
   m_Name: '[ComposeVR_Scripts]'
   m_TagString: Untagged
@@ -11198,6 +11204,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &930166652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 930166650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c29f1620f00f7e24fbde1ad5274ac7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &934981563
 GameObject:
   m_ObjectHideFlags: 0
@@ -11506,7 +11523,6 @@ GameObject:
   m_Component:
   - component: {fileID: 963170619}
   - component: {fileID: 963170620}
-  - component: {fileID: 963170621}
   m_Layer: 0
   m_Name: TCPClient
   m_TagString: TCPClient
@@ -11538,19 +11554,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35a70c829c768ae4c8004697947067bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostIP: 192.168.0.19
-  HostPort: 8887
---- !u!114 &963170621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 963170618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d401c0cfed4bcf94ead0e39ea9363328, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  Controller:
+    Config:
+      HostIP: 192.168.0.19
+      HostPort: 8887
 --- !u!4 &966367339 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4662647190859188, guid: 01c4e16551ad36844a34abd5ce70c900,
@@ -12435,9 +12442,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resultButtonPrefab: {fileID: 0}
-  resultSpacing: 0
-  resultStartOffset: 80
-  isFilterColumn: 0
+  Controller:
+    Config:
+      Name: 
+      Type: 0
+      DefaultSelection: 
+      ResultSpacing: 0
+      ResultStartOffset: 80
+      InitialSize: 15
 --- !u!114 &1006930738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12786,9 +12798,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resultButtonPrefab: {fileID: 224882076185554282, guid: b9e17e57d06bed446b2a75322db92251,
     type: 2}
-  resultSpacing: 0
-  resultStartOffset: 65
-  isFilterColumn: 1
+  Controller:
+    Config:
+      Name: Creator
+      Type: 1
+      DefaultSelection: Any Creator
+      ResultSpacing: 0
+      ResultStartOffset: 65
+      InitialSize: 15
 --- !u!114 &1026891111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27029,9 +27046,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resultButtonPrefab: {fileID: 224882076185554282, guid: b9e17e57d06bed446b2a75322db92251,
     type: 2}
-  resultSpacing: 0
-  resultStartOffset: 65
-  isFilterColumn: 1
+  Controller:
+    Config:
+      Name: Category
+      Type: 1
+      DefaultSelection: Any Category
+      ResultSpacing: 0
+      ResultStartOffset: 65
+      InitialSize: 15
 --- !u!114 &2119410690
 MonoBehaviour:
   m_ObjectHideFlags: 0

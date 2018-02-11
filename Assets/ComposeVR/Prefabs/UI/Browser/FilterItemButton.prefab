@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 222150443044157480}
   - component: {fileID: 114326932676895950}
   - component: {fileID: 114609411657902148}
+  - component: {fileID: 114723727061414732}
   m_Layer: 5
   m_Name: FilterItemButton
   m_TagString: Untagged
@@ -126,7 +127,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.77205884, g: 0.77205884, b: 0.77205884, a: 1}
+    m_HighlightedColor: {r: 0.9508551, g: 1, b: 0.491, a: 1}
     m_PressedColor: {r: 0.5792339, g: 0.909, b: 0.4210809, a: 1}
     m_DisabledColor: {r: 1, g: 0, b: 0, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -158,6 +159,17 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114723727061414732
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1337195620145666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbf4d38b2b6fe7e4ea92805432d56de8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222150443044157480
 CanvasRenderer:
   m_ObjectHideFlags: 1

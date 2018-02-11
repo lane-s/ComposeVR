@@ -18,7 +18,7 @@ namespace ComposeVR {
             public string CurrentDeviceType;
         }
 
-        private DeviceBrowserState State;
+        private DeviceBrowserState State = new DeviceBrowserState();
 
         public void SetDeviceBrowser(IDeviceBrowser b) {
             deviceBrowser = b;

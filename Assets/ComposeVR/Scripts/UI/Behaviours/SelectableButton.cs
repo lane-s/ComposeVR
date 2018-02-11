@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace ComposeVR {
     [RequireComponent(typeof(Button))]
-    [RequireComponent(typeof(Text))]
     public sealed class SelectableButton : MonoBehaviour {
 
         private Button button;
@@ -13,7 +12,7 @@ namespace ComposeVR {
         private Color normalColor;
 
         // Use this for initialization
-        void Start() {
+        void Awake() {
             button = GetComponent<Button>();
             buttonText = GetComponentInChildren<Text>();
             normalColor = button.colors.normalColor;
@@ -33,6 +32,10 @@ namespace ComposeVR {
         }
 
         public Button GetButton() {
+            if(button == null) {
+                button = GetComponent<Button>();
+            }
+
             return button;
         }
 
@@ -41,6 +44,10 @@ namespace ComposeVR {
         }
 
         public string GetText() {
+            if(buttonText == null) {
+                buttonText = GetComponentInChildren<Text>();
+            }
+
             return buttonText.text;
         }
     }

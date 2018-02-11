@@ -81,6 +81,7 @@ namespace ComposeVR {
         public class BrowserColumnConfiguration {
             public string Name;
             public ColumnType Type;
+            public string DefaultSelection;
             public float ResultSpacing = 0;
             public float ResultStartOffset = 80;
             public int InitialSize = 15;
@@ -90,24 +91,23 @@ namespace ComposeVR {
         public class BrowserColumnState {
             public string SelectedItemName;
             public int SelectedItemIndex;
-            public string DefaultSelection;
             public int ColumnSize;
             public bool UpArrowVisible;
             public bool DownArrowVisible;
         }
 
         public BrowserColumnConfiguration Config;
-        private BrowserColumnState State;
+        private BrowserColumnState State = new BrowserColumnState();
 
         public void SetBrowserColumn(IBrowserColumn c) {
             this.browserColumn = c;
         }
 
-        public void Initialize(string columnName) {
-            Config.Name = columnName;
+        public void Initialize() {
             RegisterRemoteID("browser/" + Config.Name);
 
             State.ColumnSize = Config.InitialSize;
+            State.SelectedItemIndex = -1;
 
             browserColumn.ExpandToSize(Config.InitialSize);
             browserColumn.SetArrowVisibility(Arrow.Up, false);
@@ -138,13 +138,19 @@ namespace ComposeVR {
 
         public void OnArrowClicked(Arrow arrow) {
             if(PageChanged != null) {
-                int pageChange = arrow == Arrow.Down ? 1 : 0;
+                int pageChange = arrow == Arrow.Down ? 1 : -1;
                 var args = new PageChangedEventArgs(Config.Name, Config.Type, pageChange);
                 PageChanged(this, args);
             }
         }
 
         public void OnItemSelected(int itemIndex) {
+
+            //Deselect previously selected item
+            if(State.SelectedItemIndex != -1 && browserColumn.GetItemText(itemIndex).Equals(State.SelectedItemName)) {
+                browserColumn.DeselectItem(State.SelectedItemIndex);
+            }
+
             State.SelectedItemName = browserColumn.GetItemText(itemIndex);
             State.SelectedItemIndex = itemIndex;
 
@@ -161,10 +167,14 @@ namespace ComposeVR {
             string itemName = e.BrowserEvent.OnBrowserItemChangedEvent.ItemName;
             browserColumn.UpdateItem(itemIndex, itemName);
 
-            bool isDefaultSelection = State.SelectedItemIndex == -1 && itemName.Equals(State.DefaultSelection);
-            bool isSelection = State.SelectedItemIndex == itemIndex && itemName.Equals(itemName);
-                
-            if(isDefaultSelection || isSelection) {
+            //Make default selection
+            if(State.SelectedItemIndex == -1 && itemName.Equals(Config.DefaultSelection)) {
+                OnItemSelected(itemIndex);
+            }
+
+            bool itemIsSelected = State.SelectedItemIndex == itemIndex && itemName.Equals(itemName);
+
+            if(itemIsSelected) {
                 browserColumn.SelectItem(itemIndex);
             }
             else {

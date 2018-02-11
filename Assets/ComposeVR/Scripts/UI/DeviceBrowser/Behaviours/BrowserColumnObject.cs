@@ -28,7 +28,7 @@ namespace ComposeVR {
             CreateArrows();
 
             Controller.SetBrowserColumn(this);
-            Controller.Initialize(gameObject.name);
+            Controller.Initialize();
         }
 
         private void CreateArrows() {

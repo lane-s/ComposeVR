@@ -18,6 +18,8 @@ namespace ComposeVR {
             Controller.SetEventQueue(this);
             EventQueue = new Queue<Protocol.Event>();
             DontDestroyOnLoad(this.gameObject);
+
+            Controller.Initialize();
         }
 
         // Update is called once per frame
@@ -47,7 +49,7 @@ namespace ComposeVR {
 
                 //Send the event on to its target object
                 if (currentEvent != null) {
-                    GetComponent<RemoteEventRouter>().RouteEvent(currentEvent);
+                    RemoteEventRouter.Instance.RouteEvent(currentEvent);
                 }
 
                 eventCount--;
