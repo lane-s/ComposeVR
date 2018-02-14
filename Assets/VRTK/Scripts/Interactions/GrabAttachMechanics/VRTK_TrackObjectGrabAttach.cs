@@ -24,6 +24,8 @@ namespace VRTK.GrabAttachMechanics
         [Tooltip("The maximum amount of angular velocity magnitude that can be applied to the object. Lowering this can prevent physics glitches if objects are moving too fast.")]
         public float angularVelocityLimit = float.PositiveInfinity;
 
+        public float Smoothing = 0.0f;
+
         protected bool isReleasable = true;
 
         /// <summary>
