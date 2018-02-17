@@ -6,6 +6,19 @@ using System;
 using System.Linq;
 
 namespace ComposeVR {
+    public class JackEventArgs : EventArgs {
+        private Jack otherJack;
+
+        public JackEventArgs(Jack other) {
+            otherJack = other;
+        }
+
+        public Jack Other {
+            get { return otherJack;  }
+            set { otherJack = value;  }
+        }
+    }
+
     /// <summary>
     /// Jacks provide a way to connect different modules.
     /// 
@@ -13,34 +26,43 @@ namespace ComposeVR {
     /// 
     /// A Jack that is WaitingForGrab has deployed a plug but is waiting for the user to grab it before deploying the plug on the other end of the cord.
     /// 
-    /// A Jack that is Blocked has a plug inside of it already. Plugging into a blocked jack merges two or more plugs 
+    /// A Jack that is Blocked has a plug inside of it already.
+    /// 
+    /// Every jack owns two plugs and a cord, though they are not active until deployed from the jack.
     /// 
     /// </summary>
     public sealed class Jack : MonoBehaviour {
 
         public Transform PlugPrefab;
+        public Transform CordPrefab;
+
         public Vector3 ShrinkPlugScale;
         public Transform PlugStart;
         public Transform PlugSnapPoint;
         public Transform CordOrigin;
+
         public SimpleTrigger ControllerDetector;
         public SimpleTrigger PlugDetector;
+        public SimpleTrigger BlockingDetector;
 
         public float ExtendDistance;
         public float ExtendSpeed;
+
+        public EventHandler<JackEventArgs> OtherJackConnected;
+        public EventHandler<JackEventArgs> OtherJackDisconnected;
 
         public enum State {Free, WaitingForGrab, Blocked}
         private State state;
 
         private Plug primaryPlug;
         private Plug secondaryPlug;
-
-        //Nearby plugs that originate from other jacks
-        private List<VRTK_InteractGrab> nearbyControllers;
+        private Cord cord;
 
         private Vector3 normalPlugScale;
 
-        private int numNearbyPlugs;
+        private List<VRTK_InteractGrab> nearbyControllers;
+
+        private int numBlockers;
 
         private void Awake() {
             ControllerDetector.TriggerEnter += OnControllerEnterArea;
@@ -49,22 +71,39 @@ namespace ComposeVR {
             PlugDetector.TriggerEnter += OnPlugEnterArea;
             PlugDetector.TriggerExit += OnPlugLeaveArea;
 
+            BlockingDetector.TriggerEnter += OnBlockerEnterArea;
+            BlockingDetector.TriggerExit += OnBlockerLeaveArea;
+
             nearbyControllers = new List<VRTK_InteractGrab>();
 
-            primaryPlug = Instantiate(PlugPrefab).GetComponent<Plug>();
-            secondaryPlug = Instantiate(PlugPrefab).GetComponent<Plug>();
+            primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
+            secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
 
-            primaryPlug.SetSecondaryPlug(secondaryPlug);
+            primaryPlug.SetConnectedPlug(secondaryPlug);
+            secondaryPlug.SetConnectedPlug(primaryPlug);
+
             primaryPlug.OriginJack = this;
-
-            normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
+            secondaryPlug.DestinationJack = this;
 
             primaryPlug.gameObject.SetActive(false);
             secondaryPlug.gameObject.SetActive(false);
+            normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
+
+            cord = Instantiate(CordPrefab).GetComponent<Cord>();
+            cord.SetCordEnds(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
+            cord.gameObject.SetActive(false);
 
             state = State.Free;
 
             StartCoroutine(FSM());
+        }
+
+        void OnBlockerEnterArea(object sender, SimpleTriggerEventArgs e) {
+            numBlockers += 1;
+        }
+
+        void OnBlockerLeaveArea(object sender, SimpleTriggerEventArgs e) {
+            numBlockers -= 1;
         }
 
         void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
@@ -86,7 +125,6 @@ namespace ComposeVR {
             if(o != null) {
                 Plug p = o.Owner.GetComponent<Plug>();
                 if(p != null) {
-                    numNearbyPlugs += 1;
                     p.AddNearbyJack(this);
                 }
             }
@@ -97,7 +135,6 @@ namespace ComposeVR {
             if(o != null) {
                 Plug p = o.Owner.GetComponent<Plug>();
                 if(p != null) {
-                    numNearbyPlugs += 1;
                     p.RemoveNearbyJack(this);
                 }
             }
@@ -130,8 +167,7 @@ namespace ComposeVR {
                         }
                     }
 
-                    if (!holdingPlug) {
-                        //Deploy a plug and wait for it to be grabbed
+                    if (!holdingPlug && numBlockers == 0) {
                         state = State.WaitingForGrab;
                         break;
                     }
@@ -141,6 +177,8 @@ namespace ComposeVR {
         }
 
         private IEnumerator WaitingForGrab() {
+            primaryPlug.OriginJack = this;
+            cord.gameObject.SetActive(true);
             StartCoroutine(ExtendPlug(primaryPlug, PlugStart.position + PlugStart.forward * ExtendDistance));
 
             bool grabbed = false;
@@ -148,8 +186,8 @@ namespace ComposeVR {
             while (state == State.WaitingForGrab) {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                     StartCoroutine(ExtendPlug(secondaryPlug, PlugSnapPoint.position));
-                    secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, secondaryPlug.transform.up);
                     secondaryPlug.DestinationJack = this;
+                    secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, secondaryPlug.transform.up);
 
                     state = State.Blocked;
                 }else if(nearbyControllers.Count == 0) {
@@ -185,7 +223,6 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-
         }
 
         private IEnumerator RetractPlug(Plug p) {
@@ -201,7 +238,23 @@ namespace ComposeVR {
 
             p.gameObject.SetActive(false);
 
+            if (primaryPlug.Equals(p)) {
+                cord.gameObject.SetActive(false);
+            }
+
             state = State.Free;
+        }
+
+        public void ConnecToJack(Jack other) {
+            if(OtherJackConnected != null) {
+                OtherJackConnected(this, new JackEventArgs(other));
+            }
+        }
+
+        public void DisconnectJack(Jack other) {
+            if(OtherJackDisconnected != null) {
+                OtherJackDisconnected(this, new JackEventArgs(other));
+            }
         }
     }
 }

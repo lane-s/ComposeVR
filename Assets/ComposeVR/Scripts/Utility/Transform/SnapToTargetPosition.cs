@@ -25,21 +25,34 @@ namespace ComposeVR {
         private Vector3 startPosition;
 
         private bool fireEvent = false;
+        private Rigidbody rb;
 
         void Awake() {
             targetPosition = transform.position;
             t = Mathf.Infinity;
+            rb = GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
         void Update() {
+            if(rb == null) {
+                MoveToTarget();
+            }
+        }
+
+        private void FixedUpdate() {
+            if (rb != null) {
+                MoveToTarget();
+            }
+        }
+
+        private void MoveToTarget() {
             if(t <= 1) {
                 Move();
             }
 
             if(t >= 1 && !HasReachedTarget) {
                 HasReachedTarget = true;
-                Debug.Log("Target Reached");
                 if(TargetReached != null) {
                     TargetReached(this, new EventArgs());
                 }
@@ -55,8 +68,8 @@ namespace ComposeVR {
                 t = Mathf.Pow(t, 0.5f);
             }
 
-            if (GetComponent<Rigidbody>()) {
-                GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(startPosition, targetPosition, t));
+            if (rb != null) {
+                rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, t));
             }
             else {
                 transform.position = Vector3.Lerp(startPosition, targetPosition, t);

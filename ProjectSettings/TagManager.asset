@@ -26,9 +26,9 @@ TagManager:
   - PostProcessing
   - Grabber
   - ControllerDetector
-  - 
-  - 
-  - 
+  - Controls
+  - IO
+  - Detector
   - 
   - 
   - 

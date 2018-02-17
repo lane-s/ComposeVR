@@ -12,13 +12,9 @@ namespace ComposeVR {
         public Jack OriginJack;
         public Jack DestinationJack;
 
-        public float SegmentLength = 0.005f;
-        public float RelaxAmount = 0.05f;
-        public float RelaxTime = 10.0f;
-        public float PruneDistance = 0.01f;
 
         public float AutoPlugDistance = 0.5f;
-        public float MaxHandSeparationBeforeUnsnao = 1.0f;
+        public float MaxHandSeparationBeforeUnsnap = 1.0f;
         public float MaxJackDistanceBeforeUnsnap = 1.3f;
 
         public float SnapToHandSpeed = 20.0f;
@@ -28,41 +24,22 @@ namespace ComposeVR {
         public Transform CordAttachPoint;
 
         private Jack targetJack;
-
         private List<Jack> nearbyJacks;
 
-        private Plug secondaryPlug;
-        private Color cordColor;
-        private float normalSnapSpeed;
+        private Plug connectedPlug;
+        
         private VRTK_InteractableObject interactable;
         private SnapToTargetPosition positionSnap;
         private SnapToTargetRotation rotationSnap;
+        private float normalSnapSpeed;
         private bool snapCooldown;
 
-        private LineRenderer lineRenderer;
-        private List<Vector3> path;
-        private Vector3 lastPos;
-        private float timeRelaxed;
-
-        private bool updateLine;
-
         private IEnumerator snapToJackRoutine;
-        private IEnumerator snapBackToHandRoutine;
 
         // Use this for initialization
         void Awake() {
             interactable = GetComponent<VRTK_InteractableObject>();
-            path = new List<Vector3>();
             nearbyJacks = new List<Jack>();
-
-            lineRenderer = GetComponentInChildren<LineRenderer>();
-            cordColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
-
-            if (lineRenderer) {
-                lineRenderer.material.SetColor("_TintColor", cordColor);
-            }
-
-            timeRelaxed = RelaxTime;
 
             interactable.InteractableObjectGrabbed += OnGrabbed;
             interactable.InteractableObjectUngrabbed += OnUngrabbed;
@@ -74,8 +51,6 @@ namespace ComposeVR {
 
         // Update is called once per frame
         void Update() {
-            UpdateCord();
-
             if (targetJack == null && !snapCooldown) {
                 foreach (Jack j in nearbyJacks) {
 
@@ -93,93 +68,24 @@ namespace ComposeVR {
             }
         }
 
-        private void UpdateCord() {
-
-            if (secondaryPlug != null) {
-                //Start a path from the origin
-                if (path.Count == 0 && OriginJack != null) {
-                    path.Add(OriginJack.CordOrigin.position);
-                }
-
-                if (!lastPos.Equals(CordAttachPoint.position)) {
-
-                    updateLine = false;
-
-                    //Extend path if the plug moves
-                    if (path.Count > 0) {
-                        if (Vector3.Distance(path.Last(), CordAttachPoint.position) > SegmentLength) {
-                            path.Add(CordAttachPoint.position);
-                            updateLine = true;
-                            timeRelaxed = 0;
-                        }
-                    }
-
-                    if (interactable.IsGrabbed()) {
-                        updateLine = true;
-                    }
-                }
-                else if (timeRelaxed < RelaxTime) {
-                    timeRelaxed += Time.deltaTime;
-                    updateLine = true;
-                }
-
-                //This plug is responsible for the cord between two plugs, so we have to check if the other plug moves too
-               if(secondaryPlug.gameObject.active && path[0] != secondaryPlug.CordAttachPoint.position) {
-                    if(Vector3.Distance(path[0], secondaryPlug.CordAttachPoint.position) > SegmentLength) {
-                        //If it does, we add on to the beginning of the path
-                        path.Insert(0, secondaryPlug.CordAttachPoint.position);
-                        updateLine = true;
-                        timeRelaxed = 0;
-                    }
-                }
-
-                if (updateLine) {
-                    RelaxPath();
-                    UpdateLine();
-                }
-
-                lastPos = CordAttachPoint.position;
-
-            }
-        }
-
-        private void RelaxPath() {
-            for(int i = 0; i < path.Count; i++) {
-                if(i != 0 && i != path.Count - 1) {
-                    //Take the average of the current point and the adjacent points on the path
-                    Vector3 targetPosition = (path[i - 1] + path[i] + path[i + 1]) / 3;
-
-                    //Smoothly move towards this position
-                    path[i] = Vector3.Lerp(path[i], targetPosition, RelaxAmount);
-                }
-            }
-
-            //Prune unecessary points
-            for(int i = 0; i < path.Count; i++) {
-                if(i != 0 && i != path.Count - 1) {
-                    if(Vector3.Distance(path[i - 1], path[i]) < PruneDistance) {
-                        path.RemoveAt(i);
-                    }
-                }
-            }
-
-        }
-
-        private void UpdateLine() {
-            lineRenderer.positionCount = path.Count;
-            lineRenderer.SetPositions(path.ToArray());
-        }
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
             if (DestinationJack != null) {
-                //The jack was plugged in
+                //The plug was plugged in 
                 targetJack = DestinationJack;
                 DestinationJack.SetState(Jack.State.Free);
+
+                if (OriginJack != null) {
+                    DestinationJack.DisconnectJack(OriginJack);
+                    OriginJack.DisconnectJack(DestinationJack);
+                }
+
                 DestinationJack = null;
+                connectedPlug.OriginJack = null;
             }
             else {
                 PlugTransform.SetParent(null);
-                StartCoroutine(SnapBackToHand());
+                StartCoroutine(SnapBackToController());
             }
 
             TrySnapToJack();
@@ -188,6 +94,7 @@ namespace ComposeVR {
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
             if (targetJack != null) {
                 DestinationJack = targetJack;
+                connectedPlug.OriginJack = targetJack;
 
                 ResetPlugTransform();
 
@@ -198,13 +105,18 @@ namespace ComposeVR {
                     UnSnapFromJack();
                 }
             }
+
+            if(DestinationJack == null && OriginJack == null) {
+                //Self destruct this cord
+            }
         }
 
+        //We have a small buffer distance so that the plug doesn't begin snapping to a jack when it's likely to immediately snap back to the controller
         private const float BUFFER_DISTANCE = 0.025f;
 
         private void TrySnapToJack() {
             if (interactable.IsGrabbed() && targetJack != null) {
-                if (GetTargetJackDistance() < MaxJackDistanceBeforeUnsnap - BUFFER_DISTANCE && GetDistanceToJackAxis() < MaxHandSeparationBeforeUnsnao - BUFFER_DISTANCE) {
+                if (GetTargetJackDistance() < MaxJackDistanceBeforeUnsnap - BUFFER_DISTANCE && GetDistanceToJackAxis() < MaxHandSeparationBeforeUnsnap - BUFFER_DISTANCE) {
                     snapToJackRoutine = SnapToJack();
                     StartCoroutine(snapToJackRoutine);
                 }
@@ -246,9 +158,8 @@ namespace ComposeVR {
             }
         }
 
-        //The secondary plug is the plug which is not responsible for rendering the cord
-        public void SetSecondaryPlug(Plug plug) {
-            secondaryPlug = plug;
+        public void SetConnectedPlug(Plug plug) {
+            connectedPlug = plug;
         }
 
         private void PositionPlugOnJackAxis() {
@@ -257,8 +168,8 @@ namespace ComposeVR {
             }
 
             //Move the plug to the projection of the hand position along the jack axis
-            var handPos = interactable.GetGrabbingObject().transform.position;
-            var targetPosition = targetJack.PlugSnapPoint.position + Vector3.Dot(handPos, targetJack.PlugSnapPoint.forward) * targetJack.PlugSnapPoint.forward;
+            var controllerPos = interactable.GetGrabbingObject().transform.position;
+            var targetPosition = targetJack.PlugSnapPoint.position + Vector3.Dot(controllerPos, targetJack.PlugSnapPoint.forward) * targetJack.PlugSnapPoint.forward;
 
             //Don't let the plug go behind the jack's snap point
             if(Vector3.Dot(targetPosition - targetJack.PlugSnapPoint.position, targetJack.PlugSnapPoint.forward) > 0) {
@@ -308,9 +219,9 @@ namespace ComposeVR {
                     float handDistance = Vector3.Distance(interactable.GetGrabbingObject().transform.position, PlugTransform.position);
                     float jackDistance = GetTargetJackDistance();
 
-                    if ((handDistance > MaxHandSeparationBeforeUnsnao && jackDistance > AutoPlugDistance) || jackDistance > MaxJackDistanceBeforeUnsnap) {
+                    if ((handDistance > MaxHandSeparationBeforeUnsnap + BUFFER_DISTANCE && jackDistance > AutoPlugDistance) || jackDistance > MaxJackDistanceBeforeUnsnap + BUFFER_DISTANCE) {
                         UnSnapFromJack();
-                        StartCoroutine(SnapBackToHand());
+                        StartCoroutine(SnapBackToController());
                         break;
                     }
 
@@ -332,9 +243,12 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            yield return null;
+            if(DestinationJack != null && OriginJack != null) {
+                DestinationJack.ConnecToJack(OriginJack);
+                OriginJack.ConnecToJack(DestinationJack);
+            }
 
-            //Create data connection
+            yield return null;
         }
 
         private EventHandler<EventArgs> ReturnedToHand;
@@ -349,7 +263,7 @@ namespace ComposeVR {
             targetJack = null;
         }
 
-        private IEnumerator SnapBackToHand() {
+        private IEnumerator SnapBackToController() {
             yield return null;
 
             snapCooldown = true;

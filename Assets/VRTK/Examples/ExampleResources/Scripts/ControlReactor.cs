@@ -2,12 +2,15 @@
 {
     using UnityEngine;
     using UnityEventHelper;
+    using ComposeVR;
 
     public class ControlReactor : MonoBehaviour
     {
+        public TestOutputModule module;
         public TextMesh go;
 
         private VRTK_Control_UnityEvents controlEvents;
+
 
         private void Start()
         {
@@ -23,6 +26,10 @@
         private void HandleChange(object sender, Control3DEventArgs e)
         {
             go.text = e.value.ToString() + "(" + e.normalizedValue.ToString() + "%)";
+
+            TestData d = new TestData();
+            d.controlData = e;
+            module.SendData(d);
         }
     }
 }
