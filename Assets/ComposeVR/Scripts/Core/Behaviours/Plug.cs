@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using UnityEngine;
 using VRTK;
 
@@ -18,10 +18,12 @@ namespace ComposeVR {
         public float PruneDistance = 0.01f;
 
         public float AutoPlugDistance = 0.5f;
-        public float UnSnapDistance = 1.0f;
+        public float MaxHandSeparationBeforeUnsnao = 1.0f;
+        public float MaxJackDistanceBeforeUnsnap = 1.3f;
 
         public float SnapToHandSpeed = 20.0f;
         public float SnapCooldownTime = 1.0f;
+        public float JackSnapSpeed = 0.5f;
         public Transform PlugTransform;
         public Transform CordAttachPoint;
 
@@ -45,6 +47,7 @@ namespace ComposeVR {
         private bool updateLine;
 
         private IEnumerator snapToJackRoutine;
+        private IEnumerator snapBackToHandRoutine;
 
         // Use this for initialization
         void Awake() {
@@ -78,11 +81,7 @@ namespace ComposeVR {
 
                     if (j.GetState() == Jack.State.Free) {
                         targetJack = j;
-
-                        if (interactable.IsGrabbed()) {
-                            snapToJackRoutine = SnapToJack();
-                            StartCoroutine(snapToJackRoutine);
-                        }
+                        TrySnapToJack();
                         break;
                     }
                 }
@@ -173,15 +172,17 @@ namespace ComposeVR {
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
             if (DestinationJack != null) {
+                //The jack was plugged in
                 targetJack = DestinationJack;
                 DestinationJack.SetState(Jack.State.Free);
                 DestinationJack = null;
             }
-
-            if(targetJack != null) {
-                snapToJackRoutine = SnapToJack();
-                StartCoroutine(snapToJackRoutine);
+            else {
+                PlugTransform.SetParent(null);
+                StartCoroutine(SnapBackToHand());
             }
+
+            TrySnapToJack();
         }
 
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
@@ -199,15 +200,46 @@ namespace ComposeVR {
             }
         }
 
+        private const float BUFFER_DISTANCE = 0.025f;
+
+        private void TrySnapToJack() {
+            if (interactable.IsGrabbed() && targetJack != null) {
+                if (GetTargetJackDistance() < MaxJackDistanceBeforeUnsnap - BUFFER_DISTANCE && GetDistanceToJackAxis() < MaxHandSeparationBeforeUnsnao - BUFFER_DISTANCE) {
+                    snapToJackRoutine = SnapToJack();
+                    StartCoroutine(snapToJackRoutine);
+                }
+                else {
+                    targetJack = null;
+                }
+            }
+        }
+
         private void ResetPlugTransform() {
             transform.position = PlugTransform.position;
             transform.rotation = PlugTransform.rotation;
             PlugTransform.parent = transform;
         }
 
+        private Vector3 projectionOnJackAxis;
+
         private float GetTargetJackDistance() {
             if (targetJack != null) {
-                return Vector3.Distance(targetJack.PlugSnapPoint.position, PlugTransform.position);
+                Vector3 plugToSnapPoint = targetJack.PlugSnapPoint.position - PlugTransform.position;
+                projectionOnJackAxis = PlugTransform.position + plugToSnapPoint - Vector3.Dot(plugToSnapPoint, targetJack.PlugSnapPoint.forward) * targetJack.PlugSnapPoint.forward;
+
+                return Vector3.Distance(targetJack.PlugSnapPoint.position, projectionOnJackAxis);
+            }
+            else {
+                return float.PositiveInfinity;
+            }
+        }
+
+        private float GetDistanceToJackAxis() {
+            if (targetJack != null) {
+                Vector3 plugToSnapPoint = targetJack.PlugSnapPoint.position - PlugTransform.position;
+                projectionOnJackAxis = PlugTransform.position + plugToSnapPoint - Vector3.Dot(plugToSnapPoint, targetJack.PlugSnapPoint.forward) * targetJack.PlugSnapPoint.forward;
+
+                return Vector3.Distance(PlugTransform.position, projectionOnJackAxis);
             }
             else {
                 return float.PositiveInfinity;
@@ -233,34 +265,38 @@ namespace ComposeVR {
                 targetPosition = targetJack.PlugSnapPoint.position;
             }
 
-            positionSnap.TargetPosition = targetPosition;
+            positionSnap.SnapToTarget(targetPosition, JackSnapSpeed);
         }
 
+        private const float UnSnapConstant = 0.05f;
 
         private IEnumerator SnapToJack() {
             targetJack.SetState(Jack.State.Blocked);
 
-            Vector3 origScale = PlugTransform.localScale;
-            PlugTransform.parent = null;
-            PlugTransform.localScale = origScale;
+            PlugTransform.SetParent(null);
 
-            positionSnap.enabled = true;
             rotationSnap.enabled = true;
-
             rotationSnap.TargetRotation = targetJack.PlugSnapPoint.rotation;
 
-            Vector3 startPosition = targetJack.PlugSnapPoint.position - targetJack.PlugSnapPoint.forward * 0.16f;
-            positionSnap.TargetPosition = startPosition;
+            float distanceFromJackAxis = GetDistanceToJackAxis();
+            Vector3 startPosition = projectionOnJackAxis;
 
-            bool aligned = false;
+            bool aligned = distanceFromJackAxis < 0.005f;
+
+            if (!aligned) {
+                Vector3 closestAllowedStartPosition = targetJack.PlugSnapPoint.position - targetJack.PlugSnapPoint.forward * 0.16f;
+
+                //Plug snap point points towards the jack, so if startPosition is closer to the jack than closestAllowed then it will be pointing the same way as the snap point
+               if(Vector3.Dot(startPosition - closestAllowedStartPosition, targetJack.PlugSnapPoint.forward) > 0) {
+                    startPosition = closestAllowedStartPosition;
+                }
+            }
 
             while (targetJack != null) {
                 if (!aligned) {
+                    positionSnap.SnapToTarget(startPosition, JackSnapSpeed);
                     if (positionSnap.HasReachedTarget) {
                         aligned = true;
-                    }
-                    else {
-                        positionSnap.TargetPosition = startPosition; 
                     }
                 }else{
                     PositionPlugOnJackAxis();
@@ -270,14 +306,14 @@ namespace ComposeVR {
                     }
 
                     float handDistance = Vector3.Distance(interactable.GetGrabbingObject().transform.position, PlugTransform.position);
+                    float jackDistance = GetTargetJackDistance();
 
-                    if(handDistance > UnSnapDistance) {
-                        if(GetTargetJackDistance() > AutoPlugDistance) {
-                            UnSnapFromJack();
-                            StartCoroutine(SnapBackToHand());
-                            break;
-                        }
+                    if ((handDistance > MaxHandSeparationBeforeUnsnao && jackDistance > AutoPlugDistance) || jackDistance > MaxJackDistanceBeforeUnsnap) {
+                        UnSnapFromJack();
+                        StartCoroutine(SnapBackToHand());
+                        break;
                     }
+
                 }
 
                 yield return new WaitForEndOfFrame();
@@ -290,8 +326,7 @@ namespace ComposeVR {
             StopCoroutine(snapToJackRoutine);
             snapToJackRoutine = null;
 
-            positionSnap.enabled = true;
-            positionSnap.TargetPosition = DestinationJack.PlugSnapPoint.position;
+            positionSnap.SnapToTarget(DestinationJack.PlugSnapPoint.position, 1f);
 
             while (!positionSnap.HasReachedTarget) {
                 yield return new WaitForEndOfFrame();
@@ -308,7 +343,6 @@ namespace ComposeVR {
             StopCoroutine(snapToJackRoutine);
             snapToJackRoutine = null;
 
-            positionSnap.enabled = false;
             rotationSnap.enabled = false;
 
             targetJack.SetState(Jack.State.Free);
@@ -316,30 +350,30 @@ namespace ComposeVR {
         }
 
         private IEnumerator SnapBackToHand() {
+            yield return null;
+
             snapCooldown = true;
 
-            positionSnap.enabled = true;
             rotationSnap.enabled = true;
 
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            positionSnap.TargetPosition = transform.position;
+            positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
             rotationSnap.TargetRotation = transform.rotation;
 
-            normalSnapSpeed = positionSnap.Speed;
-            positionSnap.Speed = SnapToHandSpeed;
+            while (true) {
+                positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
+                if (positionSnap.HasReachedTarget) {
+                    break;
+                }
 
-            while (!positionSnap.HasReachedTarget) {
-                positionSnap.TargetPosition = transform.position;
                 rotationSnap.TargetRotation = transform.rotation;
                 yield return new WaitForEndOfFrame();
             }
 
             ResetPlugTransform();
 
-            positionSnap.Speed = normalSnapSpeed;
-            positionSnap.enabled = false;
             rotationSnap.enabled = false;
 
             StartCoroutine(SnapCooldown());

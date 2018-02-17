@@ -56,7 +56,6 @@ namespace ComposeVR {
 
             primaryPlug.SetSecondaryPlug(secondaryPlug);
             primaryPlug.OriginJack = this;
-            primaryPlug.PlugTransform.GetComponent<SnapToTargetPosition>().Speed = ExtendSpeed;
 
             normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
 
@@ -152,8 +151,6 @@ namespace ComposeVR {
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, secondaryPlug.transform.up);
                     secondaryPlug.DestinationJack = this;
 
-                    primaryPlug.PlugTransform.GetComponent<SnapToTargetPosition>().enabled = false;
-
                     state = State.Blocked;
                 }else if(nearbyControllers.Count == 0) {
                     StartCoroutine(RetractPlug(primaryPlug.GetComponent<Plug>()));
@@ -176,12 +173,11 @@ namespace ComposeVR {
             p.transform.position = PlugStart.position;
             p.transform.rotation = PlugStart.rotation;
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().TargetPosition = target;
+            p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
             p.PlugTransform.localScale = ShrinkPlugScale;
             p.PlugTransform.GetComponent<Scalable>().TargetScale = normalPlugScale;
 
             p.PlugTransform.GetComponent<SnapToTargetRotation>().enabled = false;
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().enabled = true;
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 
@@ -189,14 +185,12 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().enabled = false;
 
         }
 
         private IEnumerator RetractPlug(Plug p) {
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().enabled = true;
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().TargetPosition = PlugStart.position;
+            p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
             p.PlugTransform.GetComponent<Scalable>().TargetScale = ShrinkPlugScale;
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
@@ -205,7 +199,6 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().enabled = false;
             p.gameObject.SetActive(false);
 
             state = State.Free;
