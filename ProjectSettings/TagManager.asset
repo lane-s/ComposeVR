@@ -24,8 +24,8 @@ TagManager:
   - 
   - NonBlocking
   - PostProcessing
-  - 
-  - 
+  - Grabber
+  - ControllerDetector
   - 
   - 
   - 

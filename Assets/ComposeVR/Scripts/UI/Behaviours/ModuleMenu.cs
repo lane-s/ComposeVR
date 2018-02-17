@@ -31,7 +31,6 @@ namespace ComposeVR {
 
         private bool placingModule = false;
 
-        private TCPClientObject client;
 
         // Use this for initialization
         void Start() {
@@ -41,8 +40,6 @@ namespace ComposeVR {
 
             menuObject = transform.Find("MenuObject");
             instrumentBank = menuObject.Find("ModuleBank");
-
-            client = GameObject.FindGameObjectWithTag("TCPClient").GetComponent<TCPClientObject>();
 
             contextObjects = new List<Transform>();
         }
