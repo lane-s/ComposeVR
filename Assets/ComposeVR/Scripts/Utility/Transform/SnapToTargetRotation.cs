@@ -58,13 +58,10 @@ namespace ComposeVR {
                 t = Mathf.Pow(t, 0.5f);
             }
 
-            Debug.Log(t);
             Quaternion currentRotation = Quaternion.Slerp(startRotation, targetRotation, t);
 
             if (rb != null) {
                 rb.MoveRotation(currentRotation);
-                
-                //transform.rotation = currentRotation;
             }
             else {
                transform.rotation = currentRotation; 
@@ -78,7 +75,6 @@ namespace ComposeVR {
 
             startRotation = transform.rotation;
             totalAngularDistance = Quaternion.Angle(startRotation, targetRotation);
-            Debug.Log(totalAngularDistance);
 
             if(totalAngularDistance < 0.005f) {
                 t = 1;
@@ -94,7 +90,6 @@ namespace ComposeVR {
             startTime = Time.time;
             totalMoveTime = totalAngularDistance / speed;
             HasReachedTarget = false;
-            Debug.Log("Snapping to rotation: " + targetRotation.eulerAngles);
         }
 
         public void SnapToTarget(Quaternion target, float rotationSpeed) {

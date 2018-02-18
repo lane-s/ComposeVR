@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using VRTK;
 
@@ -36,6 +34,9 @@ namespace ComposeVR {
         private float normalSnapSpeed;
         private bool snapCooldown;
         private Vector3 controllerPositionOnJackAxis;
+        
+        //We have a small buffer distance so that the plug doesn't begin snapping to a jack when it's likely to immediately snap back to the controller
+        private const float BUFFER_DISTANCE = 0.02f;
 
         private IEnumerator snapToJackRoutine;
 
@@ -97,7 +98,7 @@ namespace ComposeVR {
 
                 ResetPlugTransform();
 
-                if (GetDistanceToConnectionPointOnJackAixs() < AutoPlugDistance) {
+                if (Vector3.Distance(PlugTransform.position, targetJack.PlugConnectionPoint.position) < AutoPlugDistance) {
                     StartCoroutine(AutoPlugIntoTarget());
                 }
                 else {
@@ -109,9 +110,6 @@ namespace ComposeVR {
                 //Self destruct this cord
             }
         }
-
-        //We have a small buffer distance so that the plug doesn't begin snapping to a jack when it's likely to immediately snap back to the controller
-        private const float BUFFER_DISTANCE = 0.025f;
 
         /// <summary>
         /// Starts the SnapToJack coroutine if all the required conditions are met.
@@ -133,7 +131,12 @@ namespace ComposeVR {
                     }
                 }
 
-                if (correctJackType && GetDistanceToConnectionPointOnJackAixs() < MaxJackDistanceBeforeUnsnap && GetDistanceToInitialSnapPoint() < MaxHandSeparationBeforeUnsnap) {
+                Vector3 snapPoint = GetSnapPoint();
+                bool jackInRange = Vector3.Distance(snapPoint, targetJack.PlugConnectionPoint.position) < MaxJackDistanceBeforeUnsnap;
+                bool controllerInRange = Vector3.Distance(snapPoint, interactable.GetGrabbingObject().transform.position) < MaxHandSeparationBeforeUnsnap;
+
+
+                if (correctJackType && jackInRange && controllerInRange) {
                     snapToJackRoutine = SnapToJack();
                     StartCoroutine(snapToJackRoutine);
                     return true;
@@ -150,6 +153,16 @@ namespace ComposeVR {
         }
 
         /// <summary>
+        /// Checks if the given point is closer to the jack connection point than the closest allowed point
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="closestAllowedPoint"></param>
+        /// <returns></returns>
+        private bool IsCloserThan(Vector3 point, Vector3 closestAllowedPoint) {
+            return Vector3.Dot(point - closestAllowedPoint, targetJack.PlugConnectionPoint.forward) > 0;
+        }
+
+        /// <summary>
         /// Gets the point on the jack axis to snap to.
         /// 
         /// The point is calculated by getting the component of the grabbing controller position along the jack axis
@@ -157,65 +170,54 @@ namespace ComposeVR {
         /// <param name="closestAllowedPoint">The snap point will not be closer to the jack than this point</param>
         /// <returns>The snap point</returns>
         private Vector3 GetSnapPoint(Vector3 closestAllowedPoint) {
-            Vector3 controllerPos = interactable.GetGrabbingObject().transform.position;
-            Vector3 snapPoint = targetJack.PlugConnectionPoint.position + Vector3.Dot(controllerPos, targetJack.PlugConnectionPoint.forward) * targetJack.PlugConnectionPoint.forward;
 
-            if(Vector3.Dot(snapPoint - closestAllowedPoint, targetJack.PlugConnectionPoint.forward) > 0) {
+            Vector3 snapPoint = GetSnapPoint();
+
+            if(IsCloserThan(snapPoint, closestAllowedPoint)) {
                 snapPoint = closestAllowedPoint;
             }
 
             return snapPoint;
         }
 
-        /// <summary>
-        /// Gets the distance along only the jack axis from the plug model to where connected plugs end up 
-        /// </summary>
-        /// <returns></returns>
-        private float GetDistanceToConnectionPointOnJackAixs() {
-            if (targetJack != null) {
-                Vector3 plugToConnectionPoint = targetJack.PlugConnectionPoint.position - PlugTransform.position;
-                controllerPositionOnJackAxis = PlugTransform.position + plugToConnectionPoint - Vector3.Dot(plugToConnectionPoint, targetJack.PlugConnectionPoint.forward) * targetJack.PlugConnectionPoint.forward;
+        private Vector3 GetSnapPoint() {
+            Vector3 controllerPos = interactable.GetGrabbingObject().transform.position;
+            Vector3 controllerToConnectionPoint = targetJack.PlugConnectionPoint.position - controllerPos;
 
-                return Vector3.Distance(targetJack.PlugConnectionPoint.position, controllerPositionOnJackAxis);
-            }
-            else {
-                return float.PositiveInfinity;
-            }
+            return controllerPositionOnJackAxis = controllerPos + controllerToConnectionPoint - Vector3.Dot(controllerToConnectionPoint, targetJack.PlugConnectionPoint.forward) * targetJack.PlugConnectionPoint.forward;
         }
 
         /// <summary>
         /// </summary>
         /// <returns>The distance from the plug model to the point that it will initially try to snap to</returns>
-        private float GetDistanceToInitialSnapPoint() {
-            if (targetJack != null) {
-                Vector3 plugToSnapPoint = targetJack.PlugConnectionPoint.position - PlugTransform.position;
-                controllerPositionOnJackAxis = PlugTransform.position + plugToSnapPoint - Vector3.Dot(plugToSnapPoint, targetJack.PlugConnectionPoint.forward) * targetJack.PlugConnectionPoint.forward;
+        private bool IsPlugOnJackAxis() {
+            Vector3 snapPoint = GetSnapPoint();
+            Vector3 plugToSnapPoint = snapPoint - PlugTransform.position;
+            Vector3 projectOnJackAxis = Vector3.Dot(plugToSnapPoint, targetJack.PlugConnectionPoint.forward) * targetJack.PlugConnectionPoint.forward;
 
-                float distance = Vector3.Distance(PlugTransform.position, controllerPositionOnJackAxis);
+            float distance = (plugToSnapPoint - projectOnJackAxis).magnitude;
 
-                if(distance < 0.005f) {
-                    //The distance to the jack axis is small, so we don't need to snap the plug in front of the jack
-                    return 0f;
-                }
-                else {
-                    //The plug will need to snap in front of the jack so that it doesn't intersect the jack
-                    Vector3 closestAllowedStartPosition = targetJack.PlugConnectionPoint.position - targetJack.PlugConnectionPoint.forward * SmallestAllowedInitialDistanceFromJack;
-                    Vector3 initialSnapPoint = GetSnapPoint(closestAllowedStartPosition);
-
-                    return Vector3.Distance(initialSnapPoint, PlugTransform.position);
-                }
+            if(distance < 0.005f) {
+                //The distance to the jack axis is small, so we don't need to snap the plug in front of the jack
+                return true;
             }
-            else {
-                return float.PositiveInfinity;
-            }
+
+            return false;
         }
 
-        private void PositionPlugOnJackAxis(Vector3 closestAllowedPoint) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="closestAllowedPoint"></param>
+        /// <returns>The point that the plug will move to</returns>
+        private Vector3 PositionPlugOnJackAxis(Vector3 closestAllowedPoint) {
             if (!interactable.IsGrabbed()) {
-                return;
+                return Vector3.positiveInfinity;
             }
 
-            positionSnap.SnapToTarget(GetSnapPoint(closestAllowedPoint), JackSnapSpeed);
+            Vector3 snapPoint = GetSnapPoint(closestAllowedPoint);
+            positionSnap.SnapToTarget(snapPoint, JackSnapSpeed);
+            return snapPoint;
         }
 
         /// <summary>
@@ -228,8 +230,7 @@ namespace ComposeVR {
 
             rotationSnap.SnapToTarget(targetJack.PlugConnectionPoint.rotation, RotationSnapSpeed);
 
-            float distanceFromJackAxis = GetDistanceToInitialSnapPoint();
-            bool aligned = distanceFromJackAxis == 0;
+            bool aligned = IsPlugOnJackAxis();
 
             Vector3 closestAllowedStartPosition = targetJack.PlugConnectionPoint.position - targetJack.PlugConnectionPoint.forward * SmallestAllowedInitialDistanceFromJack;
 
@@ -240,16 +241,21 @@ namespace ComposeVR {
                         aligned = true;
                     }
                 }else{
-                    PositionPlugOnJackAxis(targetJack.PlugConnectionPoint.position);
+                    Vector3 snapPoint = PositionPlugOnJackAxis(targetJack.PlugConnectionPoint.position);
 
                     if (!interactable.IsGrabbed()) {
                         break;
                     }
 
-                    float handDistance = Vector3.Distance(interactable.GetGrabbingObject().transform.position, PlugTransform.position);
-                    float jackDistance = GetDistanceToConnectionPointOnJackAixs();
+                    float controllerDistance = Vector3.Distance(interactable.GetGrabbingObject().transform.position, snapPoint);
+                    float jackDistance = Vector3.Distance(targetJack.PlugConnectionPoint.transform.position, snapPoint);
 
-                    if ((handDistance > MaxHandSeparationBeforeUnsnap + BUFFER_DISTANCE && jackDistance > AutoPlugDistance) || jackDistance > MaxJackDistanceBeforeUnsnap + BUFFER_DISTANCE) {
+                    bool controllerInRange = controllerDistance <= MaxHandSeparationBeforeUnsnap + BUFFER_DISTANCE;
+                    bool plugIsInJack = jackDistance <= AutoPlugDistance;
+                    bool plugInRange = jackDistance <= MaxJackDistanceBeforeUnsnap + BUFFER_DISTANCE;
+
+                    if (!plugIsInJack && (!controllerInRange || !plugInRange)) {
+
                         UnSnapFromJack();
                         StartCoroutine(SnapBackToController());
                         break;
@@ -314,9 +320,8 @@ namespace ComposeVR {
             transform.rotation = Quaternion.LookRotation(transform.parent.forward);
 
             positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
-            rotationSnap.SnapToTarget(transform.rotation, RotationSnapSpeed);
+            rotationSnap.SnapToTarget(transform.rotation, 1200f);
 
-            Debug.Log("Snapping back to hand");
             while (true) {
                 positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
                 if (positionSnap.HasReachedTarget) {
@@ -325,7 +330,6 @@ namespace ComposeVR {
 
                 yield return new WaitForEndOfFrame();
             }
-            Debug.Log("Snap complete");
 
             ResetPlugTransform();
             StartCoroutine(SnapCooldown());

@@ -602,9 +602,9 @@ MonoBehaviour:
   DestinationJack: {fileID: 0}
   AutoPlugDistance: 0.15
   MaxHandSeparationBeforeUnsnap: 0.14
-  MaxJackDistanceBeforeUnsnap: 0.18
-  SmallestAllowedInitialDistanceFromJack: 0.16
-  SnapToHandSpeed: 1
+  MaxJackDistanceBeforeUnsnap: 0.2
+  SmallestAllowedInitialDistanceFromJack: 0.17
+  SnapToHandSpeed: 1.8
   SnapCooldownTime: 0.15
   JackSnapSpeed: 0.2
   RotationSnapSpeed: 600

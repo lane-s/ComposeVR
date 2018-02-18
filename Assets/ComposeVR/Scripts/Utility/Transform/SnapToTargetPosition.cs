@@ -87,13 +87,12 @@ namespace ComposeVR {
             startPosition = transform.position;
             totalDistanceToTarget = Vector3.Distance(startPosition, targetPosition);
 
-            if(totalDistanceToTarget < 0.005f) {
+            if(totalDistanceToTarget < 0.0075f) {
                 t = 1;
                 HasReachedTarget = true;
+                Move();
                 return;
-            }
-
-            if (t <= 1) {
+            }else if (t <= 1) {
                 Move();
             }
 
