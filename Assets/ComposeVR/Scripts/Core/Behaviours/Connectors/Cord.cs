@@ -12,6 +12,8 @@ namespace ComposeVR {
         public float RelaxTime = 10.0f;
         public float PruneDistance = 0.01f;
 
+        public int RelaxIterationsPerFrame = 2;
+
         private Transform A;
         private Transform B;
 
@@ -70,7 +72,11 @@ namespace ComposeVR {
 
                 if (timeRelaxed < RelaxTime) {
                     timeRelaxed += Time.deltaTime;
-                    RelaxPath();
+
+                    for (int i = 0; i < RelaxIterationsPerFrame; i++) {
+                        RelaxPath();
+                    }
+
                     updateLine = true;
                 }
 

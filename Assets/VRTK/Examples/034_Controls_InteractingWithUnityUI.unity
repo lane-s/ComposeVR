@@ -6395,8 +6395,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 54109159987994898, guid: 41a9d5eeb9b16524d8987df50bb934d3, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 41a9d5eeb9b16524d8987df50bb934d3, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &443395712 stripped
@@ -25848,7 +25847,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 093b8460bff837e41bf64ba390b5489f, type: 2}
+  - {fileID: 2100000, guid: 79df11f1909b7e744b3952fcc3ca83c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

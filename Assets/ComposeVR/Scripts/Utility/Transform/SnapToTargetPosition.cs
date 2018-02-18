@@ -4,18 +4,20 @@ using System;
 using UnityEngine;
 
 namespace ComposeVR {
+
+    public enum InterpolationType {Linear, Exponential};
+
     public class SnapToTargetPosition : MonoBehaviour {
 
         private Vector3 targetPosition;
 
-        private float Speed;
+        private float speed;
         public event EventHandler<EventArgs> TargetReached;
         public event EventHandler<EventArgs> MoveCancelled;
 
         public bool HasReachedTarget = false;
 
-        public enum InterpolationType {Linear, Exponential};
-        public InterpolationType interpolationType;
+        private InterpolationType interpolationType;
 
         private float t;
         private float startTime;
@@ -31,6 +33,7 @@ namespace ComposeVR {
             targetPosition = transform.position;
             t = Mathf.Infinity;
             rb = GetComponent<Rigidbody>();
+            interpolationType = InterpolationType.Exponential;
         }
 
         // Update is called once per frame
@@ -78,7 +81,7 @@ namespace ComposeVR {
 
         public void SnapToTarget(Vector3 targetPosition, float speed, InterpolationType interpolationType) {
             this.targetPosition = targetPosition;
-            Speed = speed;
+            this.speed = speed;
             this.interpolationType = interpolationType;
 
             startPosition = transform.position;
@@ -97,7 +100,7 @@ namespace ComposeVR {
 
             t = 0;
             startTime = Time.time;
-            totalMoveTime = totalDistanceToTarget / Speed;
+            totalMoveTime = totalDistanceToTarget / this.speed;
             HasReachedTarget = false;
         }
 
@@ -106,7 +109,7 @@ namespace ComposeVR {
         }
 
         public void SnapToTarget(Vector3 targetPosition) {
-            SnapToTarget(targetPosition, this.Speed, this.interpolationType);
+            SnapToTarget(targetPosition, this.speed, this.interpolationType);
         }
 
     }

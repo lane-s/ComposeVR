@@ -38,7 +38,7 @@ namespace ComposeVR {
 
         public Vector3 ShrinkPlugScale;
         public Transform PlugStart;
-        public Transform PlugSnapPoint;
+        public Transform PlugConnectionPoint;
         public Transform CordOrigin;
 
         public SimpleTrigger ControllerDetector;
@@ -76,13 +76,24 @@ namespace ComposeVR {
 
             nearbyControllers = new List<VRTK_InteractGrab>();
 
+            CreateCord();
+
+            state = State.Free;
+
+            StartCoroutine(FSM());
+        }
+
+        /// <summary>
+        /// Creates a new cord consisting of two connected plugs and a actual cord object. This is the cord that the jack will deploy when the user's controller comes near
+        /// </summary>
+        private void CreateCord() {
             primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
 
             primaryPlug.SetConnectedPlug(secondaryPlug);
             secondaryPlug.SetConnectedPlug(primaryPlug);
 
-            primaryPlug.OriginJack = this;
+            primaryPlug.SourceJack = this;
             secondaryPlug.DestinationJack = this;
 
             primaryPlug.gameObject.SetActive(false);
@@ -92,23 +103,48 @@ namespace ComposeVR {
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.SetCordEnds(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
             cord.gameObject.SetActive(false);
-
-            state = State.Free;
-
-            StartCoroutine(FSM());
         }
 
+        /// <summary>
+        /// Keep track of objects that block the jack, but ignore plugs from the cord that the jack currently manages
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnBlockerEnterArea(object sender, SimpleTriggerEventArgs e) {
+            Plug p = e.other.GetComponent<Plug>();
+            if(p == null && e.other.GetComponent<OwnedObject>()){
+                p = e.other.GetComponent<OwnedObject>().Owner.GetComponent<Plug>();
+            }
+
+            if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug))) {
+                return;
+            }
+
             numBlockers += 1;
         }
 
         void OnBlockerLeaveArea(object sender, SimpleTriggerEventArgs e) {
+            Plug p = e.other.GetComponent<Plug>();
+            if(p == null && e.other.GetComponent<OwnedObject>()){
+                p = e.other.GetComponent<OwnedObject>().Owner.GetComponent<Plug>();
+            }
+
+            if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug))) {
+                return;
+            }
+
             numBlockers -= 1;
+            numBlockers = Math.Max(numBlockers, 0);
         }
 
+        /// <summary>
+        /// Keep track of nearby controllers
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
             VRTK_InteractGrab controller = e.other.GetComponentInParent<VRTK_InteractGrab>();
-            if (controller != null) {
+            if (controller != null && !nearbyControllers.Contains(controller)) {
                 nearbyControllers.Add(controller);
             }                
         }
@@ -120,6 +156,11 @@ namespace ComposeVR {
             }                
         }
 
+        /// <summary>
+        /// Keep track of nearby plugs
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnPlugEnterArea(object sender, SimpleTriggerEventArgs e) {
             OwnedObject o = e.other.GetComponent<OwnedObject>();
             if(o != null) {
@@ -154,20 +195,26 @@ namespace ComposeVR {
             }
         }
 
+        /// <summary>
+        /// In the Free state, the jack checks to see if any empty hand is nearby. If so, extend a plug
+        /// 
+        /// This is the only state where a jack can be plugged into
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator Free() {
             while (state == State.Free) {
                 if(nearbyControllers.Count > 0) {
-                    bool holdingPlug = false;
+                    bool holdingObject = false;
 
                     foreach(VRTK_InteractGrab c in nearbyControllers) {
                         GameObject grabbedObject = c.GetGrabbedObject();
-                        if(grabbedObject != null && grabbedObject.GetComponent<Plug>()) {
-                            holdingPlug = true;
+                        if(grabbedObject != null) {
+                            holdingObject = true;
                             break;
                         }
                     }
 
-                    if (!holdingPlug && numBlockers == 0) {
+                    if (!holdingObject && numBlockers == 0) {
                         state = State.WaitingForGrab;
                         break;
                     }
@@ -176,19 +223,23 @@ namespace ComposeVR {
             }
         }
 
+        /// <summary>
+        /// When the jack is WaitingForGrab, it checks if the plug that it extended is grabbed. If it is, it extends the other plug on the same cord, releasing it into the world. It creates a new cord to replace that one.
+        /// If there are no controllers in the area, then the plug retracts and the jack goes back to the Free state
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator WaitingForGrab() {
-            primaryPlug.OriginJack = this;
+            primaryPlug.SourceJack = this;
             cord.gameObject.SetActive(true);
             StartCoroutine(ExtendPlug(primaryPlug, PlugStart.position + PlugStart.forward * ExtendDistance));
 
-            bool grabbed = false;
-
             while (state == State.WaitingForGrab) {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
-                    StartCoroutine(ExtendPlug(secondaryPlug, PlugSnapPoint.position));
+                    StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
                     secondaryPlug.DestinationJack = this;
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, secondaryPlug.transform.up);
 
+                    CreateCord();
                     state = State.Blocked;
                 }else if(nearbyControllers.Count == 0) {
                     StartCoroutine(RetractPlug(primaryPlug.GetComponent<Plug>()));
@@ -200,6 +251,10 @@ namespace ComposeVR {
 
         }
 
+        /// <summary>
+        /// A blocked jack has no behaviour. It waits for the blocking plug to set the state back to Free.
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator Blocked() {
             while (state == State.Blocked) {
                 yield return new WaitForEndOfFrame();
@@ -214,8 +269,6 @@ namespace ComposeVR {
             p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
             p.PlugTransform.localScale = ShrinkPlugScale;
             p.PlugTransform.GetComponent<Scalable>().TargetScale = normalPlugScale;
-
-            p.PlugTransform.GetComponent<SnapToTargetRotation>().enabled = false;
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 

@@ -71,7 +71,6 @@ GameObject:
   - component: {fileID: 4163896353699060}
   - component: {fileID: 65903335867139352}
   - component: {fileID: 114437091463618052}
-  - component: {fileID: 54109159987994898}
   m_Layer: 14
   m_Name: BlockerDetector
   m_TagString: Untagged
@@ -105,7 +104,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4474347613389404}
   m_Layer: 0
-  m_Name: PlugSnap
+  m_Name: PlugConnectionPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,21 +292,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1524331056482784}
   m_Mesh: {fileID: 4300000, guid: 5c9721de77b3e6b4593838a6ad8c51e3, type: 3}
---- !u!54 &54109159987994898
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1683858376151998}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &65531584428248480
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -376,7 +360,7 @@ MonoBehaviour:
   CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
   ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   PlugStart: {fileID: 4902312336630122}
-  PlugSnapPoint: {fileID: 4474347613389404}
+  PlugConnectionPoint: {fileID: 4474347613389404}
   CordOrigin: {fileID: 4283119967177086}
   ControllerDetector: {fileID: 114372540194046442}
   PlugDetector: {fileID: 114512171108863032}

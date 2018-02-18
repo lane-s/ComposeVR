@@ -598,14 +598,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff02081943a6fdf47a7057e1e7e35172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OriginJack: {fileID: 0}
+  SourceJack: {fileID: 0}
   DestinationJack: {fileID: 0}
   AutoPlugDistance: 0.15
-  MaxHandSeparationBeforeUnsnap: 0.16
+  MaxHandSeparationBeforeUnsnap: 0.14
   MaxJackDistanceBeforeUnsnap: 0.18
-  SnapToHandSpeed: 0.5
+  SmallestAllowedInitialDistanceFromJack: 0.16
+  SnapToHandSpeed: 1
   SnapCooldownTime: 0.15
-  JackSnapSpeed: 0.1
+  JackSnapSpeed: 0.2
+  RotationSnapSpeed: 600
   PlugTransform: {fileID: 4837514403879456}
   CordAttachPoint: {fileID: 4780208642896398}
 --- !u!114 &114420235210983760
@@ -633,7 +635,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasReachedTarget: 0
-  interpolationType: 1
 --- !u!114 &114549354904918792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -699,13 +700,11 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1945745975907880}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe984bd8ed30f644c987e41fafa01595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 20
-  CloseEnoughAngle: 0.005
   HasReachedTarget: 0
 --- !u!135 &135858767354311850
 SphereCollider:

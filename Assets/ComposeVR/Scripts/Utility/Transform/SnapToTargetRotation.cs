@@ -6,34 +6,103 @@ namespace ComposeVR {
 
     public class SnapToTargetRotation : MonoBehaviour {
 
+        public bool HasReachedTarget = false;
+
         private Quaternion targetRotation;
-        public Quaternion TargetRotation {
-            get { return targetRotation; }
-            set {
-                targetRotation = value;
-                HasReachedTarget = false;
-            }
-        }
 
+        private float speed;
+        private InterpolationType interpolationType;
+        private float t;
+        private float startTime;
+        private float totalAngularDistance;
+        private float totalMoveTime;
+        private Quaternion startRotation;
+        private Rigidbody rb;
 
-        public float Speed;
-        public float CloseEnoughAngle;
-        public bool HasReachedTarget;
 
         // Use this for initialization
         void Awake() {
+            rb = GetComponent<Rigidbody>();
             targetRotation = transform.rotation;
+            t = Mathf.Infinity;
+            interpolationType = InterpolationType.Exponential;
         }
 
         // Update is called once per frame
         void Update() {
-            if(Quaternion.Angle(transform.rotation, TargetRotation) > CloseEnoughAngle) {
-                transform.rotation = Quaternion.Slerp(transform.rotation, TargetRotation, Time.deltaTime * Speed);
-                HasReachedTarget = false;
+            if(rb == null) {
+                RotateToTarget();
             }
-            else {
+        }
+
+        private void FixedUpdate() {
+            if(rb != null) {
+                RotateToTarget();
+            }
+        }
+
+        private void RotateToTarget() {
+            if (t <= 1) {
+                Rotate();
+            }
+            else{
                 HasReachedTarget = true;
             }
+        }
+
+        private void Rotate() {
+            float elapsedTime = Time.time - startTime;
+            t = elapsedTime / totalMoveTime;
+
+            if(interpolationType == InterpolationType.Exponential) {
+                t = Mathf.Pow(t, 0.5f);
+            }
+
+            Debug.Log(t);
+            Quaternion currentRotation = Quaternion.Slerp(startRotation, targetRotation, t);
+
+            if (rb != null) {
+                rb.MoveRotation(currentRotation);
+                
+                //transform.rotation = currentRotation;
+            }
+            else {
+               transform.rotation = currentRotation; 
+            }
+        }
+
+        public void SnapToTarget(Quaternion target, float rotationSpeed, InterpolationType interpolationType) {
+            targetRotation = target;
+            speed = rotationSpeed;
+            this.interpolationType = interpolationType;
+
+            startRotation = transform.rotation;
+            totalAngularDistance = Quaternion.Angle(startRotation, targetRotation);
+            Debug.Log(totalAngularDistance);
+
+            if(totalAngularDistance < 0.005f) {
+                t = 1;
+                HasReachedTarget = true;
+                return;
+            }
+
+            if(t <= 1) {
+                RotateToTarget();
+            }
+
+            t = 0;
+            startTime = Time.time;
+            totalMoveTime = totalAngularDistance / speed;
+            HasReachedTarget = false;
+            Debug.Log("Snapping to rotation: " + targetRotation.eulerAngles);
+        }
+
+        public void SnapToTarget(Quaternion target, float rotationSpeed) {
+            SnapToTarget(target, rotationSpeed, this.interpolationType);
+        }
+
+        public void SnapToTarget(Quaternion target) {
+            SnapToTarget(target, this.speed, this.interpolationType);
         }
     }
 

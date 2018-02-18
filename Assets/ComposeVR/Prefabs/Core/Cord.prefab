@@ -56,6 +56,7 @@ MonoBehaviour:
   RelaxAmount: 0.05
   RelaxTime: 150
   PruneDistance: 0.01
+  RelaxIterationsPerFrame: 3
 --- !u!120 &120035059295198088
 LineRenderer:
   m_ObjectHideFlags: 1

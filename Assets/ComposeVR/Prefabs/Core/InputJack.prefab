@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4461722983459164}
   - component: {fileID: 65610955309127994}
   - component: {fileID: 114919387775607300}
-  m_Layer: 13
+  m_Layer: 14
   m_Name: PlugDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4678754457440764}
   m_Layer: 0
-  m_Name: PlugSnap
+  m_Name: PlugConnectionPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,7 +398,7 @@ MonoBehaviour:
   CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
   ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   PlugStart: {fileID: 4544589547832290}
-  PlugSnapPoint: {fileID: 4678754457440764}
+  PlugConnectionPoint: {fileID: 4678754457440764}
   CordOrigin: {fileID: 4917279820275952}
   ControllerDetector: {fileID: 114377606990020054}
   PlugDetector: {fileID: 114919387775607300}
