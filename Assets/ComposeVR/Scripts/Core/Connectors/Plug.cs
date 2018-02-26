@@ -7,9 +7,7 @@ namespace ComposeVR {
     [RequireComponent(typeof(VRTK_InteractableObject))]
     public sealed class Plug : MonoBehaviour {
 
-        public Jack SourceJack;
         public Jack DestinationJack;
-
 
         public float AutoPlugDistance = 0.5f;
         public float MaxHandSeparationBeforeUnsnap = 1.0f;
@@ -26,7 +24,8 @@ namespace ComposeVR {
         private Jack targetJack;
         private List<Jack> nearbyJacks;
 
-        private Plug connectedPlug;
+        private Cord connectedCord;
+        private LinkedListNode<BranchNode> plugNodeInCord;
         
         private VRTK_InteractableObject interactable;
         private SnapToTargetPosition positionSnap;
@@ -56,6 +55,10 @@ namespace ComposeVR {
         /// Try to snap to nearby jacks
         /// </summary>
         void Update() {
+            SnapToNearbyJacks();
+        }
+
+        private void SnapToNearbyJacks() {
             if (targetJack == null && !snapCooldown) {
                 foreach (Jack j in nearbyJacks) {
 
@@ -71,44 +74,48 @@ namespace ComposeVR {
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
             if (DestinationJack != null) {
-                //The plug was plugged in 
-                targetJack = DestinationJack;
-                DestinationJack.SetState(Jack.State.Free);
-
-                if (SourceJack != null) {
-                    DestinationJack.DisconnectJack(SourceJack);
-                    SourceJack.DisconnectJack(DestinationJack);
-                }
-
-                DestinationJack = null;
-                connectedPlug.SourceJack = null;
+                UnplugFromJack();
             }
             else {
                 PlugTransform.SetParent(null);
                 StartCoroutine(SnapBackToController());
             }
 
+            connectedCord.AllowBranching(false);
+
             TrySnapToJack();
         }
 
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
-            if (targetJack != null) {
-                DestinationJack = targetJack;
-                connectedPlug.SourceJack = targetJack;
 
+            if (targetJack != null) {
                 ResetPlugTransform();
 
                 if (Vector3.Distance(PlugTransform.position, targetJack.PlugConnectionPoint.position) < AutoPlugDistance) {
-                    StartCoroutine(AutoPlugIntoTarget());
+                    PlugIntoJack();
                 }
                 else {
                     UnSnapFromJack();
                 }
             }
 
-            if(DestinationJack == null && SourceJack == null) {
-                //Self destruct this cord
+            if(connectedCord != null) {
+                connectedCord.AllowBranching(true);
             }
+        }
+
+        private void UnplugFromJack() {
+            DestinationJack.Disconnect(connectedCord, plugNodeInCord);
+
+            targetJack = DestinationJack;
+            DestinationJack.SetState(Jack.State.Free);
+            DestinationJack = null;
+        }
+
+        private void PlugIntoJack() {
+            DestinationJack = targetJack;
+
+            StartCoroutine(AutoPlugIntoTarget());
         }
 
         /// <summary>
@@ -121,22 +128,18 @@ namespace ComposeVR {
         private bool TrySnapToJack() {
             if (interactable.IsGrabbed() && targetJack != null) {
 
-                bool correctJackType = true;
-
-                if(SourceJack != null) {
-                    if(SourceJack.GetComponent<InputJack>() != null && targetJack.GetComponent<OutputJack>() == null) {
-                        correctJackType = false;
-                    }else if(SourceJack.GetComponent<OutputJack>() != null && targetJack.GetComponent<InputJack>() == null) {
-                        correctJackType = false;
-                    }
+                float flow = connectedCord.Flow;
+                if (plugNodeInCord.Equals(connectedCord.GetBranches().First)) {
+                    flow = -flow;
                 }
+
+                bool validJackType = (flow > 0 && targetJack.GetComponent<InputJack>() != null) || (flow < 0 && targetJack.GetComponent<OutputJack>() != null) || flow == 0;
 
                 Vector3 snapPoint = GetSnapPoint();
                 bool jackInRange = Vector3.Distance(snapPoint, targetJack.PlugConnectionPoint.position) < MaxJackDistanceBeforeUnsnap;
                 bool controllerInRange = Vector3.Distance(snapPoint, interactable.GetGrabbingObject().transform.position) < MaxHandSeparationBeforeUnsnap;
 
-
-                if (correctJackType && jackInRange && controllerInRange) {
+                if (validJackType && jackInRange && controllerInRange) {
                     snapToJackRoutine = SnapToJack();
                     StartCoroutine(snapToJackRoutine);
                     return true;
@@ -269,7 +272,7 @@ namespace ComposeVR {
         }
 
         /// <summary>
-        /// Moves the plug to the jack's connection point and makes a data connection between physically connected jacks
+        /// Moves the plug to the jack's connection point and connects the plug to the jack
         /// </summary>
         /// <returns></returns>
         private IEnumerator AutoPlugIntoTarget() {
@@ -282,12 +285,29 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            if(DestinationJack != null && SourceJack != null) {
-                DestinationJack.ConnecToJack(SourceJack);
-                SourceJack.ConnecToJack(DestinationJack);
+            if(DestinationJack != null) {
+                ConnectToDestinationJack();
             }
 
             yield return null;
+        }
+
+        private void ConnectToDestinationJack() {
+            float flow = 1;
+            if (plugNodeInCord.Equals(connectedCord.GetBranches().First)) {
+                flow = -flow;
+            }
+
+            if (DestinationJack.GetComponent<InputJack>()) {
+                connectedCord.Flow = flow;
+            }
+            else {
+                connectedCord.Flow = -flow;
+            }
+
+            connectedCord.SetFlowing(true);
+
+            DestinationJack.Connect(connectedCord, plugNodeInCord);
         }
 
         private void UnSnapFromJack() {
@@ -340,6 +360,14 @@ namespace ComposeVR {
             snapCooldown = false;
         }
 
+        public void SetCord(Cord c) {
+            this.connectedCord = c;
+        }
+
+        public void SetPlugNodeInCord(LinkedListNode<BranchNode> node) {
+            plugNodeInCord = node;
+        }
+
         public void AddNearbyJack(Jack j) {
             if (!nearbyJacks.Contains(j)) {
                 nearbyJacks.Add(j);
@@ -350,10 +378,11 @@ namespace ComposeVR {
             nearbyJacks.Remove(j);
         }
 
-        public void SetConnectedPlug(Plug plug) {
-            connectedPlug = plug;
+        private void OnDisable() {
+            foreach(Jack j in nearbyJacks) {
+                j.OnBlockerDestroyed();
+            }
         }
-
     }
 
 }

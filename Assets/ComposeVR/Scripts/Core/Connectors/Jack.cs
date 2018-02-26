@@ -7,15 +7,22 @@ using System.Linq;
 
 namespace ComposeVR {
     public class JackEventArgs : EventArgs {
-        private Jack otherJack;
+        private Cord connectedCord;
+        private LinkedListNode<BranchNode> plugEnd;
 
-        public JackEventArgs(Jack other) {
-            otherJack = other;
+        public JackEventArgs(Cord connectedCord, LinkedListNode<BranchNode> plugEnd) {
+            this.connectedCord = connectedCord;
+            this.plugEnd = plugEnd;
         }
 
-        public Jack Other {
-            get { return otherJack;  }
-            set { otherJack = value;  }
+        public Cord ConnectedCord {
+            get { return connectedCord;  }
+            set { connectedCord = value;  }
+        }
+
+        public LinkedListNode<BranchNode> PlugNodeInCord {
+            get { return plugEnd; }
+            set { plugEnd = value; }
         }
     }
 
@@ -48,8 +55,8 @@ namespace ComposeVR {
         public float ExtendDistance;
         public float ExtendSpeed;
 
-        public EventHandler<JackEventArgs> OtherJackConnected;
-        public EventHandler<JackEventArgs> OtherJackDisconnected;
+        public EventHandler<JackEventArgs> PlugConnected;
+        public EventHandler<JackEventArgs> PlugDisconnected;
 
         public enum State {Free, WaitingForGrab, Blocked}
         private State state;
@@ -90,10 +97,6 @@ namespace ComposeVR {
             primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
 
-            primaryPlug.SetConnectedPlug(secondaryPlug);
-            secondaryPlug.SetConnectedPlug(primaryPlug);
-
-            primaryPlug.SourceJack = this;
             secondaryPlug.DestinationJack = this;
 
             primaryPlug.gameObject.SetActive(false);
@@ -101,7 +104,15 @@ namespace ComposeVR {
             normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
-            cord.SetCordEnds(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
+            cord.ConnectCord(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
+
+            cord.Flow = 1;
+
+            if(GetComponent<InputJack>() != null) {
+                cord.Flow = -cord.Flow;
+            }
+            cord.SetFlowing(true);
+                
             cord.gameObject.SetActive(false);
         }
 
@@ -135,6 +146,11 @@ namespace ComposeVR {
 
             numBlockers -= 1;
             numBlockers = Math.Max(numBlockers, 0);
+        }
+
+        public void OnBlockerDestroyed() {
+            numBlockers -= 1;
+            numBlockers = Mathf.Max(numBlockers, 0);
         }
 
         /// <summary>
@@ -229,7 +245,6 @@ namespace ComposeVR {
         /// </summary>
         /// <returns></returns>
         private IEnumerator WaitingForGrab() {
-            primaryPlug.SourceJack = this;
             cord.gameObject.SetActive(true);
             StartCoroutine(ExtendPlug(primaryPlug, PlugStart.position + PlugStart.forward * ExtendDistance));
 
@@ -298,15 +313,15 @@ namespace ComposeVR {
             state = State.Free;
         }
 
-        public void ConnecToJack(Jack other) {
-            if(OtherJackConnected != null) {
-                OtherJackConnected(this, new JackEventArgs(other));
+        public void Connect(Cord connectedCord, LinkedListNode<BranchNode> plugNodeInCord) {
+            if(PlugConnected != null) {
+                PlugConnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
             }
         }
 
-        public void DisconnectJack(Jack other) {
-            if(OtherJackDisconnected != null) {
-                OtherJackDisconnected(this, new JackEventArgs(other));
+        public void Disconnect(Cord connectedCord, LinkedListNode<BranchNode> plugNodeInCord) {
+            if(PlugDisconnected != null) {
+                PlugDisconnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
             }
         }
     }

@@ -95,14 +95,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5c5d969e8647a741af9f122371f9d78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  branchHandlePrefab: {fileID: 4951672727106540, guid: d67f7b089b800274f8fd426da6036c27,
+  BranchHandlePrefab: {fileID: 4951672727106540, guid: d67f7b089b800274f8fd426da6036c27,
     type: 2}
+  FlowTexture: {fileID: 2800000, guid: cde4fd05f37fd514c94b88fda1d4ad3e, type: 3}
   SegmentLength: 0.005
   RelaxAmount: 0.05
   RelaxTime: 150
   PruneDistance: 0.01
-  BranchHandleShowDistance: 5
-  RelaxIterationsPerFrame: 3
+  BranchHandleShowDistance: 0.1
+  FlowSpeed: 0.6
+  OnEmission: 0.55
+  OffEmission: 0.4
+  RelaxIterationsPerFrame: 2
 --- !u!114 &114682616248407738
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,7 +216,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 0
+    textureMode: 1
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
