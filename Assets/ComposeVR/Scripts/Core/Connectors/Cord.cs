@@ -332,8 +332,8 @@ namespace ComposeVR {
                 workingFlow = -Flow;
             }
 
-            Debug.Log("Node position in cord: " + start.Value.cordPosition);
-            Debug.Log("Working flow: " + workingFlow);
+            //Debug.Log("Node position in cord: " + start.Value.cordPosition);
+            //Debug.Log("Working flow: " + workingFlow);
 
             if (workingFlow > 0) {
 
@@ -364,7 +364,7 @@ namespace ComposeVR {
             else if(workingFlow < 0){
 
                 if (A.GetComponent<BranchHandle>()) {
-                    Debug.Log("Getting handle in A");
+                    //Debug.Log("Getting handle in A");
                     BranchHandle handle = A.GetComponent<BranchHandle>();
                     results.UnionWith(handle.GetSourceCord().GetConnectedJacks(searchDownstream, handle.GetNodeInSourceCord()));
 
@@ -373,7 +373,7 @@ namespace ComposeVR {
 
                     if (owner.GetComponent<Plug>()) {
                         Plug plug = owner.GetComponent<Plug>();
-                        Debug.Log("Getting plug in A");
+                        //Debug.Log("Getting plug in A");
 
                         if(plug.DestinationJack != null) {
                             results.Add(plug.DestinationJack);

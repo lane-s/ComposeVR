@@ -9,18 +9,21 @@ namespace ComposeVR {
 
     public class SnapToTargetPosition : MonoBehaviour {
 
-        private Vector3 targetPosition;
-
-        private float speed;
         public event EventHandler<EventArgs> TargetReached;
         public event EventHandler<EventArgs> MoveCancelled;
 
+        public float closeEnoughDistance = 0.01f;
+        public bool carryTimeBetweenSnaps = false;
         public bool HasReachedTarget = false;
-
+        
+        private Vector3 targetPosition;
+        private float speed;
         private InterpolationType interpolationType;
 
         private float t;
         private float startTime;
+        private float finishTime;
+
         private float totalDistanceToTarget;
         private float totalMoveTime;
         
@@ -55,6 +58,7 @@ namespace ComposeVR {
             }
 
             if(t >= 1 && !HasReachedTarget) {
+                finishTime = Time.time;
                 HasReachedTarget = true;
                 if(TargetReached != null) {
                     TargetReached(this, new EventArgs());
@@ -87,7 +91,7 @@ namespace ComposeVR {
             startPosition = transform.position;
             totalDistanceToTarget = Vector3.Distance(startPosition, targetPosition);
 
-            if(totalDistanceToTarget < 0.01) {
+            if(totalDistanceToTarget < closeEnoughDistance) {
                 t = 1;
                 HasReachedTarget = true;
                 Move();
@@ -96,9 +100,12 @@ namespace ComposeVR {
                 Move();
             }
 
-
             t = 0;
+
+            float lastStartTime = startTime;
+
             startTime = Time.time;
+
             totalMoveTime = totalDistanceToTarget / this.speed;
             HasReachedTarget = false;
         }

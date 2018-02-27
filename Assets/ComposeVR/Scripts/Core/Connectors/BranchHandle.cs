@@ -5,15 +5,19 @@ using VRTK;
 
 namespace ComposeVR {
     [RequireComponent(typeof(VRTK_InteractableObject))]
+    [RequireComponent(typeof(CordFollower))]
     public class BranchHandle : MonoBehaviour {
 
         public Transform PlugPrefab;
         public Transform CordPrefab;
 
         public float ShowDistanceSquared = 0.8f;
+        public float SnapSpeed = 0.5f;
         public int ClosestBranchPointToEnd = 12;
 
-        private int closestPointIndex;
+        private int closestCordPointIndex;
+        private bool wasShowing;
+
         private float controllerDistance;
 
         private Plug connectedPlug;
@@ -23,9 +27,10 @@ namespace ComposeVR {
         private Cord branchCord;
         private bool cordStartPoint = true;
 
+        private CordFollower cordFollower;
+
         private Transform controllerToTrack;
         private bool trackController = true;
-
 
         // Use this for initialization
         void Awake() {
@@ -36,30 +41,50 @@ namespace ComposeVR {
             connectedPlug.gameObject.SetActive(false);
 
             GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnGrabbed;
+            cordFollower = GetComponent<CordFollower>();
         }
 
         void Update() {
             if (trackController) {
                 if (controllerToTrack != null) {
-                    Vector3 diff = controllerToTrack.position - sourceCord.GetPointAtIndex(closestPointIndex);
+                    Vector3 diff = controllerToTrack.position - sourceCord.GetPointAtIndex(closestCordPointIndex);
                     controllerDistance = diff.sqrMagnitude;
 
-                    if (controllerDistance < ShowDistanceSquared && closestPointIndex >= ClosestBranchPointToEnd && closestPointIndex <= sourceCord.GetLength() - ClosestBranchPointToEnd) {
-                        GetComponent<MeshRenderer>().enabled = true;
-                        GetComponent<Collider>().enabled = true;
+                    if (controllerDistance < ShowDistanceSquared && closestCordPointIndex >= ClosestBranchPointToEnd && closestCordPointIndex <= sourceCord.GetLength() - ClosestBranchPointToEnd) {
+                        if (!wasShowing) {
+                            ShowHandle();                
+                        }
 
-                        transform.position = sourceCord.GetPointAtIndex(closestPointIndex);
-                        transform.rotation = Quaternion.LookRotation(controllerToTrack.position - transform.position);
+                        MoveToTargetPoint();
                     }
-                    else {
-                        GetComponent<MeshRenderer>().enabled = false;
-                        GetComponent<Collider>().enabled = false;
+                    else if (wasShowing) {
+                        HideHandle();
                     }
                 }
             }
             else {
-                transform.position = sourceCord.GetPointAtIndex(closestPointIndex);
+                MoveToTargetPoint();
             }
+        }
+
+        private void ShowHandle() {
+            GetComponent<MeshRenderer>().enabled = true;
+            GetComponent<Collider>().enabled = true;
+
+            cordFollower.TeleportToPoint(closestCordPointIndex);
+
+            wasShowing = true;
+        }
+
+        private void HideHandle() {
+            GetComponent<MeshRenderer>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+            wasShowing = false;
+        }
+
+        private void MoveToTargetPoint() {
+            cordFollower.SetTargetPoint(closestCordPointIndex);
+            transform.rotation = Quaternion.LookRotation(controllerToTrack.position - transform.position);
         }
 
         public void TrackController(Transform controller) {
@@ -75,7 +100,7 @@ namespace ComposeVR {
         }
 
         public void SetClosestPoint(int index, float distance) {
-            closestPointIndex = index;
+            closestCordPointIndex = index;
             controllerDistance = distance;
         }
 
@@ -89,6 +114,7 @@ namespace ComposeVR {
 
         public void SetSourceCord(Cord c) {
             sourceCord = c;
+            cordFollower.SetCord(c);
         }
 
         public Cord GetBranchCord() {
@@ -107,12 +133,13 @@ namespace ComposeVR {
             return nodeInSourceCord;
         }
 
+        VRTK_InteractGrab grabber;
         public void OnGrabbed(object sender, InteractableObjectEventArgs e) {
             if(branchCord != null) {
                 //Replace this branch handle with a plug
             }
             else {
-                VRTK_InteractGrab grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
+                grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
 
                 //Force the controller to let go of the branch handle
                 GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
@@ -121,16 +148,22 @@ namespace ComposeVR {
                 //And grab the plug instead
                 connectedPlug.gameObject.SetActive(true);
                 connectedPlug.transform.SetParent(null);
-                grabber.AttemptGrab();
 
                 //Create a cord between the plug and the branch handle
                 branchCord = Instantiate(CordPrefab).GetComponent<Cord>();
                 branchCord.ConnectCord(transform, connectedPlug.CordAttachPoint);
                 branchCord.Flow = 0;
 
-                nodeInSourceCord = sourceCord.InsertBranchNode(this, closestPointIndex);
+                nodeInSourceCord = sourceCord.InsertBranchNode(this, closestCordPointIndex);
                 trackController = false;
+
+                StartCoroutine(ReGrab());
             }
+        }
+
+        private IEnumerator ReGrab() {
+            yield return new WaitForEndOfFrame();
+            grabber.AttemptGrab();
         }
     }
 }

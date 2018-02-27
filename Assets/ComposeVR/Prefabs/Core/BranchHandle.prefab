@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 135499165864327226}
   - component: {fileID: 23158276750641414}
   - component: {fileID: 114047564812992208}
+  - component: {fileID: 114710451627392906}
   - component: {fileID: 114672588868597870}
   m_Layer: 11
   m_Name: BranchHandle
@@ -141,8 +142,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlugPrefab: {fileID: 4601306996117448, guid: 19d18ba3efad9014685a901d445e467d, type: 2}
+  CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
   ShowDistanceSquared: 0.05
+  SnapSpeed: 1
   ClosestBranchPointToEnd: 10
+--- !u!114 &114710451627392906
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1902757693806246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33575c46ea2f4434ea1efed359499bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 0.4
 --- !u!135 &135499165864327226
 SphereCollider:
   m_ObjectHideFlags: 1
