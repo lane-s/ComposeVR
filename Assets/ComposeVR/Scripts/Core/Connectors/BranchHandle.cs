@@ -151,6 +151,7 @@ namespace ComposeVR {
 
                 //Create a cord between the plug and the branch handle
                 branchCord = Instantiate(CordPrefab).GetComponent<Cord>();
+                branchCord.SetColor(sourceCord.GetColor());
                 branchCord.ConnectCord(transform, connectedPlug.CordAttachPoint);
                 branchCord.Flow = 0;
 

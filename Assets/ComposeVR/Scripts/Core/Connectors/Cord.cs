@@ -442,5 +442,14 @@ namespace ComposeVR {
         public Transform GetCordEnd() {
             return B;
         }
+
+        public Color GetColor() {
+            return cordColor;
+        }
+
+        public void SetColor(Color color) {
+            cordColor = color;
+            lineRenderer.material.color = cordColor;
+        }
     }
 }
