@@ -32,6 +32,8 @@ namespace ComposeVR {
         private Transform controllerToTrack;
         private bool trackController = true;
 
+        private bool grabbable;
+
         // Use this for initialization
         void Awake() {
             connectedPlug = Instantiate(PlugPrefab).GetComponent<Plug>();
@@ -41,10 +43,24 @@ namespace ComposeVR {
             connectedPlug.gameObject.SetActive(false);
 
             GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnGrabbed;
+
+            GetComponent<VRTK_InteractableObject>().isGrabbable = false;
+            StartCoroutine(AllowGrab());
+
             cordFollower = GetComponent<CordFollower>();
         }
 
+        private IEnumerator AllowGrab() {
+            yield return new WaitForSeconds(0.8f);
+            GetComponent<VRTK_InteractableObject>().isGrabbable = true;
+        }
+
         void Update() {
+            if (!grabbable) {
+                grabbable = true;
+                StartCoroutine(AllowGrab());
+            }
+
             if (trackController) {
                 if (controllerToTrack != null) {
                     Vector3 diff = controllerToTrack.position - sourceCord.GetPointAtIndex(closestCordPointIndex);
@@ -142,7 +158,7 @@ namespace ComposeVR {
                 grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
 
                 //Force the controller to let go of the branch handle
-                GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
+                grabber.ForceRelease();
                 GetComponent<VRTK_InteractableObject>().isGrabbable = false;
 
                 //And grab the plug instead
@@ -158,13 +174,19 @@ namespace ComposeVR {
                 nodeInSourceCord = sourceCord.InsertBranchNode(this, closestCordPointIndex);
                 trackController = false;
 
-                StartCoroutine(ReGrab());
+                StartCoroutine(GrabPlug());
             }
         }
 
-        private IEnumerator ReGrab() {
-            yield return new WaitForEndOfFrame();
-            grabber.AttemptGrab();
+        private IEnumerator GrabPlug() {
+            while (!connectedPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
+                connectedPlug.transform.rotation = Quaternion.LookRotation(grabber.controllerAttachPoint.transform.forward);
+                connectedPlug.transform.position = grabber.controllerAttachPoint.transform.position;
+                grabber.AttemptGrab();
+                yield return new WaitForEndOfFrame();
+            }
+
+            yield return null;
         }
     }
 }

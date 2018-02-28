@@ -55,11 +55,7 @@ namespace ComposeVR {
             lineRenderer = GetComponent<LineRenderer>();
             path = new List<Vector3>();
 
-            cordColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
-
-            if (lineRenderer) {
-                lineRenderer.material.SetColor("_TintColor", cordColor);
-            }
+            SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
 
             timeRelaxed = RelaxTime;
 
@@ -449,7 +445,9 @@ namespace ComposeVR {
 
         public void SetColor(Color color) {
             cordColor = color;
-            lineRenderer.material.color = cordColor;
+            if (lineRenderer) {
+                lineRenderer.material.SetColor("_TintColor", cordColor);
+            }
         }
     }
 }

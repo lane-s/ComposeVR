@@ -263,7 +263,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1417998939927070}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19272579, y: 0.5, z: 0.99166024}
+  m_LocalPosition: {x: -0.9165034, y: 0.5, z: 0.05352497}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4837514403879456}
@@ -599,7 +599,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff02081943a6fdf47a7057e1e7e35172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SourceJack: {fileID: 0}
   DestinationJack: {fileID: 0}
   AutoPlugDistance: 0.15
   MaxHandSeparationBeforeUnsnap: 0.14
@@ -635,6 +634,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87123092e0f24f1418ed74d994a8db6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closeEnoughDistance: 0.01
+  carryTimeBetweenSnaps: 0
   HasReachedTarget: 0
 --- !u!114 &114549354904918792
 MonoBehaviour:
@@ -740,7 +741,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.035
   m_Height: 0.2
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.08}

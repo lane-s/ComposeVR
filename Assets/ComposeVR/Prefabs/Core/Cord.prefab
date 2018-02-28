@@ -102,10 +102,9 @@ MonoBehaviour:
   RelaxAmount: 0.05
   RelaxTime: 150
   PruneDistance: 0.01
-  BranchHandleShowDistance: 0.1
-  FlowSpeed: 0.6
-  OnEmission: 0.55
-  OffEmission: 0.4
+  Flow: 1
+  OnEmission: 0.4
+  OffEmission: 0.25
   RelaxIterationsPerFrame: 2
 --- !u!114 &114682616248407738
 MonoBehaviour:
