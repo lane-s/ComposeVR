@@ -5,6 +5,23 @@ using ComposeVR;
 
 namespace ComposeVR {
 
+    public class MIDIData : WireData {
+        byte Type;
+        byte Note;
+        byte Velocity;
+
+        public MIDIData(byte Type, byte Note, byte Velocity) {
+            this.Type = Type;
+            this.Note = Note;
+            this.Velocity = Velocity;
+        }
+
+        public byte[] GetPackedMessage() {
+            byte[] msg = { Type, Note, Velocity };
+            return msg;
+        }
+    }
+
     public class DrumPad : MonoBehaviour {
 
         private byte noteByte;
@@ -16,14 +33,16 @@ namespace ComposeVR {
 
         private UDPClient client;
         private Color ogColor;
+        private OutputJack output;
 
         private bool onCooldown = false;
         private const float cooldownTime = 0.3f;
 
-        // Use this for initialization
-        void Start() {
-            client = GameObject.FindGameObjectWithTag("UDPClient").GetComponent<UDPClient>();
+        void Awake() {
             ogColor = GetComponentInChildren<MeshRenderer>().material.color;
+            output = transform.parent.GetComponentInChildren<OutputJack>();
+            float randNote = Random.value * 126;
+            midiNoteNumber = (int)randNote;
         }
 
         // Update is called once per frame
@@ -36,9 +55,11 @@ namespace ComposeVR {
             if (head) {
                 int noteVelocity = head.GetMalletVelocity();
                 if (!head.enteringFromBack && !head.IsOnCooldown() && noteVelocity > 0) {
+                    //Send note on message
                     byte velocityByte = (byte)noteVelocity;
-                    byte[] midiMessage = { 0x90, noteByte, velocityByte };
-                    client.sendBytes(midiMessage);
+                    MIDIData data = new MIDIData(0x90, noteByte, velocityByte);
+                    output.SendData(data);
+
                     head.struckPad = true;
                     GetComponentInChildren<MeshRenderer>().material.color = new Color(0, 1, 0);
                 }
@@ -49,10 +70,12 @@ namespace ComposeVR {
             MalletHead head = other.GetComponent<MalletHead>();
             if (head) {
                 if (head.struckPad) {
+                    //Send note off message
                     int noteVelocity = 110;
                     byte velocityByte = (byte)noteVelocity;
-                    byte[] midiMessage = { 0x80, noteByte, velocityByte };
-                    client.sendBytes(midiMessage);
+                    MIDIData data = new MIDIData(0x80, noteByte, velocityByte);
+                    output.SendData(data);
+
                     head.struckPad = false;
                     head.StartCooldown();
                 }

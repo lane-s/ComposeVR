@@ -100,7 +100,7 @@ MonoBehaviour:
   FlowTexture: {fileID: 2800000, guid: cde4fd05f37fd514c94b88fda1d4ad3e, type: 3}
   SegmentLength: 0.005
   RelaxAmount: 0.05
-  RelaxTime: 150
+  RelaxTime: 10
   PruneDistance: 0.01
   Flow: 1
   OnEmission: 0.4

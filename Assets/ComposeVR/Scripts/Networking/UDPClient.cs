@@ -6,6 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using ComposeVR;
+using System.IO;
+using Google.Protobuf;
 
 namespace ComposeVR {
     public class UDPClient : MonoBehaviour {
@@ -29,7 +31,7 @@ namespace ComposeVR {
 
             listener = new UdpClient(receivePort);
             listener.BeginReceive(new AsyncCallback(DataReceived), null);
-
+            outStream = new MemoryStream();
         }
 
         private void DataReceived(IAsyncResult ar) {
@@ -48,10 +50,15 @@ namespace ComposeVR {
 
         private Queue<byte[]> messageQueue;
 
-        public void send(string message) {
-            byte[] encoded_message = Encoding.UTF8.GetBytes(message);
+        private MemoryStream outStream;
+
+        public void send(Protocol.Event outgoingEvent) {
             try {
-                sender.SendTo(encoded_message, send_end_point);
+                outStream.SetLength(0);
+                outgoingEvent.WriteDelimitedTo(outStream);
+
+                byte[] data = outStream.ToArray();
+                sender.SendTo(data, send_end_point);
             }
             catch (Exception sendException) {
                 Debug.Log("Dgram send error: " + sendException.Message);

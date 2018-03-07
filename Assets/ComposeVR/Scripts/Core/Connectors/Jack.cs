@@ -42,13 +42,14 @@ namespace ComposeVR {
 
         public Transform PlugPrefab;
         public Transform CordPrefab;
+        public Transform ControllerDetectorPrefab;
 
         public Vector3 ShrinkPlugScale;
         public Transform PlugStart;
         public Transform PlugConnectionPoint;
         public Transform CordOrigin;
 
-        public SimpleTrigger ControllerDetector;
+        public Transform ControllerDetectorTransform;
         public SimpleTrigger PlugDetector;
         public SimpleTrigger BlockingDetector;
 
@@ -64,6 +65,7 @@ namespace ComposeVR {
         private Plug primaryPlug;
         private Plug secondaryPlug;
         private Cord cord;
+        private SimpleTrigger ControllerDetector;
 
         private Vector3 normalPlugScale;
 
@@ -72,6 +74,8 @@ namespace ComposeVR {
         private int numBlockers;
 
         private void Awake() {
+            ControllerDetector = (Instantiate(ControllerDetectorPrefab) as Transform).GetComponent<SimpleTrigger>();
+
             ControllerDetector.TriggerEnter += OnControllerEnterArea;
             ControllerDetector.TriggerExit += OnControllerLeaveArea;
 
@@ -90,6 +94,11 @@ namespace ComposeVR {
             StartCoroutine(FSM());
         }
 
+        private void Update() {
+            ControllerDetector.transform.position = ControllerDetectorTransform.position;
+            ControllerDetector.transform.rotation = ControllerDetectorTransform.rotation;
+        }
+
         /// <summary>
         /// Creates a new cord consisting of two connected plugs and a actual cord object. This is the cord that the jack will deploy when the user's controller comes near
         /// </summary>
@@ -97,10 +106,10 @@ namespace ComposeVR {
             primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation).GetComponent<Plug>();
 
+            secondaryPlug.transform.SetParent(PlugStart);
+            secondaryPlug.ShrinkCollider();
             secondaryPlug.DestinationJack = this;
 
-            primaryPlug.gameObject.SetActive(false);
-            secondaryPlug.gameObject.SetActive(false);
             normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
@@ -114,6 +123,8 @@ namespace ComposeVR {
             cord.SetFlowing(true);
                 
             cord.gameObject.SetActive(false);
+            primaryPlug.gameObject.SetActive(false);
+            secondaryPlug.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -252,7 +263,7 @@ namespace ComposeVR {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                     StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
                     secondaryPlug.DestinationJack = this;
-                    secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, secondaryPlug.transform.up);
+                    secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 
                     CreateCord();
                     state = State.Blocked;
@@ -280,6 +291,8 @@ namespace ComposeVR {
             p.gameObject.SetActive(true);
             p.transform.position = PlugStart.position;
             p.transform.rotation = PlugStart.rotation;
+            p.PlugTransform.position = PlugStart.position;
+            p.PlugTransform.rotation = PlugStart.rotation;
 
             p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
             p.PlugTransform.localScale = ShrinkPlugScale;

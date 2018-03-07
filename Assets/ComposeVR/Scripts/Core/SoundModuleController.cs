@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ComposeVR {
     [Serializable]
-    public class SoundModuleController : RemoteEventHandler {
+    public class SoundModuleController : RemoteEventHandler, IJackInput {
 
         [Serializable]
         public class SoundModuleConfiguration {
@@ -21,12 +21,13 @@ namespace ComposeVR {
 
             //Command DAW to create a new sound module
             RemoteEventEmitter.Instance.CreateSoundModule(GetID());
+
+            Module.GetInputJack().AddInput(this);
         } 
 
         public void SetController(IModule controller) {
             this.Module = controller;
         }
-
 
         /// <summary>
         /// Event triggered after the DAW has successfully created a new sound module
@@ -38,5 +39,33 @@ namespace ComposeVR {
             Debug.Log("Track created with id " + GetID());
             Module.GetBrowserController().OpenBrowser(GetID(), "Instrument");
         }
+
+        void IJackInput.ReceiveData(WireData data) {
+            MIDIData incomingMIDI = data as MIDIData;
+
+            if(incomingMIDI != null) {
+                PlayMIDINote(incomingMIDI);
+            }
+        }
+
+        private void PlayMIDINote(MIDIData data) {
+
+            Protocol.Module.MIDINote noteEvent = new Protocol.Module.MIDINote {
+                MIDI = Google.Protobuf.ByteString.CopyFrom(data.GetPackedMessage())
+            };
+
+            Protocol.ModuleEvent moduleEvent = new Protocol.ModuleEvent {
+                HandlerId = GetID(),
+                MidiNoteEvent = noteEvent
+            };
+
+            Protocol.Event remoteEvent = new Protocol.Event {
+                ModuleEvent = moduleEvent,
+                MethodName = "PlayMIDINote"
+            };
+
+            Module.GetUDPClient().send(remoteEvent);
+        }
+
     }
 }

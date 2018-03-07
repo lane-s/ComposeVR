@@ -147,7 +147,7 @@ namespace ComposeVR {
         public void OnItemSelected(int itemIndex) {
 
             //Deselect previously selected item
-            if(State.SelectedItemIndex != -1 && browserColumn.GetItemText(itemIndex).Equals(State.SelectedItemName)) {
+            if(State.SelectedItemIndex != -1 && browserColumn.GetItemText(State.SelectedItemIndex).Equals(State.SelectedItemName)) {
                 browserColumn.DeselectItem(State.SelectedItemIndex);
             }
 

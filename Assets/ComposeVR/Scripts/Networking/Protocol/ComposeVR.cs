@@ -45,20 +45,21 @@ namespace ComposeVR.Protocol {
             "Iy5Db21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkSAASNgoTY2xv",
             "c2VfYnJvd3Nlcl9ldmVudBgLIAEoCzIXLkNvbXBvc2VWUi5DbG9zZUJyb3dz",
             "ZXJIABJICh1vbl9icm93c2VyX2l0ZW1fY2hhbmdlZF9ldmVudBgMIAEoCzIf",
-            "LkNvbXBvc2VWUi5PbkJyb3dzZXJJdGVtQ2hhbmdlZEgAQgcKBWV2ZW50Iu0B",
+            "LkNvbXBvc2VWUi5PbkJyb3dzZXJJdGVtQ2hhbmdlZEgAQgcKBWV2ZW50Ip0C",
             "CgtNb2R1bGVFdmVudBISCgpoYW5kbGVyX2lkGAEgASgJEjQKEm9wZW5fYnJv",
             "d3Nlcl9ldmVudBgCIAEoCzIWLkNvbXBvc2VWUi5PcGVuQnJvd3NlckgAEkEK",
             "GWNyZWF0ZV9zb3VuZF9tb2R1bGVfZXZlbnQYAyABKAsyHC5Db21wb3NlVlIu",
             "Q3JlYXRlU291bmRNb2R1bGVIABJICh1vbl9zb3VuZF9tb2R1bGVfY3JlYXRl",
             "ZF9ldmVudBgEIAEoCzIfLkNvbXBvc2VWUi5PblNvdW5kTW9kdWxlQ3JlYXRl",
-            "ZEgAQgcKBWV2ZW50Qj4KHWNvbS5sYXM0dmMuY29tcG9zZXZyLnByb3RvY29s",
-            "QghQcm90b2NvbKoCEkNvbXBvc2VWUi5Qcm90b2NvbGIGcHJvdG8z"));
+            "ZEgAEi4KD21pZGlfbm90ZV9ldmVudBgFIAEoCzITLkNvbXBvc2VWUi5NSURJ",
+            "Tm90ZUgAQgcKBWV2ZW50Qj4KHWNvbS5sYXM0dmMuY29tcG9zZXZyLnByb3Rv",
+            "Y29sQghQcm90b2NvbKoCEkNvbXBvc2VWUi5Qcm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ComposeVR.Protocol.Module.ModuleReflection.Descriptor, global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Event), global::ComposeVR.Protocol.Event.Parser, new[]{ "MethodName", "BrowserEvent", "ModuleEvent" }, new[]{ "Event" }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.BrowserEvent), global::ComposeVR.Protocol.BrowserEvent.Parser, new[]{ "Path", "ChangeFilterPageEvent", "SelectFilterItemEvent", "ChangeResultsPageEvent", "LoadDeviceAtIndexEvent", "LoadDeviceWithNameEvent", "OnDeviceLoadedEvent", "OnDeviceNotFoundEvent", "OnBrowserColumnChangedEvent", "OnArrowVisibilityChangedEvent", "CloseBrowserEvent", "OnBrowserItemChangedEvent" }, new[]{ "Event" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.ModuleEvent), global::ComposeVR.Protocol.ModuleEvent.Parser, new[]{ "HandlerId", "OpenBrowserEvent", "CreateSoundModuleEvent", "OnSoundModuleCreatedEvent" }, new[]{ "Event" }, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.ModuleEvent), global::ComposeVR.Protocol.ModuleEvent.Parser, new[]{ "HandlerId", "OpenBrowserEvent", "CreateSoundModuleEvent", "OnSoundModuleCreatedEvent", "MidiNoteEvent" }, new[]{ "Event" }, null, null)
           }));
     }
     #endregion
@@ -919,6 +920,9 @@ namespace ComposeVR.Protocol {
         case EventOneofCase.OnSoundModuleCreatedEvent:
           OnSoundModuleCreatedEvent = other.OnSoundModuleCreatedEvent.Clone();
           break;
+        case EventOneofCase.MidiNoteEvent:
+          MidiNoteEvent = other.MidiNoteEvent.Clone();
+          break;
       }
 
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -973,6 +977,17 @@ namespace ComposeVR.Protocol {
       }
     }
 
+    /// <summary>Field number for the "midi_note_event" field.</summary>
+    public const int MidiNoteEventFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::ComposeVR.Protocol.Module.MIDINote MidiNoteEvent {
+      get { return eventCase_ == EventOneofCase.MidiNoteEvent ? (global::ComposeVR.Protocol.Module.MIDINote) event_ : null; }
+      set {
+        event_ = value;
+        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.MidiNoteEvent;
+      }
+    }
+
     private object event_;
     /// <summary>Enum of possible cases for the "event" oneof.</summary>
     public enum EventOneofCase {
@@ -980,6 +995,7 @@ namespace ComposeVR.Protocol {
       OpenBrowserEvent = 2,
       CreateSoundModuleEvent = 3,
       OnSoundModuleCreatedEvent = 4,
+      MidiNoteEvent = 5,
     }
     private EventOneofCase eventCase_ = EventOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1010,6 +1026,7 @@ namespace ComposeVR.Protocol {
       if (!object.Equals(OpenBrowserEvent, other.OpenBrowserEvent)) return false;
       if (!object.Equals(CreateSoundModuleEvent, other.CreateSoundModuleEvent)) return false;
       if (!object.Equals(OnSoundModuleCreatedEvent, other.OnSoundModuleCreatedEvent)) return false;
+      if (!object.Equals(MidiNoteEvent, other.MidiNoteEvent)) return false;
       if (EventCase != other.EventCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1021,6 +1038,7 @@ namespace ComposeVR.Protocol {
       if (eventCase_ == EventOneofCase.OpenBrowserEvent) hash ^= OpenBrowserEvent.GetHashCode();
       if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) hash ^= CreateSoundModuleEvent.GetHashCode();
       if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) hash ^= OnSoundModuleCreatedEvent.GetHashCode();
+      if (eventCase_ == EventOneofCase.MidiNoteEvent) hash ^= MidiNoteEvent.GetHashCode();
       hash ^= (int) eventCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1051,6 +1069,10 @@ namespace ComposeVR.Protocol {
         output.WriteRawTag(34);
         output.WriteMessage(OnSoundModuleCreatedEvent);
       }
+      if (eventCase_ == EventOneofCase.MidiNoteEvent) {
+        output.WriteRawTag(42);
+        output.WriteMessage(MidiNoteEvent);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1070,6 +1092,9 @@ namespace ComposeVR.Protocol {
       }
       if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnSoundModuleCreatedEvent);
+      }
+      if (eventCase_ == EventOneofCase.MidiNoteEvent) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MidiNoteEvent);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1103,6 +1128,12 @@ namespace ComposeVR.Protocol {
             OnSoundModuleCreatedEvent = new global::ComposeVR.Protocol.Module.OnSoundModuleCreated();
           }
           OnSoundModuleCreatedEvent.MergeFrom(other.OnSoundModuleCreatedEvent);
+          break;
+        case EventOneofCase.MidiNoteEvent:
+          if (MidiNoteEvent == null) {
+            MidiNoteEvent = new global::ComposeVR.Protocol.Module.MIDINote();
+          }
+          MidiNoteEvent.MergeFrom(other.MidiNoteEvent);
           break;
       }
 
@@ -1146,6 +1177,15 @@ namespace ComposeVR.Protocol {
             }
             input.ReadMessage(subBuilder);
             OnSoundModuleCreatedEvent = subBuilder;
+            break;
+          }
+          case 42: {
+            global::ComposeVR.Protocol.Module.MIDINote subBuilder = new global::ComposeVR.Protocol.Module.MIDINote();
+            if (eventCase_ == EventOneofCase.MidiNoteEvent) {
+              subBuilder.MergeFrom(MidiNoteEvent);
+            }
+            input.ReadMessage(subBuilder);
+            MidiNoteEvent = subBuilder;
             break;
           }
         }

@@ -210,9 +210,12 @@ namespace ComposeVR {
         private void UpdateBranchHandles() {
             for(int i = 0; i < path.Count; i++) {
                 for(int j = 0; j < nearbyControllers.Count; j++) {
-                    Vector3 diff = branchHandles[j].GetTrackedController().position - path[i];
-                    if(diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance()) {
-                        branchHandles[j].SetClosestPoint(i, diff.sqrMagnitude);
+                    if (branchHandles[j].GetTrackedController() != null) {
+                        Vector3 diff = branchHandles[j].GetTrackedController().position - path[i];
+
+                        if (diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance()) {
+                            branchHandles[j].SetClosestPoint(i, diff.sqrMagnitude);
+                        }
                     }
                 }
             }

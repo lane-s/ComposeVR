@@ -10,8 +10,11 @@ namespace ComposeVR {
     public sealed class SoundModuleObject : MonoBehaviour, IModule {
 
         public SoundModuleController Module;
+        private InputJack input;
 
         void Awake() {
+            input = GetComponentInChildren<InputJack>();
+
             Module.SetController(this);
             Module.Initialize();
         }
@@ -30,10 +33,20 @@ namespace ComposeVR {
         DeviceBrowserController IModule.GetBrowserController() {
             return ComposeVRManager.Instance.GetBrowserObject().Controller;
         }
+
+        UDPClient IModule.GetUDPClient() {
+            return ComposeVRManager.Instance.GetUDPClient();
+        }
+
+        InputJack IModule.GetInputJack() {
+            return input;
+        }
     }
 
     public interface IModule {
         void PositionBrowserAtModule();
         DeviceBrowserController GetBrowserController();
+        UDPClient GetUDPClient();
+        InputJack GetInputJack();
     }
 }

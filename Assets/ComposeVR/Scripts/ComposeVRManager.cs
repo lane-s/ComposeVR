@@ -5,15 +5,21 @@ using UnityEngine;
 namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
 
-        private DeviceBrowserObject BrowserObject;
+        private DeviceBrowserObject browserObject;
+        private UDPClient udpClient;
 
         // Use this for initialization
         void Awake() {
-            BrowserObject = GameObject.FindGameObjectWithTag("DeviceBrowser").GetComponent<DeviceBrowserObject>();
+            browserObject = GameObject.FindGameObjectWithTag("DeviceBrowser").GetComponent<DeviceBrowserObject>();
+            udpClient = GameObject.FindGameObjectWithTag("UDPClient").GetComponent<UDPClient>();
         }
 
         public DeviceBrowserObject GetBrowserObject() {
-            return BrowserObject;
+            return browserObject;
+        }
+
+        public UDPClient GetUDPClient() {
+            return udpClient;
         }
     }
 }

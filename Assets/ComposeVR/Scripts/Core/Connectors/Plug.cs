@@ -33,9 +33,13 @@ namespace ComposeVR {
         private float normalSnapSpeed;
         private bool snapCooldown;
         private Vector3 controllerPositionOnJackAxis;
+
+        private Vector3 plugColliderCenter;
+        private float plugColliderHeight;
         
         //We have a small buffer distance so that the plug doesn't begin snapping to a jack when it's likely to immediately snap back to the controller
         private const float BUFFER_DISTANCE = 0.02f;
+        private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.02f;
 
         private IEnumerator snapToJackRoutine;
 
@@ -49,6 +53,9 @@ namespace ComposeVR {
             positionSnap = PlugTransform.GetComponent<SnapToTargetPosition>();
             rotationSnap = PlugTransform.GetComponent<SnapToTargetRotation>();
             snapCooldown = false;
+
+            plugColliderCenter = PlugTransform.GetComponent<CapsuleCollider>().center;
+            plugColliderHeight = PlugTransform.GetComponent<CapsuleCollider>().height;
         }
 
         /// <summary>
@@ -110,6 +117,10 @@ namespace ComposeVR {
             targetJack = DestinationJack;
             DestinationJack.SetState(Jack.State.Free);
             DestinationJack = null;
+
+            transform.SetParent(null);
+            PlugTransform.GetComponent<CapsuleCollider>().center = plugColliderCenter;
+            PlugTransform.GetComponent<CapsuleCollider>().height = plugColliderHeight;
         }
 
         private void PlugIntoJack() {
@@ -285,11 +296,17 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            if(DestinationJack != null) {
-                ConnectToDestinationJack();
-            }
+            ConnectToDestinationJack();
+
+            transform.SetParent(DestinationJack.PlugStart);
+            ShrinkCollider();
 
             yield return null;
+        }
+
+        public void ShrinkCollider() {
+            PlugTransform.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, PLUGGED_IN_COLLIDER_HEIGHT);
+            PlugTransform.GetComponent<CapsuleCollider>().height = PLUGGED_IN_COLLIDER_HEIGHT;
         }
 
         private void ConnectToDestinationJack() {

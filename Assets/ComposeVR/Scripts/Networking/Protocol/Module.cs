@@ -26,15 +26,16 @@ namespace ComposeVR.Protocol.Module {
           string.Concat(
             "CgxNb2R1bGUucHJvdG8SCUNvbXBvc2VWUiImChFDcmVhdGVTb3VuZE1vZHVs",
             "ZRIRCglzZW5kZXJfaWQYASABKAkiFgoUT25Tb3VuZE1vZHVsZUNyZWF0ZWQi",
-            "IgoLT3BlbkJyb3dzZXISEwoLZGV2aWNlX3R5cGUYAiABKAlCOwodY29tLmxh",
-            "czR2Yy5jb21wb3NldnIucHJvdG9jb2yqAhlDb21wb3NlVlIuUHJvdG9jb2wu",
-            "TW9kdWxlYgZwcm90bzM="));
+            "IgoLT3BlbkJyb3dzZXISEwoLZGV2aWNlX3R5cGUYAiABKAkiGAoITUlESU5v",
+            "dGUSDAoETUlESRgBIAEoDEI7Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90",
+            "b2NvbKoCGUNvbXBvc2VWUi5Qcm90b2NvbC5Nb2R1bGViBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.CreateSoundModule), global::ComposeVR.Protocol.Module.CreateSoundModule.Parser, new[]{ "SenderId" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OnSoundModuleCreated), global::ComposeVR.Protocol.Module.OnSoundModuleCreated.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OpenBrowser), global::ComposeVR.Protocol.Module.OpenBrowser.Parser, new[]{ "DeviceType" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OpenBrowser), global::ComposeVR.Protocol.Module.OpenBrowser.Parser, new[]{ "DeviceType" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.MIDINote), global::ComposeVR.Protocol.Module.MIDINote.Parser, new[]{ "MIDI" }, null, null, null)
           }));
     }
     #endregion
@@ -392,6 +393,135 @@ namespace ComposeVR.Protocol.Module {
             break;
           case 18: {
             DeviceType = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class MIDINote : pb::IMessage<MIDINote> {
+    private static readonly pb::MessageParser<MIDINote> _parser = new pb::MessageParser<MIDINote>(() => new MIDINote());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<MIDINote> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::ComposeVR.Protocol.Module.ModuleReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public MIDINote() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public MIDINote(MIDINote other) : this() {
+      mIDI_ = other.mIDI_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public MIDINote Clone() {
+      return new MIDINote(this);
+    }
+
+    /// <summary>Field number for the "MIDI" field.</summary>
+    public const int MIDIFieldNumber = 1;
+    private pb::ByteString mIDI_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pb::ByteString MIDI {
+      get { return mIDI_; }
+      set {
+        mIDI_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as MIDINote);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(MIDINote other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (MIDI != other.MIDI) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (MIDI.Length != 0) hash ^= MIDI.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (MIDI.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(MIDI);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (MIDI.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(MIDI);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(MIDINote other) {
+      if (other == null) {
+        return;
+      }
+      if (other.MIDI.Length != 0) {
+        MIDI = other.MIDI;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            MIDI = input.ReadBytes();
             break;
           }
         }

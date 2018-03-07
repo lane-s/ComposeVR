@@ -20,7 +20,6 @@ namespace ComposeVR {
             }
         }
         
-
         private IEventEmitter Emitter;
 
         public void SetEmitter(IEventEmitter e) {

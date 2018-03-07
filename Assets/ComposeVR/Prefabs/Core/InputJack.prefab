@@ -134,10 +134,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4781351369864010}
-  - component: {fileID: 65826752011766988}
-  - component: {fileID: 114377606990020054}
   m_Layer: 11
-  m_Name: ControllerDetector
+  m_Name: ControllerDetectorTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -190,7 +188,7 @@ Transform:
   m_GameObject: {fileID: 1812467554585912}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.5396457, y: 0.18176684, z: -0.012869223}
-  m_LocalScale: {x: 8.579426, y: 6.5383573, z: 8.579426}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4771745816092824}
   - {fileID: 4781351369864010}
@@ -332,18 +330,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65826752011766988
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1943592690110314}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95397691931756652
 Animator:
   serializedVersion: 3
@@ -361,17 +347,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114377606990020054
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1943592690110314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc748bd3d640b424299809d973084cd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114466034488226378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -396,11 +371,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlugPrefab: {fileID: 4601306996117448, guid: 19d18ba3efad9014685a901d445e467d, type: 2}
   CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
+  ControllerDetectorPrefab: {fileID: 4955564819328184, guid: e13a495b9bb01e140b223f86439e9e0a,
+    type: 2}
   ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   PlugStart: {fileID: 4544589547832290}
   PlugConnectionPoint: {fileID: 4678754457440764}
   CordOrigin: {fileID: 4917279820275952}
-  ControllerDetector: {fileID: 114377606990020054}
+  ControllerDetectorTransform: {fileID: 4781351369864010}
   PlugDetector: {fileID: 114919387775607300}
   BlockingDetector: {fileID: 114976245245507260}
   ExtendDistance: 0.32
