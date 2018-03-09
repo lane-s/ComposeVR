@@ -41,11 +41,11 @@ namespace ComposeVR {
         public EventHandler<JackEventArgs> PlugConnected;
         public EventHandler<JackEventArgs> PlugDisconnected;
 
-        private void Awake() {
+        private bool blocked;
 
+        private void Awake() {
             PlugDetector.TriggerEnter += OnPlugEnterArea;
             PlugDetector.TriggerExit += OnPlugLeaveArea;
-
         }
 
         /// <summary>
@@ -73,6 +73,23 @@ namespace ComposeVR {
             }
         }
 
+        public bool IsBlocked() {
+            return blocked;
+        }
+
+        public void Block() {
+            if (GetComponent<CordDispenser>()) {
+                GetComponent<CordDispenser>().Block();
+            }
+            blocked = true;
+        }
+
+        public void Unblock() {
+            if (GetComponent<CordDispenser>()) {
+                GetComponent<CordDispenser>().Unblock();
+            }
+            blocked = false;
+        }
 
         public void Connect(Cord connectedCord, LinkedListNode<BranchNode> plugNodeInCord) {
             if(PlugConnected != null) {

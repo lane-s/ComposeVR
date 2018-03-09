@@ -190,6 +190,11 @@ namespace ComposeVR {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                     StartCoroutine(ExtendPlug(secondaryPlug, SecondaryPlugTarget.position));
                     secondaryPlug.DestinationJack = GetComponent<Jack>();
+
+                    if (GetComponent<Jack>()) {
+                        GetComponent<Jack>().Block();
+                    }
+
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 
                     CreateCord();

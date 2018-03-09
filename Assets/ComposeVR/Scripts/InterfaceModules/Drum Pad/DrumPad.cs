@@ -56,16 +56,14 @@ namespace ComposeVR {
             MalletHead head = other.GetComponent<MalletHead>();
             if (head) {
                 int noteVelocity = head.GetMalletVelocity();
-                if (!head.enteringFromBack && !head.IsOnCooldown() && noteVelocity > 0) {
-                    //Send note on message
-                    byte velocityByte = (byte)noteVelocity;
-                    MIDIData data = new MIDIData(144, noteByte, velocityByte);
-                    output.SendData(data);
+                //Send note on message
+                byte velocityByte = (byte)noteVelocity;
+                MIDIData data = new MIDIData(144, noteByte, velocityByte);
+                output.SendData(data);
 
-                    head.struckPad = true;
-                    GetComponentInChildren<MeshRenderer>().material.color = HitColor;
-                    Debug.Log("Playing note: " + noteByte);
-                }
+                head.struckPad = true;
+                GetComponentInChildren<MeshRenderer>().material.color = HitColor;
+                Debug.Log("Playing note: " + noteByte);
             }
         }
 

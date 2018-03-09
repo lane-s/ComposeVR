@@ -69,16 +69,11 @@ namespace ComposeVR {
             if (targetJack == null && !snapCooldown) {
                 foreach (Jack j in nearbyJacks) {
 
-                    //If the target jack has a cord dispenser, make sure it is not currently dispensing a cord
-                    if (j.GetComponent<CordDispenser>()) {
-                        if(j.GetComponent<CordDispenser>().GetState() != CordDispenser.State.Free) {
-                            continue;
+                    if (!j.IsBlocked()) {
+                        targetJack = j;
+                        if (TrySnapToJack()) {
+                            break;
                         }
-                    }
-
-                    targetJack = j;
-                    if (TrySnapToJack()) {
-                        break;
                     }
                 }
             }
@@ -243,9 +238,7 @@ namespace ComposeVR {
         /// </summary>
         /// <returns></returns>
         private IEnumerator SnapToJack() {
-            if (targetJack.GetComponent<CordDispenser>()) {
-                targetJack.GetComponent<CordDispenser>().Block();
-            }
+            targetJack.Block();
 
             PlugTransform.SetParent(null);
 
@@ -338,9 +331,7 @@ namespace ComposeVR {
             StopCoroutine(snapToJackRoutine);
             snapToJackRoutine = null;
 
-            if (targetJack.GetComponent<CordDispenser>()) {
-                targetJack.GetComponent<CordDispenser>().Unblock();
-            }
+            targetJack.Unblock();
 
             targetJack = null;
         }
@@ -407,8 +398,10 @@ namespace ComposeVR {
 
         private void OnDisable() {
             foreach(Jack j in nearbyJacks) {
-                if (j.GetComponent<CordDispenser>()) {
-                    j.GetComponent<CordDispenser>().OnBlockerDestroyed();
+                if (j != null) {
+                    if (j.GetComponent<CordDispenser>()) {
+                        j.GetComponent<CordDispenser>().OnBlockerDestroyed();
+                    }
                 }
             }
         }
