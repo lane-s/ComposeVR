@@ -33,6 +33,7 @@ namespace ComposeVR {
         private float normalSnapSpeed;
         private bool snapCooldown;
         private Vector3 controllerPositionOnJackAxis;
+        private bool snappingEnabled = true;
 
         private Vector3 plugColliderCenter;
         private float plugColliderHeight;
@@ -66,7 +67,7 @@ namespace ComposeVR {
         /// Try to snap to any jacks that are near the plug
         /// </summary>
         private void SnapToNearbyJacks() {
-            if (targetJack == null && !snapCooldown) {
+            if (targetJack == null && !snapCooldown && snappingEnabled) {
                 foreach (Jack j in nearbyJacks) {
 
                     if (!j.IsBlocked()) {
@@ -394,6 +395,14 @@ namespace ComposeVR {
 
         public void RemoveNearbyJack(Jack j) {
             nearbyJacks.Remove(j);
+        }
+
+        public void EnableSnapping() {
+            snappingEnabled = true;
+        }
+
+        public void DisableSnapping() {
+            snappingEnabled = false;
         }
 
         private void OnDisable() {

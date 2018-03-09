@@ -163,7 +163,9 @@ namespace ComposeVR {
 
                 //And grab the plug instead
                 connectedPlug.gameObject.SetActive(true);
+                connectedPlug.DisableSnapping();
                 connectedPlug.transform.SetParent(null);
+                connectedPlug.GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
 
                 //Create a cord between the plug and the branch handle
                 branchCord = Instantiate(CordPrefab).GetComponent<Cord>();
@@ -186,6 +188,9 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
+            yield return new WaitForEndOfFrame();
+
+            connectedPlug.EnableSnapping();
             yield return null;
         }
     }
