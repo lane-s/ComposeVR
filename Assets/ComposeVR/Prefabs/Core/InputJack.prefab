@@ -11,21 +11,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1812467554585912}
   m_IsPrefabParent: 1
---- !u!1 &1153118465427692
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4917279820275952}
-  m_Layer: 0
-  m_Name: CordOrigin
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1203453401177640
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,6 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4658898823782868}
   - component: {fileID: 114546479161625402}
+  - component: {fileID: 114551297114836156}
   - component: {fileID: 114466034488226378}
   m_Layer: 0
   m_Name: InputJack
@@ -152,7 +138,7 @@ Transform:
   m_LocalScale: {x: 0.143214, y: 0.08316197, z: 0.08815844}
   m_Children: []
   m_Father: {fileID: 4658898823782868}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4461722983459164
 Transform:
@@ -165,7 +151,7 @@ Transform:
   m_LocalScale: {x: 0.35047174, y: 0.28936982, z: 0.2518591}
   m_Children: []
   m_Father: {fileID: 4658898823782868}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4544589547832290
 Transform:
@@ -187,14 +173,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1812467554585912}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.5396457, y: 0.18176684, z: -0.012869223}
+  m_LocalPosition: {x: -1.4855055, y: 0.5, z: -0.5308818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4771745816092824}
   - {fileID: 4781351369864010}
   - {fileID: 4544589547832290}
   - {fileID: 4678754457440764}
-  - {fileID: 4917279820275952}
   - {fileID: 4461722983459164}
   - {fileID: 4424869153711302}
   m_Father: {fileID: 0}
@@ -238,19 +223,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4658898823782868}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4917279820275952
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1153118465427692}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0.0224}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4658898823782868}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23895910815139252
 MeshRenderer:
@@ -369,19 +341,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlugPrefab: {fileID: 4601306996117448, guid: 19d18ba3efad9014685a901d445e467d, type: 2}
-  CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
-  ControllerDetectorPrefab: {fileID: 4955564819328184, guid: e13a495b9bb01e140b223f86439e9e0a,
-    type: 2}
-  ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   PlugStart: {fileID: 4544589547832290}
   PlugConnectionPoint: {fileID: 4678754457440764}
-  CordOrigin: {fileID: 4917279820275952}
-  ControllerDetectorTransform: {fileID: 4781351369864010}
   PlugDetector: {fileID: 114919387775607300}
-  BlockingDetector: {fileID: 114976245245507260}
-  ExtendDistance: 0.32
-  ExtendSpeed: 1
+--- !u!114 &114551297114836156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1812467554585912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c224b712f199b4594ddc801f739ab2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlugPrefab: {fileID: 114143391533786518, guid: 19d18ba3efad9014685a901d445e467d,
+    type: 2}
+  CordPrefab: {fileID: 114001894019258860, guid: 7f762a0c541fada428a5c118dee6f05d,
+    type: 2}
+  ControllerDetectorPrefab: {fileID: 114463231382499086, guid: e13a495b9bb01e140b223f86439e9e0a,
+    type: 2}
+  PlugStart: {fileID: 4544589547832290}
+  SecondaryPlugTarget: {fileID: 4678754457440764}
+  BlockerDetector: {fileID: 114976245245507260}
+  ControllerDetectorVolume: {fileID: 4781351369864010}
+  ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
+  ExtendDistance: 0.3
+  ExtendSpeed: 3
 --- !u!114 &114919387775607300
 MonoBehaviour:
   m_ObjectHideFlags: 1

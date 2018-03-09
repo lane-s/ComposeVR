@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33369033635176706}
   - component: {fileID: 136706709920088884}
   - component: {fileID: 23000943332070038}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Mallet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 136864207639958010}
   - component: {fileID: 23608940652344910}
   - component: {fileID: 114002737503539880}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: MalletHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,8 +55,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1881060996873590}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.791, z: -0}
-  m_LocalScale: {x: 2.1747835, y: -0.1273184, z: 1.9743055}
+  m_LocalPosition: {x: -0.000000045633, y: 0.791, z: 7.8426e-10}
+  m_LocalScale: {x: 2.8643088, y: -0.1676853, z: 2.6002684}
   m_Children: []
   m_Father: {fileID: 4662647190859188}
   m_RootOrder: 0
@@ -67,9 +67,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1088301295149304}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.37871915, y: -0.0008209795, z: -0.026146889, w: 0.92514193}
+  m_LocalPosition: {x: -0.0015, y: 0.0752, z: 0.0718}
+  m_LocalScale: {x: 0.020347925, y: 0.1528927, z: 0.020347925}
   m_Children:
   - {fileID: 4353544254265724}
   m_Father: {fileID: 0}
@@ -164,6 +164,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4d86ba991828642a318a9e0573338f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minVelocity: 1
+  maxVelocity: 20
+  enteringFromBack: 0
+  struckPad: 0
+  controller: {fileID: 0}
 --- !u!136 &136706709920088884
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -682,19 +682,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlugPrefab: {fileID: 4601306996117448, guid: 19d18ba3efad9014685a901d445e467d, type: 2}
-  CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
-  ControllerDetectorPrefab: {fileID: 4955564819328184, guid: e13a495b9bb01e140b223f86439e9e0a,
-    type: 2}
-  ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   PlugStart: {fileID: 4118163631068634}
   PlugConnectionPoint: {fileID: 4063007530075230}
-  CordOrigin: {fileID: 4750188936004892}
-  ControllerDetectorTransform: {fileID: 4624918502064614}
   PlugDetector: {fileID: 114911279688374600}
-  BlockingDetector: {fileID: 114663173534973348}
-  ExtendDistance: 0.32
-  ExtendSpeed: 1
 --- !u!114 &114663173534973348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -749,6 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f67e26a6e5f3c4088a808301632e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HitColor: {r: 0.5658235, g: 1, b: 0.5514706, a: 1}
 --- !u!114 &114911279688374600
 MonoBehaviour:
   m_ObjectHideFlags: 1

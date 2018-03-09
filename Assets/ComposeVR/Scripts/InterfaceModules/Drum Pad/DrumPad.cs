@@ -24,6 +24,8 @@ namespace ComposeVR {
 
     public class DrumPad : MonoBehaviour {
 
+        public Color HitColor;
+
         private byte noteByte;
 
         public int midiNoteNumber {
@@ -57,11 +59,12 @@ namespace ComposeVR {
                 if (!head.enteringFromBack && !head.IsOnCooldown() && noteVelocity > 0) {
                     //Send note on message
                     byte velocityByte = (byte)noteVelocity;
-                    MIDIData data = new MIDIData(0x90, noteByte, velocityByte);
+                    MIDIData data = new MIDIData(144, noteByte, velocityByte);
                     output.SendData(data);
 
                     head.struckPad = true;
-                    GetComponentInChildren<MeshRenderer>().material.color = new Color(0, 1, 0);
+                    GetComponentInChildren<MeshRenderer>().material.color = HitColor;
+                    Debug.Log("Playing note: " + noteByte);
                 }
             }
         }
@@ -73,7 +76,7 @@ namespace ComposeVR {
                     //Send note off message
                     int noteVelocity = 110;
                     byte velocityByte = (byte)noteVelocity;
-                    MIDIData data = new MIDIData(0x80, noteByte, velocityByte);
+                    MIDIData data = new MIDIData(128, noteByte, velocityByte);
                     output.SendData(data);
 
                     head.struckPad = false;

@@ -58,22 +58,27 @@ namespace ComposeVR {
             plugColliderHeight = PlugTransform.GetComponent<CapsuleCollider>().height;
         }
 
-        /// <summary>
-        /// Try to snap to nearby jacks
-        /// </summary>
         void Update() {
             SnapToNearbyJacks();
         }
 
+        /// <summary>
+        /// Try to snap to any jacks that are near the plug
+        /// </summary>
         private void SnapToNearbyJacks() {
             if (targetJack == null && !snapCooldown) {
                 foreach (Jack j in nearbyJacks) {
 
-                    if (j.GetState() == Jack.State.Free) {
-                        targetJack = j;
-                        if (TrySnapToJack()) {
-                            break;
+                    //If the target jack has a cord dispenser, make sure it is not currently dispensing a cord
+                    if (j.GetComponent<CordDispenser>()) {
+                        if(j.GetComponent<CordDispenser>().GetState() != CordDispenser.State.Free) {
+                            continue;
                         }
+                    }
+
+                    targetJack = j;
+                    if (TrySnapToJack()) {
+                        break;
                     }
                 }
             }
@@ -115,7 +120,6 @@ namespace ComposeVR {
             DestinationJack.Disconnect(connectedCord, plugNodeInCord);
 
             targetJack = DestinationJack;
-            DestinationJack.SetState(Jack.State.Free);
             DestinationJack = null;
 
             transform.SetParent(null);
@@ -239,7 +243,10 @@ namespace ComposeVR {
         /// </summary>
         /// <returns></returns>
         private IEnumerator SnapToJack() {
-            targetJack.SetState(Jack.State.Blocked);
+            if (targetJack.GetComponent<CordDispenser>()) {
+                targetJack.GetComponent<CordDispenser>().Block();
+            }
+
             PlugTransform.SetParent(null);
 
             rotationSnap.SnapToTarget(targetJack.PlugConnectionPoint.rotation, RotationSnapSpeed);
@@ -331,7 +338,10 @@ namespace ComposeVR {
             StopCoroutine(snapToJackRoutine);
             snapToJackRoutine = null;
 
-            targetJack.SetState(Jack.State.Free);
+            if (targetJack.GetComponent<CordDispenser>()) {
+                targetJack.GetComponent<CordDispenser>().Unblock();
+            }
+
             targetJack = null;
         }
 
@@ -397,7 +407,9 @@ namespace ComposeVR {
 
         private void OnDisable() {
             foreach(Jack j in nearbyJacks) {
-                j.OnBlockerDestroyed();
+                if (j.GetComponent<CordDispenser>()) {
+                    j.GetComponent<CordDispenser>().OnBlockerDestroyed();
+                }
             }
         }
     }
