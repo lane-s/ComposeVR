@@ -58,6 +58,10 @@ namespace ComposeVR {
         void Update() {
             controllerDetector.transform.position = ControllerDetectorVolume.position;
             controllerDetector.transform.rotation = ControllerDetectorVolume.rotation;
+
+            if (Input.GetKeyDown(KeyCode.W)) {
+                Debug.Log(transform.parent.gameObject.name+" state: "+state);
+            }
         }
 
         /// <summary>
@@ -163,6 +167,7 @@ namespace ComposeVR {
                     foreach(VRTK_InteractGrab c in nearbyControllers) {
                         GameObject grabbedObject = c.GetGrabbedObject();
                         if(grabbedObject != null) {
+                            Debug.Log("Extend blocked by " + grabbedObject.name);
                             holdingObject = true;
                             break;
                         }
@@ -171,6 +176,9 @@ namespace ComposeVR {
                     if (!holdingObject && numBlockers == 0) {
                         state = State.WaitingForGrab;
                         break;
+                    }
+                    else {
+                        Debug.Log("Can't extend. " + numBlockers + " blockers");
                     }
                 }
                 yield return new WaitForEndOfFrame();
@@ -263,6 +271,7 @@ namespace ComposeVR {
         }
 
         public void Block() {
+            Debug.Log("Dispenser blocked by plug");
             if (state == State.Free) {
                 state = State.Blocked;
             }

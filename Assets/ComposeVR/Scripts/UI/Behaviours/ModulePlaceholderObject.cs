@@ -15,15 +15,23 @@ namespace ComposeVR {
         private float scaleVelocity = 0;
 
         private void Awake() {
-            //Replace with code that makes use of dictionaries
+            //TODO: Create robust placeholder system that generates a placeholder based on the given prefab
             if (GetComponent<MeshRenderer>()) {
-                initialColor = GetComponent<MeshRenderer>().material.color;
+                Material mat = GetComponent<MeshRenderer>().material;
+
+                if (mat.HasProperty("_Color")) {
+                    initialColor = mat.color;
+                }
             }
             else {
                 foreach (Transform child in transform) {
                     foreach (Transform nestedChild in child) {
                         if (nestedChild.GetComponent<MeshRenderer>()) {
-                            initialColor = nestedChild.GetComponent<MeshRenderer>().material.color;
+                            Material mat = nestedChild.GetComponent<MeshRenderer>().material;
+                            if (mat.HasProperty("_Color")) {
+                                initialColor = mat.color;
+                                break;
+                            }
                         }
                     }
                 }
@@ -78,7 +86,11 @@ namespace ComposeVR {
 
         private void setColorRecursive(Transform t, Color col) {
             if (t.GetComponent<MeshRenderer>()) {
-                t.GetComponent<MeshRenderer>().material.color = col;
+                Material mat = t.GetComponent<MeshRenderer>().material;
+
+                if (mat.HasProperty("_Color")) {
+                    t.GetComponent<MeshRenderer>().material.color = col;
+                }
             }
 
             foreach (Transform child in t) {

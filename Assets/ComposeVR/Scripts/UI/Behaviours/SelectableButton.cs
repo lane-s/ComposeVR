@@ -22,14 +22,12 @@ namespace ComposeVR {
             ColorBlock cb = button.colors;
             cb.normalColor = cb.pressedColor;
             button.colors = cb;
-            Debug.Log("Selecting " + buttonText.text);
         }
 
         public void Deselect() {
             ColorBlock cb = button.colors;
             cb.normalColor = normalColor;
             button.colors = cb;
-            Debug.Log("Deselecting " + buttonText.text);
         }
 
         public Button GetButton() {

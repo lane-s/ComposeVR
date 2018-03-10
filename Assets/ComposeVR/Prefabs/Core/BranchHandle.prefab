@@ -143,7 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlugPrefab: {fileID: 4601306996117448, guid: 19d18ba3efad9014685a901d445e467d, type: 2}
   CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
-  ShowDistanceSquared: 0.05
+  ShowDistanceSquared: 0.0375
   SnapSpeed: 1
   ClosestBranchPointToEnd: 10
 --- !u!114 &114710451627392906

@@ -5895,7 +5895,7 @@ GameObject:
   - component: {fileID: 424876218}
   - component: {fileID: 424876219}
   m_Layer: 0
-  m_Name: MalletContext
+  m_Name: WandContext
   m_TagString: Mallet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12282,6 +12282,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 942949818}
+--- !u!1 &945465019 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1881060996873590, guid: 01c4e16551ad36844a34abd5ce70c900,
+    type: 2}
+  m_PrefabInternal: {fileID: 1178742956}
+--- !u!114 &945465025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 945465019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: {fileID: 1933670545}
 --- !u!1 &958901224
 GameObject:
   m_ObjectHideFlags: 0
@@ -12526,7 +12543,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 975859774}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 174429e04b0388249a137b2dc0050b66, type: 3}
   m_Name: 
@@ -16738,7 +16755,7 @@ GameObject:
   - component: {fileID: 1169261714}
   - component: {fileID: 1169261715}
   m_Layer: 0
-  m_Name: MalletContext
+  m_Name: WandContext
   m_TagString: Mallet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16936,13 +16953,13 @@ Prefab:
       propertyPath: controller
       value: 
       objectReference: {fileID: 1933670545}
-    - target: {fileID: 4662647190859188, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -1.458
+    - target: {fileID: 1088301295149304, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
+      propertyPath: m_Name
+      value: Wand
       objectReference: {fileID: 0}
-    - target: {fileID: 4662647190859188, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 3.244
+    - target: {fileID: 1881060996873590, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
+      propertyPath: m_Name
+      value: Tip
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
@@ -17939,6 +17956,14 @@ Prefab:
       propertyPath: controller
       value: 
       objectReference: {fileID: 734900877}
+    - target: {fileID: 1088301295149304, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
+      propertyPath: m_Name
+      value: Wand
+      objectReference: {fileID: 0}
+    - target: {fileID: 1881060996873590, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
+      propertyPath: m_Name
+      value: Tip
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 01c4e16551ad36844a34abd5ce70c900, type: 2}
   m_IsPrefabParent: 0
@@ -24133,6 +24158,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1801401624}
+--- !u!1 &1801799482 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1881060996873590, guid: 01c4e16551ad36844a34abd5ce70c900,
+    type: 2}
+  m_PrefabInternal: {fileID: 1283481010}
+--- !u!114 &1801799488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1801799482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: {fileID: 734900877}
 --- !u!1 &1802694406
 GameObject:
   m_ObjectHideFlags: 0
@@ -26422,7 +26464,7 @@ MonoBehaviour:
   customRaycast: {fileID: 0}
   layersToIgnore:
     serializedVersion: 2
-    m_Bits: 1028
+    m_Bits: 19460
   pointerOriginSmoothingSettings:
     smoothsPosition: 0
     maxAllowedPerFrameDistanceDifference: 0.003

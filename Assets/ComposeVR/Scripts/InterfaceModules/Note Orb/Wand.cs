@@ -6,13 +6,13 @@ using ComposeVR;
 
 namespace ComposeVR {
 
-    public class MalletHead : MonoBehaviour {
+    public class Wand : MonoBehaviour {
 
         public float minVelocity = 1f;
         public float maxVelocity = 25.0f;
 
         public bool enteringFromBack;
-        public bool struckPad;
+        public bool intersectingOrb;
         public Transform controller;
 
         private VRTK_ControllerReference controllerReference;
