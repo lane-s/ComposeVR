@@ -27,7 +27,7 @@ namespace ComposeVR {
 
         public string GetID() {
             if (id == null) {
-                id = Guid.NewGuid().ToString();
+                id = ComposeVRManager.Instance.GetNewHandlerID();
             }
             return id;
         }

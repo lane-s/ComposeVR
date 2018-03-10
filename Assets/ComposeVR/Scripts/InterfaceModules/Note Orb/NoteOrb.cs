@@ -6,18 +6,18 @@ using VRTK;
 namespace ComposeVR {
 
     public class MIDIData : WireData {
-        byte Type;
-        byte Note;
-        byte Velocity;
+        public byte Status;
+        public byte Note;
+        public byte Velocity;
 
-        public MIDIData(byte Type, byte Note, byte Velocity) {
-            this.Type = Type;
+        public MIDIData(byte Status, byte Note, byte Velocity) {
+            this.Status = Status;
             this.Note = Note;
             this.Velocity = Velocity;
         }
 
         public byte[] GetPackedMessage() {
-            byte[] msg = { Type, Note, Velocity };
+            byte[] msg = { Status, Note, Velocity };
             return msg;
         }
     }
@@ -44,6 +44,11 @@ namespace ComposeVR {
         private const float cooldownTime = 0.3f;
         private VRTK_ControllerReference controllerReference;
 
+        private const byte NOTE_ON_STATUS = 0x90;
+        private const byte NOTE_OFF_STATUS = 0x80;
+
+        private HashSet<VRTK_ControllerReference> nearbyControllers;
+
         void Awake() {
             Material mat = GetComponentInChildren<MeshRenderer>().material;
             originalEmissionGain = mat.GetFloat("_EmissionGain");
@@ -51,6 +56,8 @@ namespace ComposeVR {
             output = transform.parent.GetComponentInChildren<OutputJack>();
             float randNote = Random.value * 126;
             midiNoteNumber = (int)randNote;
+
+            nearbyControllers = new HashSet<VRTK_ControllerReference>();
         }
 
         // Update is called once per frame
@@ -62,19 +69,23 @@ namespace ComposeVR {
             Wand head = other.GetComponent<Wand>();
             if (head) {
                 Material mat = GetComponentInChildren<MeshRenderer>().material;
-                mat.SetFloat("_EmissionGain", HitEmissionGain);
+                mat.SetColor("_TintColor", Color.green);
                 //Debug.Log("Playing note: " + noteByte);
 
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
-                    owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed; 
-                    owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased += OnControllerTriggerReleased;
 
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
-                    if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                        NoteOn(head.GetMalletVelocity());
-                    }
+                    if (!nearbyControllers.Contains(controllerReference)) {
+                        if (owner.GetComponent<VRTK_ControllerEvents>().buttonOnePressed) {
+                            NoteOn(head.GetMalletVelocity());
+                        }
 
+                        owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
+                        owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased += OnControllerTriggerReleased;
+
+                        nearbyControllers.Add(controllerReference);
+                    }
                 }
             }
         }
@@ -83,12 +94,19 @@ namespace ComposeVR {
             Wand head = other.GetComponent<Wand>();
             if (head) {
                 Material mat = GetComponentInChildren<MeshRenderer>().material;
-                mat.SetFloat("_EmissionGain", originalEmissionGain);
+                mat.SetColor("_TintColor", Color.white);
 
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
-                    owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
-                    owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
+
+                    controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
+
+                    if (nearbyControllers.Contains(controllerReference)) {
+                        nearbyControllers.Remove(controllerReference);
+
+                        owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
+                        owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
+                    }
                 }
 
                 NoteOff();
@@ -97,20 +115,26 @@ namespace ComposeVR {
 
         void NoteOn(int noteVelocity) {
             byte velocityByte = (byte)noteVelocity;
-            MIDIData data = new MIDIData(144, noteByte, velocityByte);
+            MIDIData data = new MIDIData(NOTE_ON_STATUS, noteByte, velocityByte);
             output.SendData(data);
             VRTK_ControllerHaptics.TriggerHapticPulse(controllerReference, TouchHapticsStrength, TouchHapticsDuration, TouchHapticsInterval);
+
+            Material mat = GetComponentInChildren<MeshRenderer>().material;
+            mat.SetFloat("_EmissionGain", HitEmissionGain);
         }
 
         void NoteOff() {
             int noteVelocity = 110;
             byte velocityByte = (byte)noteVelocity;
-            MIDIData data = new MIDIData(128, noteByte, velocityByte);
+            MIDIData data = new MIDIData(NOTE_OFF_STATUS, noteByte, velocityByte);
             output.SendData(data);
+
+            Material mat = GetComponentInChildren<MeshRenderer>().material;
+            mat.SetFloat("_EmissionGain", originalEmissionGain);
         }
 
         void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
-            NoteOn((int)e.buttonPressure * 127);
+            NoteOn((int)(e.buttonPressure * 127));
         }
 
         void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {

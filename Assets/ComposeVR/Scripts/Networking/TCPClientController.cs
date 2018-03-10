@@ -110,6 +110,7 @@ namespace ComposeVR {
                 byte[] buffer = new byte[State.Client.ReceiveBufferSize];
 
                 networkStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), buffer);
+                Debug.Log("Connected");
             }
             catch (Exception ex) {
                 Debug.Log("Connection callback failed");

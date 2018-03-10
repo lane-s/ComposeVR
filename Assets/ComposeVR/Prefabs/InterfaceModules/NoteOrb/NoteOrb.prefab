@@ -568,7 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f67e26a6e5f3c4088a808301632e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitEmissionGain: 0.6
+  HitEmissionGain: 0.32
   TouchHapticsStrength: 1.5
   TouchHapticsDuration: 0.2
   TouchHapticsInterval: 0.035

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using OSCsharp.Data;
 
 namespace ComposeVR {
     [Serializable]
@@ -23,6 +24,8 @@ namespace ComposeVR {
             RemoteEventEmitter.Instance.CreateSoundModule(GetID());
 
             Module.GetInputJack().AddInput(this);
+
+            now = new OscTimeTag();
         } 
 
         public void SetController(IModule controller) {
@@ -48,9 +51,13 @@ namespace ComposeVR {
             }
         }
 
+        private OscTimeTag now;
+        private OscBundle bundle;
+        private string OSCNoteAddress;
+
         private void PlayMIDINote(MIDIData data) {
 
-            Protocol.Module.MIDINote noteEvent = new Protocol.Module.MIDINote {
+            /*Protocol.Module.MIDINote noteEvent = new Protocol.Module.MIDINote {
                 MIDI = Google.Protobuf.ByteString.CopyFrom(data.GetPackedMessage())
             };
 
@@ -62,9 +69,26 @@ namespace ComposeVR {
             Protocol.Event remoteEvent = new Protocol.Event {
                 ModuleEvent = moduleEvent,
                 MethodName = "PlayMIDINote"
-            };
+            };*/
 
-            Module.GetUDPClient().send(remoteEvent);
+            //Module.GetUDPClient().sendBytes(data.GetPackedMessage());
+            now.Set(DateTime.Now);
+
+            string noteStatus;
+            if(data.Status == 0x90) {
+                noteStatus = "on";
+            }
+            else {
+                noteStatus = "off";
+            }
+
+            string noteAddress = "/" + GetID() + "/note/" + noteStatus;
+
+            int MIDI = data.Note;
+            MIDI |= ((int)(data.Velocity) << 16);
+
+            OscMessage noteMessage = new OscMessage(noteAddress, MIDI);
+            Module.GetOSCEventDispatcher().SendOSCPacket(noteAddress, noteMessage);
         }
 
     }

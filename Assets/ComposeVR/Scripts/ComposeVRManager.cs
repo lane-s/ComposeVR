@@ -6,20 +6,28 @@ namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
 
         private DeviceBrowserObject browserObject;
-        private UDPClient udpClient;
+        private ComposeVROSCEventDispatcher oscEventDispatcher;
+        private int handlerCount = 0;
 
         // Use this for initialization
         void Awake() {
             browserObject = GameObject.FindGameObjectWithTag("DeviceBrowser").GetComponent<DeviceBrowserObject>();
-            udpClient = GameObject.FindGameObjectWithTag("UDPClient").GetComponent<UDPClient>();
+            oscEventDispatcher = GameObject.FindGameObjectWithTag("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
         }
 
         public DeviceBrowserObject GetBrowserObject() {
             return browserObject;
         }
 
-        public UDPClient GetUDPClient() {
-            return udpClient;
+        public ComposeVROSCEventDispatcher GetOSCEventDispatcher() {
+            return oscEventDispatcher;
+        }
+
+        public string GetNewHandlerID() {
+            string result = "ComposeVRObject-"+handlerCount;
+            handlerCount += 1;
+
+            return result;
         }
     }
 }

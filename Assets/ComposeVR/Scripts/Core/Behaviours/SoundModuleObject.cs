@@ -34,8 +34,8 @@ namespace ComposeVR {
             return ComposeVRManager.Instance.GetBrowserObject().Controller;
         }
 
-        UDPClient IModule.GetUDPClient() {
-            return ComposeVRManager.Instance.GetUDPClient();
+        ComposeVROSCEventDispatcher IModule.GetOSCEventDispatcher() {
+            return ComposeVRManager.Instance.GetOSCEventDispatcher();
         }
 
         InputJack IModule.GetInputJack() {
@@ -46,7 +46,7 @@ namespace ComposeVR {
     public interface IModule {
         void PositionBrowserAtModule();
         DeviceBrowserController GetBrowserController();
-        UDPClient GetUDPClient();
+        ComposeVROSCEventDispatcher GetOSCEventDispatcher();
         InputJack GetInputJack();
     }
 }

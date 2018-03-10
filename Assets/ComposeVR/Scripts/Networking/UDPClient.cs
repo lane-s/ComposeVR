@@ -58,6 +58,7 @@ namespace ComposeVR {
                 outgoingEvent.WriteDelimitedTo(outStream);
 
                 byte[] data = outStream.ToArray();
+                
                 sender.SendTo(data, send_end_point);
             }
             catch (Exception sendException) {
