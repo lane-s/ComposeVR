@@ -83,6 +83,7 @@ namespace ComposeVR {
             }
 
             string noteAddress = "/" + GetID() + "/note/" + noteStatus;
+            Debug.Log(noteAddress);
 
             int MIDI = data.Note;
             MIDI |= ((int)(data.Velocity) << 16);

@@ -77,7 +77,7 @@ namespace ComposeVR {
 
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!nearbyControllers.Contains(controllerReference)) {
-                        if (owner.GetComponent<VRTK_ControllerEvents>().buttonOnePressed) {
+                        if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
                             NoteOn(head.GetMalletVelocity());
                         }
 
