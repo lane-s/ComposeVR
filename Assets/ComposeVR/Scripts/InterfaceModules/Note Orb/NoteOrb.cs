@@ -5,20 +5,16 @@ using VRTK;
 
 namespace ComposeVR {
 
-    public class MIDIData : WireData {
-        public byte Status;
-        public byte Note;
-        public byte Velocity;
+    public class NoteData : WireData {
+        public enum Status { On, Off };
+        public Status NoteStatus;
+        public int Note;
+        public int Velocity;
 
-        public MIDIData(byte Status, byte Note, byte Velocity) {
-            this.Status = Status;
+        public NoteData(Status status, int Note, int Velocity) {
+            this.NoteStatus = status;
             this.Note = Note;
             this.Velocity = Velocity;
-        }
-
-        public byte[] GetPackedMessage() {
-            byte[] msg = { Status, Note, Velocity };
-            return msg;
         }
     }
 
@@ -44,9 +40,6 @@ namespace ComposeVR {
         private const float cooldownTime = 0.3f;
         private VRTK_ControllerReference controllerReference;
 
-        private const byte NOTE_ON_STATUS = 0x90;
-        private const byte NOTE_OFF_STATUS = 0x80;
-
         private HashSet<VRTK_ControllerReference> nearbyControllers;
 
         void Awake() {
@@ -66,8 +59,8 @@ namespace ComposeVR {
         }
 
         void OnTriggerEnter(Collider other) {
-            Wand head = other.GetComponent<Wand>();
-            if (head) {
+            Wand wand = other.GetComponent<Wand>();
+            if (wand) {
                 Material mat = GetComponentInChildren<MeshRenderer>().material;
                 mat.SetColor("_TintColor", Color.green);
                 //Debug.Log("Playing note: " + noteByte);
@@ -78,7 +71,7 @@ namespace ComposeVR {
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!nearbyControllers.Contains(controllerReference)) {
                         if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                            NoteOn(head.GetMalletVelocity());
+                            NoteOn(wand.GetVelocity());
                         }
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
@@ -91,8 +84,8 @@ namespace ComposeVR {
         }
 
         void OnTriggerExit(Collider other) {
-            Wand head = other.GetComponent<Wand>();
-            if (head) {
+            Wand wand = other.GetComponent<Wand>();
+            if (wand) {
                 Material mat = GetComponentInChildren<MeshRenderer>().material;
                 mat.SetColor("_TintColor", Color.white);
 
@@ -115,7 +108,7 @@ namespace ComposeVR {
 
         void NoteOn(int noteVelocity) {
             byte velocityByte = (byte)noteVelocity;
-            MIDIData data = new MIDIData(NOTE_ON_STATUS, noteByte, velocityByte);
+            NoteData data = new NoteData(NoteData.Status.On, noteByte, velocityByte);
             output.SendData(data);
             VRTK_ControllerHaptics.TriggerHapticPulse(controllerReference, TouchHapticsStrength, TouchHapticsDuration, TouchHapticsInterval);
 
@@ -126,7 +119,7 @@ namespace ComposeVR {
         void NoteOff() {
             int noteVelocity = 110;
             byte velocityByte = (byte)noteVelocity;
-            MIDIData data = new MIDIData(NOTE_OFF_STATUS, noteByte, velocityByte);
+            NoteData data = new NoteData(NoteData.Status.Off, noteByte, velocityByte);
             output.SendData(data);
 
             Material mat = GetComponentInChildren<MeshRenderer>().material;

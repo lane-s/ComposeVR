@@ -28,7 +28,7 @@ namespace ComposeVR {
             angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(controllerReference);
         }
 
-        public int GetMalletVelocity() {
+        public int GetVelocity() {
             float vel = controllerVelocity.magnitude + angularVelocity.magnitude;
             if (vel < minVelocity)
                 return 0;

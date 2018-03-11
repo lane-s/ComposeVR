@@ -44,7 +44,7 @@ namespace ComposeVR {
         }
 
         void IJackInput.ReceiveData(WireData data) {
-            MIDIData incomingMIDI = data as MIDIData;
+            NoteData incomingMIDI = data as NoteData;
 
             if(incomingMIDI != null) {
                 PlayMIDINote(incomingMIDI);
@@ -55,7 +55,7 @@ namespace ComposeVR {
         private OscBundle bundle;
         private string OSCNoteAddress;
 
-        private void PlayMIDINote(MIDIData data) {
+        private void PlayMIDINote(NoteData data) {
 
             /*Protocol.Module.MIDINote noteEvent = new Protocol.Module.MIDINote {
                 MIDI = Google.Protobuf.ByteString.CopyFrom(data.GetPackedMessage())
@@ -75,7 +75,7 @@ namespace ComposeVR {
             now.Set(DateTime.Now);
 
             string noteStatus;
-            if(data.Status == 0x90) {
+            if(data.NoteStatus == NoteData.Status.On) {
                 noteStatus = "on";
             }
             else {
