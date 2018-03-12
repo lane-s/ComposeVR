@@ -25,7 +25,7 @@ namespace ComposeVR {
         public event EventHandler<NoteChooserEventArgs> NoteSelectionChanged;
         public event EventHandler<NoteChooserEventArgs> NoteChoiceConfirmed;
 
-        private int currentOctave = 3;
+        private int currentOctave = 5;
         private HashSet<int> selectedNotes;
         private Text octaveIndicator;
         private GameObject leftArrow;
@@ -42,9 +42,9 @@ namespace ComposeVR {
             selectedNotes = new HashSet<int>();
 
             //Listen for clicks from each note button
-            for(int octave = 0; octave < OCTAVES_PER_PAGE; octave++) {
-                foreach (Transform note in transform.Find("Octave"+octave)) {
-                    int noteIndex = note.GetSiblingIndex() + octave * NOTES_PER_OCTAVE;
+            for(int pageOctave = 0; pageOctave < OCTAVES_PER_PAGE; pageOctave++) {
+                foreach (Transform note in transform.Find("Octave"+pageOctave)) {
+                    int noteIndex = note.GetSiblingIndex() + pageOctave * NOTES_PER_OCTAVE;
 
                     note.GetComponent<Button>().onClick.AddListener(() => {
                         OnNoteClicked(note.GetComponent<Button>(), noteIndex);
@@ -85,7 +85,7 @@ namespace ComposeVR {
             }
 
             leftArrow.SetActive(currentOctave > 0);
-            UpdateOctaveIndicator();
+            UpdatePage();
         }
 
         public void OnRightArrowClicked() {
@@ -95,11 +95,26 @@ namespace ComposeVR {
             }
 
             rightArrow.SetActive(currentOctave < MAX_OCTAVE);
-            UpdateOctaveIndicator();
+            UpdatePage();
         }
 
-        private void UpdateOctaveIndicator() {
+        private void UpdatePage() {
             octaveIndicator.text = "Octave: " + currentOctave;
+            ClearPage();
+
+            foreach(int note in selectedNotes) {
+                //Check if the note is on the current page
+                if(currentOctave * NOTES_PER_OCTAVE <= note && note < (currentOctave + OCTAVES_PER_PAGE) * NOTES_PER_OCTAVE) {
+                    int index = getIndexFromNoteNumber(note);
+
+                    //Get the octave of the note relative to the current octave
+                    int pageOctave = index / NOTES_PER_OCTAVE;
+                    index -= pageOctave * NOTES_PER_OCTAVE;
+
+                    //Select the note
+                    transform.Find("Octave" + pageOctave).GetChild(index).GetComponent<SelectableButton>().Select();
+                }
+            }
         }
 
         public void OnConfirmButtonClicked() {
@@ -117,9 +132,12 @@ namespace ComposeVR {
 
         private void ResetSelection() {
             selectedNotes.Clear();
+            ClearPage();
+        }
 
-            for(int octave = 0; octave < OCTAVES_PER_PAGE; octave++) {
-                foreach(Transform note in transform.Find("Octave"+octave)) {
+        private void ClearPage() {
+            for(int pageOctave = 0; pageOctave < OCTAVES_PER_PAGE; pageOctave++) {
+                foreach(Transform note in transform.Find("Octave"+pageOctave)) {
                     note.GetComponent<SelectableButton>().Deselect();
                 }
             }
@@ -150,6 +168,10 @@ namespace ComposeVR {
 
         private int getNoteNumberFromIndex(int index) {
             return index + currentOctave * NOTES_PER_OCTAVE;
+        }
+
+        private int getIndexFromNoteNumber(int noteNumber) {
+            return noteNumber - currentOctave * NOTES_PER_OCTAVE;
         }
     }
 
