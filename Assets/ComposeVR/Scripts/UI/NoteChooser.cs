@@ -44,8 +44,10 @@ namespace ComposeVR {
             //Listen for clicks from each note button
             for(int octave = 0; octave < OCTAVES_PER_PAGE; octave++) {
                 foreach (Transform note in transform.Find("Octave"+octave)) {
+                    int noteIndex = note.GetSiblingIndex() + octave * NOTES_PER_OCTAVE;
+
                     note.GetComponent<Button>().onClick.AddListener(() => {
-                        OnNoteClicked(note.GetComponent<Button>(), note.GetSiblingIndex() + octave * NOTES_PER_OCTAVE);
+                        OnNoteClicked(note.GetComponent<Button>(), noteIndex);
                     });
                 }
             }
