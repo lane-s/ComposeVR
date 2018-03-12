@@ -19,7 +19,7 @@ namespace ComposeVR {
         }
 
         BrowserColumnController IDeviceBrowser.GetResultColumn() {
-            foreach(BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
+            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
                 if (c.Controller.Config.Type == BrowserColumnController.ColumnType.RESULTS) {
                     return c.Controller;
                 }
@@ -31,18 +31,23 @@ namespace ComposeVR {
         List<BrowserColumnController> IDeviceBrowser.GetFilterColumns() {
             var filterColumns = new List<BrowserColumnController>();
 
-            foreach(BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
-                if(c.Controller.Config.Type == BrowserColumnController.ColumnType.FILTER) {
+            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
+                if (c.Controller.Config.Type == BrowserColumnController.ColumnType.FILTER) {
                     filterColumns.Add(c.Controller);
                 }
             }
 
             return filterColumns;
         }
+
+        void IDeviceBrowser.Hide(){
+            transform.position = Vector3.down * 1000;
+        }
     }
 
     public interface IDeviceBrowser {
         BrowserColumnController GetResultColumn();
         List<BrowserColumnController> GetFilterColumns();
+        void Hide();
     }
 }

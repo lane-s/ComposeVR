@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRTK;
 
@@ -25,12 +26,7 @@ namespace ComposeVR {
         public float TouchHapticsDuration;
         public float TouchHapticsInterval;
 
-        private byte noteByte;
-
-        public int midiNoteNumber {
-            get { return (int)noteByte; }
-            set { noteByte = (byte)value; }
-        }
+        private List<int> selectedNotes;
 
         private UDPClient client;
         private OutputJack output;
@@ -38,7 +34,10 @@ namespace ComposeVR {
 
         private bool onCooldown = false;
         private const float cooldownTime = 0.3f;
+
         private VRTK_ControllerReference controllerReference;
+        private NoteChooser noteChooser;
+        private int numOn = 0;
 
         private HashSet<VRTK_ControllerReference> nearbyControllers;
 
@@ -47,23 +46,16 @@ namespace ComposeVR {
             originalEmissionGain = mat.GetFloat("_EmissionGain");
 
             output = transform.parent.GetComponentInChildren<OutputJack>();
-            float randNote = Random.value * 126;
-            midiNoteNumber = (int)randNote;
-
             nearbyControllers = new HashSet<VRTK_ControllerReference>();
-        }
 
-        // Update is called once per frame
-        void Update() {
-
+            selectedNotes = new List<int>();
+            output.GetComponent<Jack>().PlugConnected += OnPlugConnected;
         }
 
         void OnTriggerEnter(Collider other) {
             Wand wand = other.GetComponent<Wand>();
             if (wand) {
-                Material mat = GetComponentInChildren<MeshRenderer>().material;
-                mat.SetColor("_TintColor", Color.green);
-                //Debug.Log("Playing note: " + noteByte);
+                SetShellColor(Color.green);
 
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
@@ -71,7 +63,7 @@ namespace ComposeVR {
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!nearbyControllers.Contains(controllerReference)) {
                         if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                            NoteOn(wand.GetVelocity());
+                            OrbOn(wand.GetVelocity());
                         }
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
@@ -86,9 +78,7 @@ namespace ComposeVR {
         void OnTriggerExit(Collider other) {
             Wand wand = other.GetComponent<Wand>();
             if (wand) {
-                Material mat = GetComponentInChildren<MeshRenderer>().material;
-                mat.SetColor("_TintColor", Color.white);
-
+                SetShellColor(Color.white);
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
 
@@ -102,37 +92,92 @@ namespace ComposeVR {
                     }
                 }
 
-                NoteOff();
+                if (numOn > 0) {
+                    OrbOff();
+                }
             }
         }
 
-        void NoteOn(int noteVelocity) {
-            byte velocityByte = (byte)noteVelocity;
-            NoteData data = new NoteData(NoteData.Status.On, noteByte, velocityByte);
-            output.SendData(data);
-            VRTK_ControllerHaptics.TriggerHapticPulse(controllerReference, TouchHapticsStrength, TouchHapticsDuration, TouchHapticsInterval);
+        private void OrbOn(int velocity) {
+            numOn += 1;
+            foreach (int note in selectedNotes) {
+                NoteOn(note, velocity);
+            }
 
             Material mat = GetComponentInChildren<MeshRenderer>().material;
             mat.SetFloat("_EmissionGain", HitEmissionGain);
         }
 
-        void NoteOff() {
-            int noteVelocity = 110;
-            byte velocityByte = (byte)noteVelocity;
-            NoteData data = new NoteData(NoteData.Status.Off, noteByte, velocityByte);
-            output.SendData(data);
+        private void OrbOff() {
+            numOn -= 1;
+            foreach(int note in selectedNotes) {
+                NoteOff(note);
+            }
 
             Material mat = GetComponentInChildren<MeshRenderer>().material;
             mat.SetFloat("_EmissionGain", originalEmissionGain);
         }
 
-        void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
-            NoteOn((int)(e.buttonPressure * 127));
+        private void NoteOn(int note, int velocity) {
+            NoteData data = new NoteData(NoteData.Status.On, note, velocity);
+            output.SendData(data);
         }
 
-        void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
-            NoteOff();
+        private void NoteOff(int note) {
+            int velocity = 110;
+            NoteData data = new NoteData(NoteData.Status.Off, note, velocity);
+            output.SendData(data);
         }
 
+        private void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
+            OrbOn((int)(e.buttonPressure * 127));
+            VRTK_ControllerHaptics.TriggerHapticPulse(controllerReference, TouchHapticsStrength, TouchHapticsDuration, TouchHapticsInterval);
+        }
+
+        private void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
+            OrbOff();
+        }
+
+        private const float NOTE_CHOOSER_OFFSET = 0.1f;
+
+        private void OpenNoteChooser() {
+            noteChooser = ComposeVRManager.Instance.GetNoteChooserObject();
+            noteChooser.Display(true);
+
+            noteChooser.NoteChoiceConfirmed += OnNoteChoiceConfirmed;
+            noteChooser.NoteSelectionChanged += OnNoteSelectionChanged;
+
+            noteChooser.transform.parent.position = transform.position + Vector3.up * NOTE_CHOOSER_OFFSET;
+            noteChooser.transform.parent.rotation = Quaternion.LookRotation(noteChooser.transform.parent.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
+            noteChooser.transform.parent.position -= noteChooser.transform.parent.forward * 0.05f;
+        }
+
+        private void OnNoteChoiceConfirmed(object sender, NoteChooserEventArgs args) {
+            selectedNotes = args.SelectedNotes.ToList<int>();
+            noteChooser.NoteChoiceConfirmed -= OnNoteChoiceConfirmed;
+            noteChooser.NoteSelectionChanged -= OnNoteSelectionChanged;
+        }
+
+        private void OnNoteSelectionChanged(object sender, NoteChooserEventArgs args) {
+            selectedNotes = args.SelectedNotes.ToList<int>();
+            StartCoroutine(previewSelection());
+        }
+
+        private IEnumerator previewSelection() {
+            SetShellColor(Color.green);
+            OrbOn(95);
+            yield return new WaitForSecondsRealtime(0.25f);
+            SetShellColor(Color.white);
+            OrbOff();
+        }
+
+        private void SetShellColor(Color c) {
+            Material mat = GetComponentInChildren<MeshRenderer>().material;
+            mat.SetColor("_TintColor", c);
+        }
+
+        private void OnPlugConnected(object sender, JackEventArgs args) {
+            OpenNoteChooser();
+        }
     }
 }

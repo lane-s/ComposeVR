@@ -6,17 +6,25 @@ namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
 
         private DeviceBrowserObject browserObject;
+        private NoteChooser noteChooser;
+
         private ComposeVROSCEventDispatcher oscEventDispatcher;
         private int handlerCount = 0;
 
         // Use this for initialization
         void Awake() {
-            browserObject = GameObject.FindGameObjectWithTag("DeviceBrowser").GetComponent<DeviceBrowserObject>();
-            oscEventDispatcher = GameObject.FindGameObjectWithTag("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
+            browserObject = transform.Find("DeviceBrowser").GetComponent<DeviceBrowserObject>();
+            noteChooser = transform.Find("NoteChooser").GetChild(0).GetComponent<NoteChooser>();
+
+            oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
         }
 
         public DeviceBrowserObject GetBrowserObject() {
             return browserObject;
+        }
+
+        public NoteChooser GetNoteChooserObject() {
+            return noteChooser;
         }
 
         public ComposeVROSCEventDispatcher GetOSCEventDispatcher() {

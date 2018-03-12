@@ -10,6 +10,7 @@ namespace ComposeVR {
         private Button button;
         private Text buttonText;
         private Color normalColor;
+        private bool selected = false;
 
         // Use this for initialization
         void Awake() {
@@ -22,12 +23,16 @@ namespace ComposeVR {
             ColorBlock cb = button.colors;
             cb.normalColor = cb.pressedColor;
             button.colors = cb;
+
+            selected = true;
         }
 
         public void Deselect() {
             ColorBlock cb = button.colors;
             cb.normalColor = normalColor;
             button.colors = cb;
+
+            selected = false;
         }
 
         public Button GetButton() {
@@ -48,6 +53,10 @@ namespace ComposeVR {
             }
 
             return buttonText.text;
+        }
+
+        public bool IsSelected() {
+            return selected;
         }
     }
 }

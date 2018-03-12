@@ -25,7 +25,7 @@ namespace ComposeVR {
 
             Module.GetInputJack().AddInput(this);
 
-            now = new OscTimeTag();
+            playingNotes = new int[127];
         } 
 
         public void SetController(IModule controller) {
@@ -54,36 +54,29 @@ namespace ComposeVR {
         private OscTimeTag now;
         private OscBundle bundle;
         private string OSCNoteAddress;
+        private int[] playingNotes;
 
         private void PlayMIDINote(NoteData data) {
-
-            /*Protocol.Module.MIDINote noteEvent = new Protocol.Module.MIDINote {
-                MIDI = Google.Protobuf.ByteString.CopyFrom(data.GetPackedMessage())
-            };
-
-            Protocol.ModuleEvent moduleEvent = new Protocol.ModuleEvent {
-                HandlerId = GetID(),
-                MidiNoteEvent = noteEvent
-            };
-
-            Protocol.Event remoteEvent = new Protocol.Event {
-                ModuleEvent = moduleEvent,
-                MethodName = "PlayMIDINote"
-            };*/
-
-            //Module.GetUDPClient().sendBytes(data.GetPackedMessage());
-            now.Set(DateTime.Now);
 
             string noteStatus;
             if(data.NoteStatus == NoteData.Status.On) {
                 noteStatus = "on";
+                playingNotes[data.Note] += 1;
             }
             else {
                 noteStatus = "off";
+                playingNotes[data.Note] -= 1;
+                if(playingNotes[data.Note] < 0) {
+                    playingNotes[data.Note] = 0;
+                }
+
+                //Only send a note off message if none of the inputs are playing the note
+                if(playingNotes[data.Note] != 0) {
+                    return;
+                }
             }
 
             string noteAddress = "/" + GetID() + "/note/" + noteStatus;
-            Debug.Log(noteAddress);
 
             int MIDI = data.Note;
             MIDI |= ((int)(data.Velocity) << 16);

@@ -56,6 +56,7 @@ namespace ComposeVR {
 
         public void CloseBrowser() {
             SetVisible(false);
+            deviceBrowser.Hide();
         }
 
         private void SetVisible(bool visible) {

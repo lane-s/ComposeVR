@@ -11,9 +11,7 @@ TagManager:
   - PadAnchor
   - UDPClient
   - ModuleMenu
-  - DeviceBrowser
   - Headset
-  - OSCEventDispatcher
   layers:
   - Default
   - TransparentFX
