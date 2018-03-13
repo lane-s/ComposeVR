@@ -351,6 +351,7 @@ namespace ComposeVR {
         /// </summary>
         /// <returns></returns>
         private IEnumerator SnapBackToController() {
+            snappingEnabled = false;
             yield return null;
 
             snapCooldown = true;
@@ -371,6 +372,7 @@ namespace ComposeVR {
             }
 
             ResetPlugTransform();
+            snappingEnabled = true;
             StartCoroutine(SnapCooldown());
         }
 

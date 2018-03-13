@@ -73,7 +73,8 @@ namespace ComposeVR {
 
             visible = display;
 
-            if (display) {
+            if (!display) {
+                transform.parent.SetParent(null);
                 transform.parent.position = Vector3.down * 1000;
             }
         }

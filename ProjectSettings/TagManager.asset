@@ -28,7 +28,7 @@ TagManager:
   - Controls
   - IO
   - Detector
-  - 
+  - Teleportable
   - 
   - 
   - 
@@ -54,4 +54,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 970438513
+    locked: 0
+  - name: NoteChooser
+    uniqueID: 3671467657
     locked: 0

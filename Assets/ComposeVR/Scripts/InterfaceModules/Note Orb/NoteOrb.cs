@@ -150,6 +150,7 @@ namespace ComposeVR {
             noteChooser.transform.parent.position = transform.position + Vector3.up * NOTE_CHOOSER_OFFSET;
             noteChooser.transform.parent.rotation = Quaternion.LookRotation(noteChooser.transform.parent.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
             noteChooser.transform.parent.position -= noteChooser.transform.parent.forward * 0.05f;
+            noteChooser.transform.parent.SetParent(this.transform);
         }
 
         private void OnNoteChoiceConfirmed(object sender, NoteChooserEventArgs args) {

@@ -269,7 +269,9 @@ namespace ComposeVR {
         public void AllowBranching(bool allow) {
             allowBranching = allow;
             for(int i = 0; i < branchHandles.Count; i++) {
-                branchHandles[i].gameObject.SetActive(allowBranching);
+                if (branchHandles[i] != null) {
+                    branchHandles[i].gameObject.SetActive(allowBranching);
+                }
             }
         }
 

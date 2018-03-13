@@ -254,7 +254,7 @@ namespace VRTK
 
         protected virtual void OnEnable()
         {
-            defaultMaterial = Resources.Load("WorldPointer") as Material;
+          defaultMaterial = Resources.Load("WorldPointer") as Material;
             makeRendererVisible = new List<GameObject>();
             CreatePointerOriginTransformFollow();
             CreatePointerObjects();
