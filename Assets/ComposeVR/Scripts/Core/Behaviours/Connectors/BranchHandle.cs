@@ -161,22 +161,14 @@ namespace ComposeVR {
             return sourceCord;
         }
 
-        public CordNode GetUpstreamNode() {
-            if(cordJunction != null) {
-                if (cordJunction.Flow > 0) {
-                    return cordJunction.A;
-                }
-                else {
-                    return cordJunction.B;
-                }
+        public CordNode GetDownstreamNode(bool reverseFlow) {
+            float workingFlow = cordJunction.Flow;
+            if (reverseFlow) {
+                workingFlow = -workingFlow;
             }
-            Debug.LogError("Cannot get UpstreamCord for BranchHandle that has not yet split the source cord");
-            return null;
-        }
 
-        public CordNode GetDownstreamNode() {
             if(cordJunction != null) {
-                if(cordJunction.Flow > 0) {
+                if(workingFlow > 0) {
                     return cordJunction.B;
                 }
                 else {
@@ -189,6 +181,17 @@ namespace ComposeVR {
 
         public bool IsCordStartPoint() {
             return cordStartPoint;
+        }
+
+        public void MergeJunction() {
+            List<Vector3> fullPath = cordJunction.A.cord.GetPath();
+            fullPath.AddRange(cordJunction.B.cord.GetPath());
+
+            cordJunction.A.cord.ConnectCord(cordJunction.A.cord.GetCordStart(), cordJunction.B.cord.GetCordEnd());
+            cordJunction.A.cord.SetPath(fullPath);
+
+            cordJunction.B.cord.DestroyCord();
+            Destroy(gameObject);
         }
 
         VRTK_InteractGrab grabber;

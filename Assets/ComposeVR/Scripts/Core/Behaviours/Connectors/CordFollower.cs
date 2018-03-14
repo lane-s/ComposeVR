@@ -1,9 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 namespace ComposeVR {
+    public class CordFollowerEventArgs : EventArgs{
+        public Vector3 NextMoveVector;
+        
+        public CordFollowerEventArgs(Vector3 nextMoveVector) {
+            this.NextMoveVector = nextMoveVector;
+        }
+    }
+
     public class CordFollower : MonoBehaviour {
+        public event EventHandler<CordFollowerEventArgs> NextPointReached;
         public float Speed;
 
         private Cord cord;
@@ -26,6 +34,8 @@ namespace ComposeVR {
                 if (!nextPos.Equals(cord.GetPointAtIndex(nextPointIndex))) {
 
                     while (Vector3.Dot(toNextPoint, nextDiff) < 0) {
+                        Vector3 nextMove = Vector3.zero;
+
                         currentPointIndex = nextPointIndex;
                         nextPointIndex = NextPointIndex();
 
@@ -34,11 +44,12 @@ namespace ComposeVR {
                             break;
                         }
                         else {
-                            Vector3 nextMove = (cord.GetPointAtIndex(nextPointIndex) - cord.GetPointAtIndex(currentPointIndex)).normalized;
+                            nextMove = (cord.GetPointAtIndex(nextPointIndex) - cord.GetPointAtIndex(currentPointIndex)).normalized;
                             nextPos = cord.GetPointAtIndex(currentPointIndex) + nextMove * nextDiff.magnitude;
                         }
 
                         nextDiff = cord.GetPointAtIndex(nextPointIndex) - nextPos;
+                        OnNextPointReached(nextMove);
                     }
 
                 }
@@ -59,6 +70,12 @@ namespace ComposeVR {
             }
             else {
                 return currentPointIndex;
+            }
+        }
+
+        private void OnNextPointReached(Vector3 nextMove) {
+            if(NextPointReached != null) {
+                NextPointReached(this, new CordFollowerEventArgs(nextMove));
             }
         }
 

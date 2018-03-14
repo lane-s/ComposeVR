@@ -125,7 +125,7 @@ namespace ComposeVR {
                 networkStream = State.Client.GetStream();
             }
             catch {
-                Debug.Log("Read exception");
+                //Debug.Log("Read exception");
                 return;
             }
 

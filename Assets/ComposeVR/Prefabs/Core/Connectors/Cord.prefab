@@ -113,6 +113,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BranchHandlePrefab: {fileID: 4951672727106540, guid: d67f7b089b800274f8fd426da6036c27,
     type: 2}
+  CordCollapseParticleSystemPrefab: {fileID: 198039469201688654, guid: 074e06aacafc6f84fa49eb1a4c4ab78c,
+    type: 2}
   FlowTexture: {fileID: 2800000, guid: cde4fd05f37fd514c94b88fda1d4ad3e, type: 3}
   SegmentLength: 0.005
   RelaxAmount: 0.05

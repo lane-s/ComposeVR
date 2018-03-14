@@ -17,7 +17,7 @@ namespace ComposeVR {
 
         private void OnPlugConnected(object sender, JackEventArgs e) {
 
-            HashSet<Jack> connectedInputJacks = e.ConnectedCord.GetConnectedJacks(true, e.PlugNodeInCord);
+            HashSet<Jack> connectedInputJacks = e.ConnectedCord.GetConnectedJacks(false, e.PlugNodeInCord);
             foreach(Jack j in connectedInputJacks) {
                 connectedInputs.UnionWith(j.GetComponent<InputJack>().GetConnectedInputs());
             }

@@ -25,7 +25,7 @@ namespace ComposeVR {
         private List<Jack> nearbyJacks;
 
         private Cord connectedCord;
-        
+
         private VRTK_InteractableObject interactable;
         private SnapToTargetPosition positionSnap;
         private SnapToTargetRotation rotationSnap;
@@ -36,7 +36,7 @@ namespace ComposeVR {
 
         private Vector3 plugColliderCenter;
         private float plugColliderHeight;
-        
+
         //We have a small buffer distance so that the plug doesn't begin snapping to a jack when it's likely to immediately snap back to the controller
         private const float BUFFER_DISTANCE = 0.02f;
         private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.02f;
@@ -56,6 +56,8 @@ namespace ComposeVR {
 
             plugColliderCenter = PlugTransform.GetComponent<CapsuleCollider>().center;
             plugColliderHeight = PlugTransform.GetComponent<CapsuleCollider>().height;
+
+            GetComponent<CordFollower>().enabled = false;
         }
 
         void Update() {
@@ -106,13 +108,47 @@ namespace ComposeVR {
                 }
             }
 
-            if(connectedCord != null) {
+            if (connectedCord != null) {
                 connectedCord.AllowBranching(true);
+            }
+
+            TryCollapse();
+        }
+
+        /// <summary>
+        /// Collapse the cord if one of the following conditions are met:
+        ///     1. Both ends of the cord are plugs and neither plug is plugged in
+        ///     2. One end of the cord is an unplugged plug and the other is a BranchHandle.
+        /// </summary>
+        private void TryCollapse() {
+            if (!IsPluggedIn() && connectedCord != null) {
+
+                Transform oppositeNode = GetOppositeCordNode();
+                Plug p = connectedCord.GetPlugFromCordNode(oppositeNode);
+
+                if(p != null && !p.IsPluggedIn()) {
+                    connectedCord.Collapse();
+                }else if (oppositeNode.GetComponent<BranchHandle>()) {
+                    connectedCord.Collapse();
+                }
             }
         }
 
+        private Transform GetOppositeCordNode() {
+            if (connectedCord != null) {
+                if (connectedCord.GetCordStart().Equals(CordAttachPoint)) {
+                    return connectedCord.GetCordEnd();
+                }
+                else {
+                    return connectedCord.GetCordStart();
+                }
+            }
+
+            return null;
+        }
+
         private void UnplugFromJack() {
-            DestinationJack.Disconnect(connectedCord, transform);
+            DestinationJack.Disconnect(connectedCord, CordAttachPoint);
 
             targetJack = DestinationJack;
             DestinationJack = null;
@@ -120,6 +156,13 @@ namespace ComposeVR {
             transform.SetParent(null);
             PlugTransform.GetComponent<CapsuleCollider>().center = plugColliderCenter;
             PlugTransform.GetComponent<CapsuleCollider>().height = plugColliderHeight;
+
+            Transform oppositeNode = GetOppositeCordNode();
+            Plug p = connectedCord.GetPlugFromCordNode(oppositeNode);
+
+            if(p != null && !p.IsPluggedIn()) {
+                connectedCord.Flow = 0;
+            }
         }
 
         private void PlugIntoJack() {
@@ -139,7 +182,7 @@ namespace ComposeVR {
             if (interactable.IsGrabbed() && targetJack != null) {
 
                 float flow = connectedCord.Flow;
-                if (transform.Equals(connectedCord.GetCordStart())) {
+                if (CordAttachPoint.Equals(connectedCord.GetCordStart())) {
                     flow = -flow;
                 }
 
@@ -287,7 +330,10 @@ namespace ComposeVR {
         /// </summary>
         /// <returns></returns>
         private IEnumerator AutoPlugIntoTarget() {
-            StopCoroutine(snapToJackRoutine);
+            if (snapToJackRoutine != null) {
+                StopCoroutine(snapToJackRoutine);
+            }
+
             snapToJackRoutine = null;
 
             positionSnap.SnapToTarget(DestinationJack.PlugConnectionPoint.position, 1f);
@@ -311,7 +357,7 @@ namespace ComposeVR {
 
         private void ConnectToDestinationJack() {
             float flow = 1;
-            if (transform.Equals(connectedCord.GetCordStart())) {
+            if (CordAttachPoint.Equals(connectedCord.GetCordStart())) {
                 flow = -flow;
             }
 
@@ -324,7 +370,7 @@ namespace ComposeVR {
 
             connectedCord.SetFlowing(true);
 
-            DestinationJack.Connect(connectedCord, transform);
+            DestinationJack.Connect(connectedCord, CordAttachPoint);
         }
 
         private void UnSnapFromJack() {
@@ -359,16 +405,23 @@ namespace ComposeVR {
             transform.rotation = Quaternion.LookRotation(transform.parent.forward);
 
             positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
+            float originalCloseEnough = positionSnap.closeEnoughDistance;
+            positionSnap.closeEnoughDistance = 0.015f;
+
             rotationSnap.SnapToTarget(transform.rotation, 1200f);
 
             while (true) {
-                positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
+                float targetDistance = Vector3.Distance(transform.position, PlugTransform.position);
+                float snapSpeed = Mathf.Clamp(SnapToHandSpeed * targetDistance, SnapToHandSpeed, SnapToHandSpeed + 5f);
+                positionSnap.SnapToTarget(transform.position+GetComponent<Rigidbody>().velocity, snapSpeed);
                 if (positionSnap.HasReachedTarget) {
                     break;
                 }
 
-                yield return new WaitForEndOfFrame();
+                yield return new WaitForFixedUpdate();
             }
+
+            positionSnap.closeEnoughDistance = originalCloseEnough;
 
             ResetPlugTransform();
             snappingEnabled = true;
@@ -382,6 +435,7 @@ namespace ComposeVR {
 
         public void SetCord(Cord c) {
             this.connectedCord = c;
+            GetComponent<CordFollower>().SetCord(c);
         }
 
         public void AddNearbyJack(Jack j) {
@@ -400,6 +454,10 @@ namespace ComposeVR {
 
         public void DisableSnapping() {
             snappingEnabled = false;
+        }
+
+        public bool IsPluggedIn() {
+            return DestinationJack != null;
         }
 
         private void OnDisable() {

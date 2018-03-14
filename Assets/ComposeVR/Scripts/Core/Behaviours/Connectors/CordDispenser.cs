@@ -167,7 +167,6 @@ namespace ComposeVR {
                     foreach(VRTK_InteractGrab c in nearbyControllers) {
                         GameObject grabbedObject = c.GetGrabbedObject();
                         if(grabbedObject != null) {
-                            Debug.Log("Extend blocked by " + grabbedObject.name);
                             holdingObject = true;
                             break;
                         }
@@ -176,9 +175,6 @@ namespace ComposeVR {
                     if (!holdingObject && numBlockers == 0) {
                         state = State.WaitingForGrab;
                         break;
-                    }
-                    else {
-                        Debug.Log("Can't extend. " + numBlockers + " blockers");
                     }
                 }
                 yield return new WaitForEndOfFrame();

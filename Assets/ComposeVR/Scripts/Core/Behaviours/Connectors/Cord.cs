@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,6 +9,7 @@ namespace ComposeVR {
     public sealed class Cord : MonoBehaviour {
 
         public Transform BranchHandlePrefab;
+        public ParticleSystem CordCollapseParticleSystemPrefab;
         public Texture FlowTexture;
 
         public float SegmentLength = 0.005f;
@@ -30,6 +31,16 @@ namespace ComposeVR {
         private Vector3 lastPos;
         private float timeRelaxed;
         private Color cordColor;
+
+        private int collapseStart;
+        private int collapseEnd;
+        private bool collapsing = false;
+        private float collapseAccel = 0.01f;
+        private const float COLLAPSE_ROTATION_SPEED = 20f;
+        private Vector3 plugALookVector;
+        private Vector3 plugBLookVector;
+        private ParticleSystem collapseParticles;
+        private const int COLLAPSE_PARTICLE_FIRE_COUNT = 20; //How small should the cord be when the collapse particle system fires
 
         private bool updateLine;
 
@@ -56,11 +67,13 @@ namespace ComposeVR {
             branchHandles = new List<BranchHandle>();
 
             lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
+            collapseParticles = Instantiate(CordCollapseParticleSystemPrefab);
+            collapseParticles.gameObject.SetActive(false);
         }
 
         // Update is called once per frame
         void Update() {
-            if (A != null && B != null) {
+            if (A != null && B != null && !collapsing) {
                 //Start a path from the origin
                 if (path.Count == 0) {
                     path.Add(A.position);
@@ -111,6 +124,56 @@ namespace ComposeVR {
                 lastPos = B.position;
 
                 FlowEffect();
+            }
+            else if(collapsing) {
+                if(collapseStart >= collapseEnd || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
+                    OnCollapseFinished();
+                }
+                else {
+                    //Only render the portion of the path that has not yet been collapsed
+                    lineRenderer.positionCount = collapseEnd - collapseStart + 1;
+                    Vector3[] collapsingPath = new Vector3[lineRenderer.positionCount];
+
+                    int j = 0;
+                    for(int i = collapseStart; i <= collapseEnd; i++) {
+                        collapsingPath[j] = path[i];
+                        j += 1;
+                    }
+
+                    lineRenderer.SetPositions(collapsingPath);
+
+                    //Rotate plugs to point away from their movement direction
+                    Plug plugA = GetPlugFromCordNode(A);
+                    if(plugA != null) {
+                        if (plugALookVector != Vector3.zero) {
+                            plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
+                        }
+                        plugA.GetComponent<CordFollower>().Speed += collapseAccel;
+                    }
+
+                     Plug plugB = GetPlugFromCordNode(B);
+                    if(plugB != null) {
+                        if (plugBLookVector != Vector3.zero) {
+                            plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
+                        }
+                        plugB.GetComponent<CordFollower>().Speed += collapseAccel;
+                    }
+
+                    //Play the collapse particle effect when the cord is almost completely collapsed
+                    if(lineRenderer.positionCount < COLLAPSE_PARTICLE_FIRE_COUNT && collapseParticles != null && !collapseParticles.gameObject.activeSelf) {
+                        collapseParticles.gameObject.SetActive(true);
+                        if(plugA != null && plugB != null) {
+                            collapseParticles.transform.position = GetPointAtIndex((collapseEnd - collapseStart) / 2 + collapseStart);
+                        }else if(plugA != null) {
+                            collapseParticles.transform.position = GetPointAtIndex(path.Count - 1);
+                        }
+                        else {
+                            collapseParticles.transform.position = GetPointAtIndex(0);
+                        }
+
+                        collapseParticles.Play();
+                    }
+                }
             }
         }
 
@@ -217,6 +280,14 @@ namespace ComposeVR {
                 if (owner.GetComponent<Plug>()) {
                     Plug p = owner.GetComponent<Plug>();
                     p.SetCord(this);
+
+                    if (p.IsPluggedIn()) {
+                        if (p.DestinationJack.GetComponent<InputJack>()) {
+                            Flow = -1;
+                        }else if (p.DestinationJack.GetComponent<OutputJack>()) {
+                            Flow = 1;
+                        }
+                    }
                 }
             }
 
@@ -225,7 +296,19 @@ namespace ComposeVR {
                 if (owner.GetComponent<Plug>()) {
                     Plug p = owner.GetComponent<Plug>();
                     p.SetCord(this);
+
+                    if (p.IsPluggedIn()) {
+                        if (p.DestinationJack.GetComponent<InputJack>()) {
+                            Flow = 1;
+                        }else if (p.DestinationJack.GetComponent<OutputJack>()) {
+                            Flow = -1;
+                        }
+                    }
                 }
+            }
+
+            if(Flow != 0) {
+                SetFlowing(true);
             }
         }
 
@@ -289,42 +372,40 @@ namespace ComposeVR {
             UpdateBoundingBox();
         }
 
+        public List<Vector3> GetPath() {
+            return path;
+        }
+
         /// <summary>
-        /// This method searches the network of cords connected to this cord in the direction determined by searchDownstream.
+        /// This method searches the network of cords connected to this cord in the direction determined by reverseFlow.
         /// 
         /// For a given cord, flow is positive if the cord flows from A -> B (i.e. A is the output and B is the input)
         /// Flow is negative if the cords flows from B -> A
         /// 
-        /// Searching for output jacks means looking for endpoints which are 'downstream' from the start point. This means we only take paths with positive flow during our search. 
-        /// This is reversed when searching for input jacks. 
+        /// When searching, we look for nodes that are 'downstream' from the start point. This means we only take paths with positive flow during our search. 
+        /// This is reversed when searching for output jacks 
         /// 
         /// </summary>
-        /// <param name="getOutputJacks"></param>
+        /// <param name="reverseFlow"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<Jack> GetConnectedJacks(bool searchDownstream, Transform start) {
+        public HashSet<Jack> GetConnectedJacks(bool reverseFlow, Transform start) {
             HashSet<Jack> results = new HashSet<Jack>();
 
-            float workingFlow; 
-            if (searchDownstream) {
-                workingFlow = Flow;
+            float workingFlow = Flow; 
+            if (reverseFlow) {
+                workingFlow = -workingFlow;
             }
-            else {
-                workingFlow = -Flow;
-            }
-
-            //Debug.Log("Node position in cord: " + start.Value.cordPosition);
-            //Debug.Log("Working flow: " + workingFlow);
 
             if (workingFlow > 0 && !B.Equals(start)) {
 
                 if (B.GetComponent<BranchHandle>()) {
                     BranchHandle handle = B.GetComponent<BranchHandle>();
-                    CordNode downStreamNode = handle.GetDownstreamNode();
-                    results.UnionWith(downStreamNode.cord.GetConnectedJacks(searchDownstream, downStreamNode.nodeInCord));
+                    CordNode downStreamNode = handle.GetDownstreamNode(reverseFlow);
+                    results.UnionWith(downStreamNode.cord.GetConnectedJacks(reverseFlow, downStreamNode.nodeInCord));
 
                     CordNode branchNode = handle.GetBranchNode();
-                    results.UnionWith(branchNode.cord.GetConnectedJacks(searchDownstream, branchNode.nodeInCord));
+                    results.UnionWith(branchNode.cord.GetConnectedJacks(reverseFlow, branchNode.nodeInCord));
                 }else if (B.GetComponent<OwnedObject>()) {
                     Transform owner = B.GetComponent<OwnedObject>().Owner;
 
@@ -342,17 +423,16 @@ namespace ComposeVR {
 
                 if (A.GetComponent<BranchHandle>()) {
                     BranchHandle handle = A.GetComponent<BranchHandle>();
-                    CordNode upstreamNode = handle.GetUpstreamNode();
-                    results.UnionWith(handle.GetSourceCord().GetConnectedJacks(searchDownstream, upstreamNode.nodeInCord));
+                    CordNode downstreamNode = handle.GetDownstreamNode(reverseFlow);
+                    results.UnionWith(downstreamNode.cord.GetConnectedJacks(reverseFlow, downstreamNode.nodeInCord));
 
                     CordNode branchNode = handle.GetBranchNode();
-                    results.UnionWith(branchNode.cord.GetConnectedJacks(searchDownstream, branchNode.nodeInCord));
+                    results.UnionWith(branchNode.cord.GetConnectedJacks(reverseFlow, branchNode.nodeInCord));
                 }else if (A.GetComponent<OwnedObject>()) {
                     Transform owner = A.GetComponent<OwnedObject>().Owner;
 
                     if (owner.GetComponent<Plug>()) {
                         Plug plug = owner.GetComponent<Plug>();
-                        //Debug.Log("Getting plug in A");
 
                         if(plug.DestinationJack != null) {
                             results.Add(plug.DestinationJack);
@@ -421,5 +501,91 @@ namespace ComposeVR {
                 lineRenderer.material.SetColor("_TintColor", cordColor);
             }
         }
+
+        public void Collapse() {
+            Flow = 0;
+            SetFlowing(false);
+
+            collapsing = true;
+
+            Plug plugA = GetPlugFromCordNode(A);
+            Plug plugB = GetPlugFromCordNode(B);
+
+            collapseStart = 0;
+            collapseEnd = path.Count - 1;
+
+            if(plugA != null) {
+                CordFollower followerA = plugA.GetComponent<CordFollower>();
+                followerA.enabled = true;
+                followerA.TeleportToPoint(0);
+                followerA.SetTargetPoint(path.Count - 1);
+                followerA.NextPointReached += OnStartPointConsumed;
+                plugA.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
+            }
+
+            if(plugB != null) {
+                CordFollower followerB = plugB.GetComponent<CordFollower>();
+                followerB.enabled = true;
+                followerB.TeleportToPoint(path.Count - 1);
+                followerB.SetTargetPoint(0);
+                followerB.NextPointReached += OnEndPointConsumed;
+                plugB.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
+            }
+        }
+
+        private void OnCollapseFinished() {
+
+            if (A.GetComponent<BranchHandle>()) {
+                A.GetComponent<BranchHandle>().MergeJunction();
+            }
+            else {
+                Plug p = GetPlugFromCordNode(A);
+                if(p != null) {
+                    Destroy(p.gameObject);
+                }
+            }
+
+            if (B.GetComponent<BranchHandle>()) {
+                B.GetComponent<BranchHandle>().MergeJunction();
+            }
+            else {
+                Plug p = GetPlugFromCordNode(B);
+                if(p != null) {
+                    Destroy(p.gameObject);
+                }
+            }
+
+            DestroyCord();
+        }
+
+        public void DestroyCord() {
+            foreach(BranchHandle b in branchHandles) {
+                Destroy(b.gameObject);
+            }
+
+            Destroy(gameObject);
+        }
+
+        private void OnStartPointConsumed(object sender, CordFollowerEventArgs e) {
+            collapseStart += 1;
+            plugALookVector = -e.NextMoveVector;
+        }
+
+        private void OnEndPointConsumed(object sender, CordFollowerEventArgs e) {
+            collapseEnd -= 1;
+            plugBLookVector = -e.NextMoveVector;
+        }
+
+        public Plug GetPlugFromCordNode(Transform cordAttachPoint) {
+            if (cordAttachPoint.GetComponent<OwnedObject>()) {
+                Transform owner = cordAttachPoint.GetComponent<OwnedObject>().Owner;
+                if (owner.GetComponent<Plug>()) {
+                    return owner.GetComponent<Plug>();
+                }
+            }
+
+            return null;    
+        }
+
     }
 }

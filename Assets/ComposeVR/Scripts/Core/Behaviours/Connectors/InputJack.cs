@@ -13,16 +13,20 @@ namespace ComposeVR {
         }
 
         private void OnPlugConnected(object sender, JackEventArgs e) {
-            HashSet<Jack> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(false, e.PlugNodeInCord);
+            HashSet<Jack> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(true, e.PlugNodeInCord);
             foreach(Jack j in connectedOutputJacks) {
-                j.GetComponent<OutputJack>().ConnectInputs(connectedInputs);
+                if (j.GetComponent<OutputJack>()) {
+                    j.GetComponent<OutputJack>().ConnectInputs(connectedInputs);
+                }
             }
         }
 
         private void OnPlugDisconnected(object sender, JackEventArgs e) {
-            HashSet<Jack> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(false, e.PlugNodeInCord);
+            HashSet<Jack> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(true, e.PlugNodeInCord);
             foreach(Jack j in connectedOutputJacks) {
-                j.GetComponent<OutputJack>().DisconnectInputs(connectedInputs);
+                if (j.GetComponent<OutputJack>()) {
+                    j.GetComponent<OutputJack>().DisconnectInputs(connectedInputs);
+                }
             }
         }
 

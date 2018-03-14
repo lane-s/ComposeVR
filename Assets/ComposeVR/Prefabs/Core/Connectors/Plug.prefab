@@ -75,6 +75,7 @@ GameObject:
   - component: {fileID: 54170332809952730}
   - component: {fileID: 114143391533786518}
   - component: {fileID: 135858767354311850}
+  - component: {fileID: 114620639719833418}
   m_Layer: 13
   m_Name: Plug
   m_TagString: Untagged
@@ -604,7 +605,7 @@ MonoBehaviour:
   MaxHandSeparationBeforeUnsnap: 0.14
   MaxJackDistanceBeforeUnsnap: 0.2
   SmallestAllowedInitialDistanceFromJack: 0.17
-  SnapToHandSpeed: 1.8
+  SnapToHandSpeed: 1.5
   SnapCooldownTime: 0.15
   JackSnapSpeed: 0.2
   RotationSnapSpeed: 600
@@ -661,6 +662,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: {fileID: 4601306996117448}
+--- !u!114 &114620639719833418
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417998939927070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33575c46ea2f4434ea1efed359499bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 1.5
 --- !u!114 &114679998007066222
 MonoBehaviour:
   m_ObjectHideFlags: 1
