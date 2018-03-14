@@ -25,7 +25,6 @@ namespace ComposeVR {
         private List<Jack> nearbyJacks;
 
         private Cord connectedCord;
-        private LinkedListNode<BranchNode> plugNodeInCord;
         
         private VRTK_InteractableObject interactable;
         private SnapToTargetPosition positionSnap;
@@ -113,7 +112,7 @@ namespace ComposeVR {
         }
 
         private void UnplugFromJack() {
-            DestinationJack.Disconnect(connectedCord, plugNodeInCord);
+            DestinationJack.Disconnect(connectedCord, transform);
 
             targetJack = DestinationJack;
             DestinationJack = null;
@@ -140,7 +139,7 @@ namespace ComposeVR {
             if (interactable.IsGrabbed() && targetJack != null) {
 
                 float flow = connectedCord.Flow;
-                if (plugNodeInCord.Equals(connectedCord.GetBranches().First)) {
+                if (transform.Equals(connectedCord.GetCordStart())) {
                     flow = -flow;
                 }
 
@@ -312,7 +311,7 @@ namespace ComposeVR {
 
         private void ConnectToDestinationJack() {
             float flow = 1;
-            if (plugNodeInCord.Equals(connectedCord.GetBranches().First)) {
+            if (transform.Equals(connectedCord.GetCordStart())) {
                 flow = -flow;
             }
 
@@ -325,7 +324,7 @@ namespace ComposeVR {
 
             connectedCord.SetFlowing(true);
 
-            DestinationJack.Connect(connectedCord, plugNodeInCord);
+            DestinationJack.Connect(connectedCord, transform);
         }
 
         private void UnSnapFromJack() {
@@ -383,10 +382,6 @@ namespace ComposeVR {
 
         public void SetCord(Cord c) {
             this.connectedCord = c;
-        }
-
-        public void SetPlugNodeInCord(LinkedListNode<BranchNode> node) {
-            plugNodeInCord = node;
         }
 
         public void AddNearbyJack(Jack j) {

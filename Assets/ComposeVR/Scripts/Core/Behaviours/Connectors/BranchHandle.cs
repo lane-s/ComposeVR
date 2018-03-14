@@ -4,6 +4,29 @@ using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
+    public class CordNode {
+        public Cord cord;
+        public Transform nodeInCord;
+
+        public CordNode(Cord cord, Transform nodeInCord) {
+            this.cord = cord;
+            this.nodeInCord = nodeInCord;
+        }
+    }
+    public class CordJunction {
+        public CordNode A;
+        public CordNode B;
+
+        public float Flow;
+
+        public CordJunction(CordNode A, CordNode B, float Flow) {
+            this.A = A;
+            this.B = B;
+
+            this.Flow = Flow;
+        }
+    }
+
     [RequireComponent(typeof(VRTK_InteractableObject))]
     [RequireComponent(typeof(CordFollower))]
     public class BranchHandle : MonoBehaviour {
@@ -19,20 +42,22 @@ namespace ComposeVR {
         private bool wasShowing;
 
         private float controllerDistance;
+        private Cord sourceCord;    //The cord that created the BranchHandle
 
-        private Plug connectedPlug;
-        private Cord sourceCord;
-        private LinkedListNode<BranchNode> nodeInSourceCord;
+        private CordJunction cordJunction; //Junction where the sourceCord was split by the BranchHandle
 
-        private Cord branchCord;
+        private CordNode branchNode;
         private bool cordStartPoint = true;
 
         private CordFollower cordFollower;
 
         private Transform controllerToTrack;
+        private Plug connectedPlug;
         private bool trackController = true;
 
-        private bool grabbable;
+        private const float UNGRABBABLE_TIME = 0.35f;
+        private float ungrabbableTimeElapsed;
+        private bool ungrabbablePeriodOver;
 
         // Use this for initialization
         void Awake() {
@@ -43,22 +68,20 @@ namespace ComposeVR {
             connectedPlug.gameObject.SetActive(false);
 
             GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnGrabbed;
+            GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnUngrabbed;
 
             GetComponent<VRTK_InteractableObject>().isGrabbable = false;
-            StartCoroutine(AllowGrab());
 
             cordFollower = GetComponent<CordFollower>();
         }
 
-        private IEnumerator AllowGrab() {
-            yield return new WaitForSeconds(0.8f);
-            GetComponent<VRTK_InteractableObject>().isGrabbable = true;
-        }
-
         void Update() {
-            if (!grabbable) {
-                grabbable = true;
-                StartCoroutine(AllowGrab());
+            if (ungrabbableTimeElapsed < UNGRABBABLE_TIME) {
+                ungrabbableTimeElapsed += Time.deltaTime;
+            }
+            else if(!ungrabbablePeriodOver){
+                GetComponent<VRTK_InteractableObject>().isGrabbable = true;
+                ungrabbablePeriodOver = true;
             }
 
             if (trackController) {
@@ -77,9 +100,6 @@ namespace ComposeVR {
                         HideHandle();
                     }
                 }
-            }
-            else {
-                MoveToTargetPoint();
             }
         }
 
@@ -133,26 +153,48 @@ namespace ComposeVR {
             cordFollower.SetCord(c);
         }
 
-        public Cord GetBranchCord() {
-            return branchCord;
+        public CordNode GetBranchNode() {
+            return branchNode;
         }
 
         public Cord GetSourceCord() {
             return sourceCord;
         }
 
+        public CordNode GetUpstreamNode() {
+            if(cordJunction != null) {
+                if (cordJunction.Flow > 0) {
+                    return cordJunction.A;
+                }
+                else {
+                    return cordJunction.B;
+                }
+            }
+            Debug.LogError("Cannot get UpstreamCord for BranchHandle that has not yet split the source cord");
+            return null;
+        }
+
+        public CordNode GetDownstreamNode() {
+            if(cordJunction != null) {
+                if(cordJunction.Flow > 0) {
+                    return cordJunction.B;
+                }
+                else {
+                    return cordJunction.A;
+                }
+            }
+            Debug.LogError("Cannot get DownstreamCord for BranchHandle that has not yet split the source cord");
+            return null;
+        }
+
         public bool IsCordStartPoint() {
             return cordStartPoint;
         }
 
-        public LinkedListNode<BranchNode> GetNodeInSourceCord() {
-            return nodeInSourceCord;
-        }
-
         VRTK_InteractGrab grabber;
-        public void OnGrabbed(object sender, InteractableObjectEventArgs e) {
-            if(branchCord != null) {
-                //Replace this branch handle with a plug
+        private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
+            if(branchNode != null) {
+
             }
             else {
                 grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
@@ -167,17 +209,30 @@ namespace ComposeVR {
                 connectedPlug.transform.SetParent(null);
                 connectedPlug.GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
 
+                Cord branchCord;
+
                 //Create a cord between the plug and the branch handle
                 branchCord = Instantiate(CordPrefab).GetComponent<Cord>();
                 branchCord.SetColor(sourceCord.GetColor());
                 branchCord.ConnectCord(transform, connectedPlug.CordAttachPoint);
                 branchCord.Flow = 0;
 
-                nodeInSourceCord = sourceCord.InsertBranchNode(this, closestCordPointIndex);
+                branchNode = new CordNode(branchCord, transform);
+
+                //Split the original cord
+                Cord splitCord = Instantiate(CordPrefab).GetComponent<Cord>();
+                cordJunction = sourceCord.SplitByBranchHandle(this, closestCordPointIndex, splitCord);
+                
                 trackController = false;
+                cordFollower.enabled = false;
 
                 StartCoroutine(GrabPlug());
+
             }
+        }
+
+        private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
+            GetComponent<Rigidbody>().isKinematic = true;
         }
 
         private IEnumerator GrabPlug() {
@@ -191,6 +246,7 @@ namespace ComposeVR {
             yield return new WaitForEndOfFrame();
 
             connectedPlug.EnableSnapping();
+            GetComponent<VRTK_InteractableObject>().isGrabbable = true;
             yield return null;
         }
     }

@@ -5,9 +5,9 @@ using UnityEngine;
 namespace ComposeVR {
     public class JackEventArgs : EventArgs {
         private Cord connectedCord;
-        private LinkedListNode<BranchNode> plugEnd;
+        private Transform plugEnd;
 
-        public JackEventArgs(Cord connectedCord, LinkedListNode<BranchNode> plugEnd) {
+        public JackEventArgs(Cord connectedCord, Transform plugEnd) {
             this.connectedCord = connectedCord;
             this.plugEnd = plugEnd;
         }
@@ -17,7 +17,7 @@ namespace ComposeVR {
             set { connectedCord = value;  }
         }
 
-        public LinkedListNode<BranchNode> PlugNodeInCord {
+        public Transform PlugNodeInCord {
             get { return plugEnd; }
             set { plugEnd = value; }
         }
@@ -91,13 +91,13 @@ namespace ComposeVR {
             blocked = false;
         }
 
-        public void Connect(Cord connectedCord, LinkedListNode<BranchNode> plugNodeInCord) {
+        public void Connect(Cord connectedCord, Transform plugNodeInCord) {
             if(PlugConnected != null) {
                 PlugConnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
             }
         }
 
-        public void Disconnect(Cord connectedCord, LinkedListNode<BranchNode> plugNodeInCord) {
+        public void Disconnect(Cord connectedCord, Transform plugNodeInCord) {
             if(PlugDisconnected != null) {
                 PlugDisconnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
             }

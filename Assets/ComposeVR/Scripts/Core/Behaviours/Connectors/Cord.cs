@@ -5,16 +5,6 @@ using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
-    public class BranchNode {
-        public BranchHandle handle;
-        public int cordPosition;
-
-        public BranchNode(BranchHandle handle, int cordPosition) {
-            this.handle = handle;
-            this.cordPosition = cordPosition;
-        }
-    }
-
     [RequireComponent(typeof(LineRenderer))]
     public sealed class Cord : MonoBehaviour {
 
@@ -31,7 +21,7 @@ namespace ComposeVR {
 
         public int RelaxIterationsPerFrame = 2;
 
-        private const float BOUNDING_BOX_PADDING = 0.1f;
+        private const float BOUNDING_BOX_PADDING = 0.01f;
         private Transform A;
         private Transform B;
 
@@ -47,12 +37,11 @@ namespace ComposeVR {
         private List<Transform> nearbyControllers;
         private List<BranchHandle> branchHandles;
 
-        private LinkedList<BranchNode> branches;
-
         private bool allowBranching;
 
         void Awake() {
             lineRenderer = GetComponent<LineRenderer>();
+
             path = new List<Vector3>();
 
             SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
@@ -67,18 +56,6 @@ namespace ComposeVR {
             branchHandles = new List<BranchHandle>();
 
             lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
-
-            InitializeBranchList();            
-        }
-
-        private void InitializeBranchList() {
-            branches = new LinkedList<BranchNode>();
-
-            BranchNode A = new BranchNode(null, int.MinValue);
-            BranchNode B = new BranchNode(null, int.MaxValue);
-
-            branches.AddFirst(A);
-            branches.AddLast(B);
         }
 
         // Update is called once per frame
@@ -137,10 +114,10 @@ namespace ComposeVR {
             }
         }
 
-        float flowVal = 0;
+        float flowTextureOffset = 0;
         private void FlowEffect() {
-            flowVal = Mathf.Repeat(flowVal - Time.deltaTime*Flow, 1);
-            lineRenderer.material.mainTextureOffset = new Vector2(flowVal, 0);
+            flowTextureOffset = Mathf.Repeat(flowTextureOffset - Time.deltaTime*Flow, 1);
+            lineRenderer.material.mainTextureOffset = new Vector2(flowTextureOffset, 0);
         }
 
         private BoxCollider GetBoundingBox() {
@@ -193,11 +170,11 @@ namespace ComposeVR {
                 maxZ = Mathf.Max(path[i].z, maxZ)+BOUNDING_BOX_PADDING/2;
             }
 
-            Vector3 min = transform.InverseTransformPoint(new Vector3(minX, minY, minZ));
-            Vector3 max = transform.InverseTransformPoint(new Vector3(maxX, maxY, maxZ));
+            Vector3 min = new Vector3(minX, minY, minZ);
+            Vector3 max = new Vector3(maxX, maxY, maxZ);
 
-            GetBoundingBox().center = (min + max) / 2;
-            GetBoundingBox().size = max - min;
+            transform.GetChild(0).position = (min + max) / 2;
+            transform.GetChild(0).SetGlobalScale(max - min);
         }
 
         /// <summary>
@@ -240,7 +217,6 @@ namespace ComposeVR {
                 if (owner.GetComponent<Plug>()) {
                     Plug p = owner.GetComponent<Plug>();
                     p.SetCord(this);
-                    p.SetPlugNodeInCord(branches.First);
                 }
             }
 
@@ -249,12 +225,15 @@ namespace ComposeVR {
                 if (owner.GetComponent<Plug>()) {
                     Plug p = owner.GetComponent<Plug>();
                     p.SetCord(this);
-                    p.SetPlugNodeInCord(branches.Last);
                 }
             }
         }
 
+        private bool flowing;
+
         public void SetFlowing(bool flowing) {
+            this.flowing = flowing;
+
             if (flowing) {
                 lineRenderer.material.mainTexture = FlowTexture;
                 lineRenderer.material.SetFloat("_EmissionGain", OnEmission);
@@ -263,7 +242,7 @@ namespace ComposeVR {
                 lineRenderer.material.mainTexture = null;
                 lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
             }
-            flowVal = 0;
+            flowTextureOffset = 0;
         }
 
         public void AllowBranching(bool allow) {
@@ -282,31 +261,32 @@ namespace ComposeVR {
         private void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
             if (!nearbyControllers.Contains(e.other.transform)) {
                 nearbyControllers.Add(e.other.transform);
-
-                if(nearbyControllers.Count > branchHandles.Count) {
-                    branchHandles.Add((Instantiate(BranchHandlePrefab) as Transform).GetComponent<BranchHandle>());
-                }
-                
-                for(int i = 0; i < branchHandles.Count; i++) {
-                    if (!branchHandles[i].IsTrackingController()) {
-                        branchHandles[i].TrackController(e.other.transform);
-                        branchHandles[i].SetSourceCord(this);
-                        branchHandles[i].gameObject.SetActive(allowBranching);
-                    }
-                }
+                CreateBranchHandles(e.other.transform);
             }                
         }
+
+        private void CreateBranchHandles(Transform trackedController) {
+            if(nearbyControllers.Count > branchHandles.Count) {
+                branchHandles.Add((Instantiate(BranchHandlePrefab) as Transform).GetComponent<BranchHandle>());
+                branchHandles[branchHandles.Count - 1].SetSourceCord(this);
+                branchHandles[branchHandles.Count - 1].gameObject.SetActive(allowBranching);
+                branchHandles[branchHandles.Count - 1].TrackController(trackedController);
+            }
+        } 
 
         private void OnControllerLeaveArea(object sender, SimpleTriggerEventArgs e) {
             int index = nearbyControllers.IndexOf(e.other.transform);
             if (index != -1) {
                 nearbyControllers.RemoveAt(index);
-                branchHandles[index].TrackController(null);
+                Destroy(branchHandles[index].gameObject);
+                branchHandles.RemoveAt(index);
             }
         }
 
-        public LinkedList<BranchNode> GetBranches() {
-            return branches;
+        public void SetPath(List<Vector3> path) {
+            this.path = path;
+            UpdateLine();
+            UpdateBoundingBox();
         }
 
         /// <summary>
@@ -322,7 +302,7 @@ namespace ComposeVR {
         /// <param name="getOutputJacks"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<Jack> GetConnectedJacks(bool searchDownstream, LinkedListNode<BranchNode> start) {
+        public HashSet<Jack> GetConnectedJacks(bool searchDownstream, Transform start) {
             HashSet<Jack> results = new HashSet<Jack>();
 
             float workingFlow; 
@@ -336,12 +316,15 @@ namespace ComposeVR {
             //Debug.Log("Node position in cord: " + start.Value.cordPosition);
             //Debug.Log("Working flow: " + workingFlow);
 
-            if (workingFlow > 0) {
+            if (workingFlow > 0 && !B.Equals(start)) {
 
                 if (B.GetComponent<BranchHandle>()) {
                     BranchHandle handle = B.GetComponent<BranchHandle>();
-                    results.UnionWith(handle.GetSourceCord().GetConnectedJacks(searchDownstream, handle.GetNodeInSourceCord()));
+                    CordNode downStreamNode = handle.GetDownstreamNode();
+                    results.UnionWith(downStreamNode.cord.GetConnectedJacks(searchDownstream, downStreamNode.nodeInCord));
 
+                    CordNode branchNode = handle.GetBranchNode();
+                    results.UnionWith(branchNode.cord.GetConnectedJacks(searchDownstream, branchNode.nodeInCord));
                 }else if (B.GetComponent<OwnedObject>()) {
                     Transform owner = B.GetComponent<OwnedObject>().Owner;
 
@@ -354,21 +337,16 @@ namespace ComposeVR {
                     }
                 }
 
-                if(start != null) {
-                    LinkedListNode<BranchNode> current = start;
-                    while(current.Next != null) {
-                        current = current.Next;
-                        results.UnionWith(SearchBranch(current.Value, searchDownstream));
-                    }
-                }
             }
-            else if(workingFlow < 0){
+            else if(workingFlow < 0 && !A.Equals(start)){
 
                 if (A.GetComponent<BranchHandle>()) {
-                    //Debug.Log("Getting handle in A");
                     BranchHandle handle = A.GetComponent<BranchHandle>();
-                    results.UnionWith(handle.GetSourceCord().GetConnectedJacks(searchDownstream, handle.GetNodeInSourceCord()));
+                    CordNode upstreamNode = handle.GetUpstreamNode();
+                    results.UnionWith(handle.GetSourceCord().GetConnectedJacks(searchDownstream, upstreamNode.nodeInCord));
 
+                    CordNode branchNode = handle.GetBranchNode();
+                    results.UnionWith(branchNode.cord.GetConnectedJacks(searchDownstream, branchNode.nodeInCord));
                 }else if (A.GetComponent<OwnedObject>()) {
                     Transform owner = A.GetComponent<OwnedObject>().Owner;
 
@@ -381,59 +359,48 @@ namespace ComposeVR {
                         }
                     }
                 }
-
-                if(start != null) {
-                    LinkedListNode<BranchNode> current = start;
-
-                    while(current.Previous != null) {
-                        current = current.Previous;
-                        results.UnionWith(SearchBranch(current.Value, searchDownstream));
-                    }
-                }
             }
 
             return results;
         }
 
-        private HashSet<Jack> SearchBranch(BranchNode n, bool searchDownstream) {
-            if(n.handle == null) {
-                return new HashSet<Jack>();
+        /// <summary>
+        /// Splits the cord so that this cord contains the points before splitPoint and splitCord contains the points after splitPoint
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="splitPointIndex"></param>
+        /// <param name="splitCord"></param>
+        /// <returns></returns>
+        public CordJunction SplitByBranchHandle(BranchHandle handle, int splitPointIndex, Cord splitCord) {
+
+            //Get the points after the splitPoint and assign them to the splitCord
+            List<Vector3> splitPath = new List<Vector3>();
+            for(int i = splitPointIndex; i < path.Count; i++) {
+                splitPath.Add(path[i]);
             }
 
-            BranchHandle branchToSearch = n.handle;
-            LinkedListNode<BranchNode> nextStart;
+            splitCord.SetColor(cordColor);
+            splitCord.Flow = 0;
+            splitCord.ConnectCord(handle.transform, B);
+            splitCord.SetPath(splitPath);
+            splitCord.AllowBranching(true);
 
-            if (branchToSearch.IsCordStartPoint()) {
-                nextStart = branchToSearch.GetBranchCord().GetBranches().First;
+            int combinedPathLength = path.Count;
+
+            //Exclude the points in the splitCord from this cord
+            for(int i = 0; i < combinedPathLength - splitPointIndex; i++) {
+                path.RemoveAt(path.Count - 1);
             }
-            else {
-                nextStart = branchToSearch.GetBranchCord().GetBranches().Last;
-            }
+            B = handle.transform;
 
-            return branchToSearch.GetBranchCord().GetConnectedJacks(searchDownstream, nextStart);
-        }
+            branchHandles.Remove(handle);
+            CreateBranchHandles(handle.GetTrackedController());
+            UpdateBoundingBox();
 
-        public LinkedListNode<BranchNode> InsertBranchNode(BranchHandle handle, int cordPosition) {
+            CordNode JunctionA = new CordNode(this, handle.transform);
+            CordNode JunctionB = new CordNode(splitCord, handle.transform);
 
-            //When inserting a new branch node, the handle becomes a persistent fixture on the wire and we need a new branch handle to follow the user's controller
-            for(int i = 0; i < branchHandles.Count; i++) {
-                if (branchHandles[i].Equals(handle)) {
-                    BranchHandle newHandle = Instantiate(BranchHandlePrefab).GetComponent<BranchHandle>();
-                    newHandle.TrackController(branchHandles[i].GetTrackedController());
-                    newHandle.SetSourceCord(this);
-                    branchHandles[i] = newHandle;
-                    branchHandles[i].gameObject.SetActive(allowBranching);
-                }
-            }
-
-            LinkedListNode<BranchNode> current = branches.First;
-
-            while(current.Value.cordPosition < cordPosition) {
-                current = current.Next;
-            }
-
-            BranchNode n = new BranchNode(handle, cordPosition);
-            return branches.AddBefore(current, n);
+            return new CordJunction(JunctionA, JunctionB, Flow);
         }
 
         public Transform GetCordStart() {

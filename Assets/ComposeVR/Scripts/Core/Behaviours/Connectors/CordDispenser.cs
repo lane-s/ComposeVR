@@ -271,7 +271,6 @@ namespace ComposeVR {
         }
 
         public void Block() {
-            Debug.Log("Dispenser blocked by plug");
             if (state == State.Free) {
                 state = State.Blocked;
             }
