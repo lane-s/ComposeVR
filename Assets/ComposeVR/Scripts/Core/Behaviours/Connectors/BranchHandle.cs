@@ -52,7 +52,6 @@ namespace ComposeVR {
         private CordFollower cordFollower;
 
         private Transform controllerToTrack;
-        private Plug connectedPlug;
         private bool trackController = true;
 
         private const float UNGRABBABLE_TIME = 0.35f;
@@ -61,12 +60,6 @@ namespace ComposeVR {
 
         // Use this for initialization
         void Awake() {
-            connectedPlug = Instantiate(PlugPrefab).GetComponent<Plug>();
-            connectedPlug.transform.parent = transform;
-            connectedPlug.transform.localPosition = Vector3.zero;
-            connectedPlug.transform.localRotation = Quaternion.identity;
-            connectedPlug.gameObject.SetActive(false);
-
             GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnGrabbed;
             GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnUngrabbed;
 
@@ -192,29 +185,16 @@ namespace ComposeVR {
         /// The two cords in the CordJunction that was formed by splitting the source cord as well as the newly created branch cord
         /// 
         /// This method takes a cord that is about to collapse as the parameter and merges the other two cords of the handle together.
-        /// The BranchHandle is no longer needed after the merge, so it is destroyed
         /// </summary>
         /// <param name="collapsedCord"></param>
-        public void MergeJunction(Cord collapsedCord) {
-
-            List<Vector3> mergedPath = new List<Vector3>();
+        public void MergeRemainingCords(Cord collapsedCord) {
 
             if (collapsedCord.Equals(branchNode.cord)) {
-                //If the branch cord is collapsing then we merge the two cords in the junction
-                mergedPath.AddRange(cordJunction.A.cord.GetPath());
-                mergedPath.AddRange(cordJunction.B.cord.GetPath());
-
-                cordJunction.A.cord.ConnectCord(cordJunction.A.cord.GetCordStart(), cordJunction.B.cord.GetCordEnd());
-                cordJunction.A.cord.SetPath(mergedPath);
-
-                if (cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>()) {
-                    BranchHandle endHandle = cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>();
-                    endHandle.ReplaceCord(cordJunction.B.cord, cordJunction.A.cord);
-                }
-
-                cordJunction.B.cord.DestroyCord();
+                //If the branch cord has collapsed we merge the junction and end up with the same cord that was split by the BranchHandle
+                MergeJunction();
             }else {
-
+                //Otherwise one side of the junction has collapsed so we merge the branch cord with the other side of the junction
+                List<Vector3> mergedPath = new List<Vector3>();
                 CordNode toMerge = collapsedCord.Equals(cordJunction.A.cord) ? cordJunction.B : cordJunction.A;
 
                 Transform branchEnd = branchNode.nodeInCord.Equals(branchNode.cord.GetCordStart()) ? branchNode.cord.GetCordEnd() : branchNode.cord.GetCordStart();
@@ -239,8 +219,25 @@ namespace ComposeVR {
                 
                 branchNode.cord.DestroyCord();
             }
+        }
 
-            Destroy(gameObject);
+        private Cord MergeJunction() {
+            List<Vector3> mergedPath = new List<Vector3>();
+            //If the branch cord is collapsing then we merge the two cords in the junction
+            mergedPath.AddRange(cordJunction.A.cord.GetPath());
+            mergedPath.AddRange(cordJunction.B.cord.GetPath());
+
+            cordJunction.A.cord.ConnectCord(cordJunction.A.cord.GetCordStart(), cordJunction.B.cord.GetCordEnd());
+            cordJunction.A.cord.SetPath(mergedPath);
+
+            if (cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>()) {
+                BranchHandle endHandle = cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>();
+                endHandle.ReplaceCord(cordJunction.B.cord, cordJunction.A.cord);
+            }
+
+            cordJunction.B.cord.DestroyCord();
+
+            return cordJunction.A.cord;
         }
 
         public void ReplaceCord(Cord toReplace, Cord replacement) {
@@ -256,28 +253,25 @@ namespace ComposeVR {
 
         VRTK_InteractGrab grabber;
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
+            grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
             if(branchNode != null) {
-
+                VRTK_ControllerEvents controllerEvents = e.interactingObject.GetComponent<VRTK_ControllerEvents>();
+                controllerEvents.ButtonOnePressed += OnDisconnectButtonPressed;
             }
             else {
-                grabber = e.interactingObject.GetComponent<VRTK_InteractGrab>();
 
                 //Force the controller to let go of the branch handle
                 grabber.ForceRelease();
                 GetComponent<VRTK_InteractableObject>().isGrabbable = false;
 
-                //And grab the plug instead
-                connectedPlug.gameObject.SetActive(true);
-                connectedPlug.DisableSnapping();
-                connectedPlug.transform.SetParent(null);
-                connectedPlug.GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
+                Plug branchPlug = CreatePlug();
 
                 Cord branchCord;
 
                 //Create a cord between the plug and the branch handle
                 branchCord = Instantiate(CordPrefab).GetComponent<Cord>();
                 branchCord.SetColor(sourceCord.GetColor());
-                branchCord.ConnectCord(transform, connectedPlug.CordAttachPoint);
+                branchCord.ConnectCord(transform, branchPlug.CordAttachPoint);
                 branchCord.Flow = 0;
 
                 branchNode = new CordNode(branchCord, transform);
@@ -288,27 +282,65 @@ namespace ComposeVR {
                 trackController = false;
                 cordFollower.enabled = false;
 
-                StartCoroutine(GrabPlug());
-
+                StartCoroutine(GrabPlug(branchPlug, false));
             }
         }
 
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
             GetComponent<Rigidbody>().isKinematic = true;
+            if(branchNode != null) {
+                e.interactingObject.GetComponent<VRTK_ControllerEvents>().ButtonOnePressed -= OnDisconnectButtonPressed;
+            }
         }
 
-        private IEnumerator GrabPlug() {
-            while (!connectedPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
-                connectedPlug.transform.rotation = Quaternion.LookRotation(grabber.controllerAttachPoint.transform.forward);
-                connectedPlug.transform.position = grabber.controllerAttachPoint.transform.position;
+        private Cord merged;
+
+        private void OnDisconnectButtonPressed(object sender, ControllerInteractionEventArgs e) {
+            grabber.ForceRelease();
+            GetComponent<VRTK_InteractableObject>().enabled = false;
+            GetComponent<MeshRenderer>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+
+            merged = MergeJunction();
+            merged.AllowBranching(false);
+
+            Plug disconnectedPlug = CreatePlug();
+            if (branchNode.cord.GetCordStart().Equals(branchNode.nodeInCord)) {
+                branchNode.cord.ConnectCord(disconnectedPlug.CordAttachPoint, branchNode.cord.GetCordEnd());
+            }
+            else {
+                branchNode.cord.ConnectCord(branchNode.cord.GetCordStart(), disconnectedPlug.CordAttachPoint);
+            } 
+
+            StartCoroutine(GrabPlug(disconnectedPlug, true));
+        }
+
+        private Plug CreatePlug() {
+            Plug p = Instantiate(PlugPrefab).GetComponent<Plug>();
+            p.transform.position = transform.position;
+            p.transform.rotation = transform.rotation;
+            p.DisableSnapping();
+            p.GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
+            return p;
+        }
+
+        private IEnumerator GrabPlug(Plug p, bool destroyOnFinished) {
+            while (!p.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
+                p.transform.rotation = Quaternion.LookRotation(grabber.controllerAttachPoint.transform.forward);
+                p.transform.position = grabber.controllerAttachPoint.transform.position;
                 grabber.AttemptGrab();
                 yield return new WaitForEndOfFrame();
             }
 
             yield return new WaitForEndOfFrame();
 
-            connectedPlug.EnableSnapping();
+            p.EnableSnapping();
             GetComponent<VRTK_InteractableObject>().isGrabbable = true;
+
+            if (destroyOnFinished) {
+                merged.AllowBranching(true);
+                Destroy(this.gameObject);
+            }
             yield return null;
         }
     }

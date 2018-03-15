@@ -261,6 +261,33 @@ namespace ComposeVR {
             }
         }
 
+        private void OnCollapseFinished() {
+
+            if (A.GetComponent<BranchHandle>()) {
+                A.GetComponent<BranchHandle>().MergeRemainingCords(this);
+                Destroy(A.gameObject);
+            }
+            else {
+                Plug p = GetPlugFromCordNode(A);
+                if(p != null) {
+                    Destroy(p.gameObject);
+                }
+            }
+
+            if (B.GetComponent<BranchHandle>()) {
+                B.GetComponent<BranchHandle>().MergeRemainingCords(this);
+                Destroy(B.gameObject);
+            }
+            else {
+                Plug p = GetPlugFromCordNode(B);
+                if(p != null) {
+                    Destroy(p.gameObject);
+                }
+            }
+
+            DestroyCord();
+        }
+
         public Vector3 GetPointAtIndex(int i) {
             if(i >= path.Count) {
                 i = path.Count - 1;
@@ -538,30 +565,6 @@ namespace ComposeVR {
             }
         }
 
-        private void OnCollapseFinished() {
-
-            if (A.GetComponent<BranchHandle>()) {
-                A.GetComponent<BranchHandle>().MergeJunction(this);
-            }
-            else {
-                Plug p = GetPlugFromCordNode(A);
-                if(p != null) {
-                    Destroy(p.gameObject);
-                }
-            }
-
-            if (B.GetComponent<BranchHandle>()) {
-                B.GetComponent<BranchHandle>().MergeJunction(this);
-            }
-            else {
-                Plug p = GetPlugFromCordNode(B);
-                if(p != null) {
-                    Destroy(p.gameObject);
-                }
-            }
-
-            DestroyCord();
-        }
 
         public void DestroyCord() {
             foreach(BranchHandle b in branchHandles) {
