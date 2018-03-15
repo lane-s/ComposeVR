@@ -370,6 +370,7 @@ namespace ComposeVR {
             this.path = path;
             UpdateLine();
             UpdateBoundingBox();
+            timeRelaxed = 0;
         }
 
         public List<Vector3> GetPath() {
@@ -462,6 +463,10 @@ namespace ComposeVR {
             splitCord.SetColor(cordColor);
             splitCord.Flow = 0;
             splitCord.ConnectCord(handle.transform, B);
+            if (B.GetComponent<BranchHandle>()) {
+                B.GetComponent<BranchHandle>().ReplaceCord(this, splitCord);
+            }
+
             splitCord.SetPath(splitPath);
             splitCord.AllowBranching(true);
 
@@ -536,7 +541,7 @@ namespace ComposeVR {
         private void OnCollapseFinished() {
 
             if (A.GetComponent<BranchHandle>()) {
-                A.GetComponent<BranchHandle>().MergeJunction();
+                A.GetComponent<BranchHandle>().MergeJunction(this);
             }
             else {
                 Plug p = GetPlugFromCordNode(A);
@@ -546,7 +551,7 @@ namespace ComposeVR {
             }
 
             if (B.GetComponent<BranchHandle>()) {
-                B.GetComponent<BranchHandle>().MergeJunction();
+                B.GetComponent<BranchHandle>().MergeJunction(this);
             }
             else {
                 Plug p = GetPlugFromCordNode(B);
@@ -577,6 +582,10 @@ namespace ComposeVR {
         }
 
         public Plug GetPlugFromCordNode(Transform cordAttachPoint) {
+            if(cordAttachPoint == null) {
+                return null;
+            }
+
             if (cordAttachPoint.GetComponent<OwnedObject>()) {
                 Transform owner = cordAttachPoint.GetComponent<OwnedObject>().Owner;
                 if (owner.GetComponent<Plug>()) {

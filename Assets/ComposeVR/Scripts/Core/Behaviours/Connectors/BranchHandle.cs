@@ -157,6 +157,10 @@ namespace ComposeVR {
             return branchNode;
         }
 
+        public void SetBranchCord(Cord cord) {
+            branchNode.cord = cord;
+        }
+
         public Cord GetSourceCord() {
             return sourceCord;
         }
@@ -183,15 +187,71 @@ namespace ComposeVR {
             return cordStartPoint;
         }
 
-        public void MergeJunction() {
-            List<Vector3> fullPath = cordJunction.A.cord.GetPath();
-            fullPath.AddRange(cordJunction.B.cord.GetPath());
+        /// <summary>
+        /// A BranchHandle exists at the intersection of three cords:
+        /// The two cords in the CordJunction that was formed by splitting the source cord as well as the newly created branch cord
+        /// 
+        /// This method takes a cord that is about to collapse as the parameter and merges the other two cords of the handle together.
+        /// The BranchHandle is no longer needed after the merge, so it is destroyed
+        /// </summary>
+        /// <param name="collapsedCord"></param>
+        public void MergeJunction(Cord collapsedCord) {
 
-            cordJunction.A.cord.ConnectCord(cordJunction.A.cord.GetCordStart(), cordJunction.B.cord.GetCordEnd());
-            cordJunction.A.cord.SetPath(fullPath);
+            List<Vector3> mergedPath = new List<Vector3>();
 
-            cordJunction.B.cord.DestroyCord();
+            if (collapsedCord.Equals(branchNode.cord)) {
+                //If the branch cord is collapsing then we merge the two cords in the junction
+                mergedPath.AddRange(cordJunction.A.cord.GetPath());
+                mergedPath.AddRange(cordJunction.B.cord.GetPath());
+
+                cordJunction.A.cord.ConnectCord(cordJunction.A.cord.GetCordStart(), cordJunction.B.cord.GetCordEnd());
+                cordJunction.A.cord.SetPath(mergedPath);
+
+                if (cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>()) {
+                    BranchHandle endHandle = cordJunction.B.cord.GetCordEnd().GetComponent<BranchHandle>();
+                    endHandle.ReplaceCord(cordJunction.B.cord, cordJunction.A.cord);
+                }
+
+                cordJunction.B.cord.DestroyCord();
+            }else {
+
+                CordNode toMerge = collapsedCord.Equals(cordJunction.A.cord) ? cordJunction.B : cordJunction.A;
+
+                Transform branchEnd = branchNode.nodeInCord.Equals(branchNode.cord.GetCordStart()) ? branchNode.cord.GetCordEnd() : branchNode.cord.GetCordStart();
+
+                if (toMerge.nodeInCord.Equals(toMerge.cord.GetCordStart())) {
+                    toMerge.cord.ConnectCord(branchEnd, toMerge.cord.GetCordEnd());
+                    mergedPath.AddRange(branchNode.cord.GetPath());
+                    mergedPath.AddRange(toMerge.cord.GetPath());
+                }
+                else {
+                    toMerge.cord.ConnectCord(toMerge.cord.GetCordStart(), branchEnd);
+                    mergedPath.AddRange(toMerge.cord.GetPath());
+                    mergedPath.AddRange(branchNode.cord.GetPath());
+                }
+
+                toMerge.cord.SetPath(mergedPath);
+
+                if (branchEnd.GetComponent<BranchHandle>()) {
+                    BranchHandle startHandle = branchEnd.GetComponent<BranchHandle>();
+                    startHandle.ReplaceCord(branchNode.cord, toMerge.cord);
+                }
+                
+                branchNode.cord.DestroyCord();
+            }
+
             Destroy(gameObject);
+        }
+
+        public void ReplaceCord(Cord toReplace, Cord replacement) {
+            if (branchNode != null && branchNode.cord.Equals(toReplace)) {
+                branchNode.cord = replacement;
+            }else if (cordJunction != null && cordJunction.A != null && cordJunction.A.cord.Equals(toReplace)) {
+                cordJunction.A.cord = replacement;
+            }
+            else if(cordJunction != null && cordJunction.B != null && cordJunction.B.cord.Equals(toReplace)){
+                cordJunction.B.cord = replacement; 
+            }
         }
 
         VRTK_InteractGrab grabber;
@@ -222,9 +282,8 @@ namespace ComposeVR {
 
                 branchNode = new CordNode(branchCord, transform);
 
-                //Split the original cord
                 Cord splitCord = Instantiate(CordPrefab).GetComponent<Cord>();
-                cordJunction = sourceCord.SplitByBranchHandle(this, closestCordPointIndex, splitCord);
+                cordJunction = sourceCord.SplitByBranchHandle(this, closestCordPointIndex, splitCord); //The source cord is split into two cords connected by a cordJunction
                 
                 trackController = false;
                 cordFollower.enabled = false;

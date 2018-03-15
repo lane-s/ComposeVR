@@ -16,14 +16,17 @@ namespace ComposeVR {
         }
 
         void IJackInput.ReceiveData(WireData data) {
-            TestData d = (TestData)data;
-            float dialVal = d.controlData.normalizedValue / 100f;
+            TestData d = data as TestData;
 
-            float H, S, V;
-            Color.RGBToHSV(originalColor, out H, out S, out V);
+            if (d != null) {
+                float dialVal = d.controlData.normalizedValue / 100f;
+
+                float H, S, V;
+                Color.RGBToHSV(originalColor, out H, out S, out V);
 
 
-            GetComponent<MeshRenderer>().material.color = Color.HSVToRGB(dialVal, S, V);
+                GetComponent<MeshRenderer>().material.color = Color.HSVToRGB(dialVal, S, V);
+            }
         }
     }
 }
