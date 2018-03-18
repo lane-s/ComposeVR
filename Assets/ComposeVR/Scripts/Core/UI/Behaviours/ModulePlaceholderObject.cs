@@ -49,7 +49,7 @@ namespace ComposeVR {
 
         public void OnTriggerEnter(Collider other) {
 
-            if (!Utility.isInLayerMask(other.gameObject.layer, ignoreLayers)) {
+            if (!Utility.IsInLayerMask(other.gameObject.layer, ignoreLayers)) {
                 blockingCollisions += 1;
             }
 
@@ -67,7 +67,7 @@ namespace ComposeVR {
         }
 
         public void OnTriggerExit(Collider other) {
-            if (!Utility.isInLayerMask(other.gameObject.layer, ignoreLayers)) {
+            if (!Utility.IsInLayerMask(other.gameObject.layer, ignoreLayers)) {
                 blockingCollisions -= 1;
             }
 
