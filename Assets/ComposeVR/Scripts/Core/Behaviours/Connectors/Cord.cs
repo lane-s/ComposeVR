@@ -31,7 +31,9 @@ namespace ComposeVR {
         private Vector3 lastPos;
         private float timeRelaxed;
         private Color cordColor;
-
+        private float flowTextureOffset = 0;
+        private bool flowing;
+                
         private int collapseStart;
         private int collapseEnd;
         private bool collapsing = false;
@@ -50,12 +52,71 @@ namespace ComposeVR {
 
         private bool allowBranching;
 
+        public Transform StartNode {
+            get { return A; }
+        }
+
+        public Transform EndNode {
+            get { return B; }
+        }
+
+        public Color Color {
+            get { return cordColor; }
+            set {
+                cordColor = value;
+                if (lineRenderer) {
+                    lineRenderer.material.SetColor("_TintColor", cordColor);
+                }
+            }
+        }
+
+        public List<Vector3> Path {
+            get { return path; }
+            set {
+                path = value;
+                UpdateLine();
+                UpdateBoundingBox();
+                timeRelaxed = 0;
+            }
+        }
+
+        public int NumPoints {
+            get { return Path.Count; }
+        }
+
+        public bool Flowing {
+            get { return flowing; }
+            set {
+                flowing = value;
+
+                if (flowing) {
+                    lineRenderer.material.mainTexture = FlowTexture;
+                    lineRenderer.material.SetFloat("_EmissionGain", OnEmission);
+                }
+                else {
+                    lineRenderer.material.mainTexture = null;
+                    lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
+                }
+                flowTextureOffset = 0;
+            }
+        }
+
+        public Vector3 GetPathPointAtIndex(int i) {
+            if(i >= path.Count) {
+                i = path.Count - 1;
+            }else if(i < 0) {
+                i = 0;
+            }
+
+            return path[i];
+        }
+
         void Awake() {
             lineRenderer = GetComponent<LineRenderer>();
 
             path = new List<Vector3>();
 
-            SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
+            Color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
 
             timeRelaxed = RelaxTime;
 
@@ -71,114 +132,133 @@ namespace ComposeVR {
             collapseParticles.gameObject.SetActive(false);
         }
 
+        #region Nearby Controller Detection
+        private void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
+            if (!nearbyControllers.Contains(e.other.transform)) {
+                nearbyControllers.Add(e.other.transform);
+                CreateBranchHandles(e.other.transform);
+            }                
+        }
+
+        private void OnControllerLeaveArea(object sender, SimpleTriggerEventArgs e) {
+            int index = nearbyControllers.IndexOf(e.other.transform);
+            if (index != -1) {
+                nearbyControllers.RemoveAt(index);
+                Destroy(branchHandles[index].gameObject);
+                branchHandles.RemoveAt(index);
+            }
+        }
+        #endregion Nearby Controller Detection
+
         // Update is called once per frame
         void Update() {
-            if (A != null && B != null && !collapsing) {
-                //Start a path from the origin
-                if (path.Count == 0) {
-                    path.Add(A.position);
-                }
+            if(A != null && B != null) {
+                if (!collapsing) {
+                    //Start a path from the origin
+                    if (path.Count == 0) {
+                        path.Add(A.position);
+                    }
 
-                if (!lastPos.Equals(B.position)) {
+                    if (!lastPos.Equals(B.position)) {
 
-                    updateLine = false;
+                        updateLine = false;
 
-                    //Extend path if the end moves
-                    if (path.Count > 0) {
-                        if (Vector3.Distance(path.Last(), B.position) > SegmentLength) {
-                            path.Add(B.position);
+                        //Extend path if the end moves
+                        if (path.Count > 0) {
+                            if (Vector3.Distance(path.Last(), B.position) > SegmentLength) {
+                                path.Add(B.position);
+                                updateLine = true;
+                                timeRelaxed = 0;
+                            }
+                        }
+                    }
+
+                    //Add on to the beginning of the cord if the start point is not at the beginning of the cord path
+                    if (A.gameObject.activeSelf && path[0] != A.position) {
+                        if (Vector3.Distance(path[0], A.position) > SegmentLength) {
+                            path.Insert(0, A.position);
                             updateLine = true;
                             timeRelaxed = 0;
                         }
                     }
-                }
 
-                //Add on to the beginning of the cord if the start point is not at the beginning of the cord path
-                if (A.gameObject.activeSelf && path[0] != A.position) {
-                    if (Vector3.Distance(path[0], A.position) > SegmentLength) {
-                        path.Insert(0, A.position);
+                    if (timeRelaxed < RelaxTime) {
+                        timeRelaxed += Time.deltaTime;
+
+                        for (int i = 0; i < RelaxIterationsPerFrame; i++) {
+                            RelaxPath();
+                        }
+
                         updateLine = true;
-                        timeRelaxed = 0;
-                    }
-                }
-
-                if (timeRelaxed < RelaxTime) {
-                    timeRelaxed += Time.deltaTime;
-
-                    for (int i = 0; i < RelaxIterationsPerFrame; i++) {
-                        RelaxPath();
                     }
 
-                    updateLine = true;
-                }
-
-                if (updateLine) {
-                    UpdateLine();
-                    UpdateBoundingBox();
-                }
-
-                if (nearbyControllers.Count > 0) {
-                    UpdateBranchHandles();
-                }
-
-                lastPos = B.position;
-
-                FlowEffect();
-            }
-            else if(collapsing) {
-                if(collapseStart >= collapseEnd || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
-                    OnCollapseFinished();
-                }
-                else {
-                    //Only render the portion of the path that has not yet been collapsed
-                    lineRenderer.positionCount = collapseEnd - collapseStart + 1;
-                    Vector3[] collapsingPath = new Vector3[lineRenderer.positionCount];
-
-                    int j = 0;
-                    for(int i = collapseStart; i <= collapseEnd; i++) {
-                        collapsingPath[j] = path[i];
-                        j += 1;
+                    if (updateLine) {
+                        UpdateLine();
+                        UpdateBoundingBox();
                     }
 
-                    lineRenderer.SetPositions(collapsingPath);
-
-                    //Rotate plugs to point away from their movement direction
-                    Plug plugA = GetPlugFromCordNode(A);
-                    if(plugA != null) {
-                        if (plugALookVector != Vector3.zero) {
-                            plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
-                        }
-                        plugA.GetComponent<CordFollower>().Speed += collapseAccel;
+                    if (nearbyControllers.Count > 0) {
+                        UpdateBranchHandles();
                     }
 
-                     Plug plugB = GetPlugFromCordNode(B);
-                    if(plugB != null) {
-                        if (plugBLookVector != Vector3.zero) {
-                            plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
-                        }
-                        plugB.GetComponent<CordFollower>().Speed += collapseAccel;
-                    }
+                    lastPos = B.position;
 
-                    //Play the collapse particle effect when the cord is almost completely collapsed
-                    if(lineRenderer.positionCount < COLLAPSE_PARTICLE_FIRE_COUNT && collapseParticles != null && !collapseParticles.gameObject.activeSelf) {
-                        collapseParticles.gameObject.SetActive(true);
-                        if(plugA != null && plugB != null) {
-                            collapseParticles.transform.position = GetPointAtIndex((collapseEnd - collapseStart) / 2 + collapseStart);
-                        }else if(plugA != null) {
-                            collapseParticles.transform.position = GetPointAtIndex(path.Count - 1);
-                        }
-                        else {
-                            collapseParticles.transform.position = GetPointAtIndex(0);
+                    TranslateFlowTexture();
+                }
+                else if(collapsing) {
+                    if(collapseStart >= collapseEnd || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
+                        OnCollapseFinished();
+                    }
+                    else {
+                        //Only render the portion of the path that has not yet been collapsed
+                        lineRenderer.positionCount = collapseEnd - collapseStart + 1;
+                        Vector3[] collapsingPath = new Vector3[lineRenderer.positionCount];
+
+                        int j = 0;
+                        for(int i = collapseStart; i <= collapseEnd; i++) {
+                            collapsingPath[j] = path[i];
+                            j += 1;
                         }
 
-                        collapseParticles.Play();
+                        lineRenderer.SetPositions(collapsingPath);
+
+                        //Rotate plugs to point away from their movement direction
+                        Plug plugA = A.GetComponentInOwner<Plug>();
+                        if(plugA != null) {
+                            if (plugALookVector != Vector3.zero) {
+                                plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
+                            }
+                            plugA.GetComponent<CordFollower>().Speed += collapseAccel;
+                        }
+
+                         Plug plugB = B.GetComponentInOwner<Plug>();
+                        if(plugB != null) {
+                            if (plugBLookVector != Vector3.zero) {
+                                plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
+                            }
+                            plugB.GetComponent<CordFollower>().Speed += collapseAccel;
+                        }
+
+                        //Play the collapse particle effect when the cord is almost completely collapsed
+                        if(lineRenderer.positionCount < COLLAPSE_PARTICLE_FIRE_COUNT && collapseParticles != null && !collapseParticles.gameObject.activeSelf) {
+                            collapseParticles.gameObject.SetActive(true);
+                            if(plugA != null && plugB != null) {
+                                collapseParticles.transform.position = GetPathPointAtIndex((collapseEnd - collapseStart) / 2 + collapseStart);
+                            }else if(plugA != null) {
+                                collapseParticles.transform.position = GetPathPointAtIndex(path.Count - 1);
+                            }
+                            else {
+                                collapseParticles.transform.position = GetPathPointAtIndex(0);
+                            }
+
+                            collapseParticles.Play();
+                        }
                     }
                 }
             }
         }
 
-        float flowTextureOffset = 0;
-        private void FlowEffect() {
+        private void TranslateFlowTexture() {
             flowTextureOffset = Mathf.Repeat(flowTextureOffset - Time.deltaTime*Flow, 1);
             lineRenderer.material.mainTextureOffset = new Vector2(flowTextureOffset, 0);
         }
@@ -240,120 +320,15 @@ namespace ComposeVR {
             transform.GetChild(0).SetGlobalScale(max - min);
         }
 
-        /// <summary>
-        /// For each nearby controller, update the point on the cord that is closest to the controller/
-        /// 
-        /// If the distance between the controller and the closest point on the cord is below a threshold, show a handle to allow the user to branch off of this cord
-        /// 
-        /// Currently we use a brute force method as it seems to be ok for the number of points that are on a normal cord segment. If performance of this method becomes a problem, we will have to use space partitioning to reduce the search time
-        /// </summary>
-        private void UpdateBranchHandles() {
-            for(int i = 0; i < path.Count; i++) {
-                for(int j = 0; j < nearbyControllers.Count; j++) {
-                    if (branchHandles[j].GetTrackedController() != null) {
-                        Vector3 diff = branchHandles[j].GetTrackedController().position - path[i];
-
-                        if (diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance()) {
-                            branchHandles[j].SetClosestPoint(i, diff.sqrMagnitude);
-                        }
-                    }
-                }
+        #region BranchHandle Management
+        private void CreateBranchHandles(Transform trackedController) {
+            if(nearbyControllers.Count > branchHandles.Count) {
+                branchHandles.Add((Instantiate(BranchHandlePrefab) as Transform).GetComponent<BranchHandle>());
+                branchHandles[branchHandles.Count - 1].SourceCord = this;
+                branchHandles[branchHandles.Count - 1].gameObject.SetActive(allowBranching);
+                branchHandles[branchHandles.Count - 1].TrackedController = trackedController;
             }
-        }
-
-        private void OnCollapseFinished() {
-
-            if (A.GetComponent<BranchHandle>()) {
-                A.GetComponent<BranchHandle>().MergeRemainingCords(this);
-                Destroy(A.gameObject);
-            }
-            else {
-                Plug p = GetPlugFromCordNode(A);
-                if(p != null) {
-                    Destroy(p.gameObject);
-                }
-            }
-
-            if (B.GetComponent<BranchHandle>()) {
-                B.GetComponent<BranchHandle>().MergeRemainingCords(this);
-                Destroy(B.gameObject);
-            }
-            else {
-                Plug p = GetPlugFromCordNode(B);
-                if(p != null) {
-                    Destroy(p.gameObject);
-                }
-            }
-
-            DestroyCord();
-        }
-
-        public Vector3 GetPointAtIndex(int i) {
-            if(i >= path.Count) {
-                i = path.Count - 1;
-            }else if(i < 0) {
-                i = 0;
-            }
-
-            return path[i];
-        }
-
-        public void ConnectCord(Transform start, Transform end) {
-            A = start;
-            B = end;
-
-            if (A.GetComponent<OwnedObject>()) {
-                Transform owner = A.GetComponent<OwnedObject>().Owner;
-                if (owner.GetComponent<Plug>()) {
-                    Plug p = owner.GetComponent<Plug>();
-                    p.SetCord(this);
-
-                    if (p.IsPluggedIn()) {
-                        if (p.DestinationJack.GetComponent<InputJack>()) {
-                            Flow = -1;
-                        }else if (p.DestinationJack.GetComponent<OutputJack>()) {
-                            Flow = 1;
-                        }
-                    }
-                }
-            }
-
-            if (B.GetComponent<OwnedObject>()) {
-                Transform owner = B.GetComponent<OwnedObject>().Owner;
-                if (owner.GetComponent<Plug>()) {
-                    Plug p = owner.GetComponent<Plug>();
-                    p.SetCord(this);
-
-                    if (p.IsPluggedIn()) {
-                        if (p.DestinationJack.GetComponent<InputJack>()) {
-                            Flow = 1;
-                        }else if (p.DestinationJack.GetComponent<OutputJack>()) {
-                            Flow = -1;
-                        }
-                    }
-                }
-            }
-
-            if(Flow != 0) {
-                SetFlowing(true);
-            }
-        }
-
-        private bool flowing;
-
-        public void SetFlowing(bool flowing) {
-            this.flowing = flowing;
-
-            if (flowing) {
-                lineRenderer.material.mainTexture = FlowTexture;
-                lineRenderer.material.SetFloat("_EmissionGain", OnEmission);
-            }
-            else {
-                lineRenderer.material.mainTexture = null;
-                lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
-            }
-            flowTextureOffset = 0;
-        }
+        } 
 
         public void AllowBranching(bool allow) {
             allowBranching = allow;
@@ -364,114 +339,29 @@ namespace ComposeVR {
             }
         }
 
-        public float GetLength() {
-            return path.Count;
-        }
-
-        private void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
-            if (!nearbyControllers.Contains(e.other.transform)) {
-                nearbyControllers.Add(e.other.transform);
-                CreateBranchHandles(e.other.transform);
-            }                
-        }
-
-        private void CreateBranchHandles(Transform trackedController) {
-            if(nearbyControllers.Count > branchHandles.Count) {
-                branchHandles.Add((Instantiate(BranchHandlePrefab) as Transform).GetComponent<BranchHandle>());
-                branchHandles[branchHandles.Count - 1].SetSourceCord(this);
-                branchHandles[branchHandles.Count - 1].gameObject.SetActive(allowBranching);
-                branchHandles[branchHandles.Count - 1].TrackController(trackedController);
-            }
-        } 
-
-        private void OnControllerLeaveArea(object sender, SimpleTriggerEventArgs e) {
-            int index = nearbyControllers.IndexOf(e.other.transform);
-            if (index != -1) {
-                nearbyControllers.RemoveAt(index);
-                Destroy(branchHandles[index].gameObject);
-                branchHandles.RemoveAt(index);
-            }
-        }
-
-        public void SetPath(List<Vector3> path) {
-            this.path = path;
-            UpdateLine();
-            UpdateBoundingBox();
-            timeRelaxed = 0;
-        }
-
-        public List<Vector3> GetPath() {
-            return path;
-        }
-
         /// <summary>
-        /// This method searches the network of cords connected to this cord in the direction determined by reverseFlow.
+        /// For each nearby controller, update the point on the cord that is closest to the controller/
         /// 
-        /// For a given cord, flow is positive if the cord flows from A -> B (i.e. A is the output and B is the input)
-        /// Flow is negative if the cords flows from B -> A
+        /// If the distance between the controller and the closest point on the cord is below a threshold, show a handle to allow the user to branch off of this cord
         /// 
-        /// When searching, we look for nodes that are 'downstream' from the start point. This means we only take paths with positive flow during our search. 
-        /// This is reversed when searching for output jacks 
-        /// 
+        /// Currently we use a brute force method as it seems to be ok for the number of points that are on a normal cord segment. If performance of this method becomes a problem, we will have to use space partitioning to reduce the search time
         /// </summary>
-        /// <param name="reverseFlow"></param>
-        /// <param name="cordPos"></param>
-        /// <returns></returns>
-        public HashSet<Jack> GetConnectedJacks(bool reverseFlow, Transform start) {
-            HashSet<Jack> results = new HashSet<Jack>();
+        private void UpdateBranchHandles() {
+            for(int i = 0; i < path.Count; i++) {
+                for(int j = 0; j < nearbyControllers.Count; j++) {
+                    if (branchHandles[j].TrackedController != null) {
+                        Vector3 diff = branchHandles[j].TrackedController.position - path[i];
 
-            float workingFlow = Flow; 
-            if (reverseFlow) {
-                workingFlow = -workingFlow;
-            }
-
-            if (workingFlow > 0 && !B.Equals(start)) {
-
-                if (B.GetComponent<BranchHandle>()) {
-                    BranchHandle handle = B.GetComponent<BranchHandle>();
-                    CordNode downStreamNode = handle.GetDownstreamNode(reverseFlow);
-                    results.UnionWith(downStreamNode.cord.GetConnectedJacks(reverseFlow, downStreamNode.nodeInCord));
-
-                    CordNode branchNode = handle.GetBranchNode();
-                    results.UnionWith(branchNode.cord.GetConnectedJacks(reverseFlow, branchNode.nodeInCord));
-                }else if (B.GetComponent<OwnedObject>()) {
-                    Transform owner = B.GetComponent<OwnedObject>().Owner;
-
-                    if (owner.GetComponent<Plug>()) {
-                        Plug plug = owner.GetComponent<Plug>();
-
-                        if(plug.DestinationJack != null) {
-                            results.Add(plug.DestinationJack);
-                        }
-                    }
-                }
-
-            }
-            else if(workingFlow < 0 && !A.Equals(start)){
-
-                if (A.GetComponent<BranchHandle>()) {
-                    BranchHandle handle = A.GetComponent<BranchHandle>();
-                    CordNode downstreamNode = handle.GetDownstreamNode(reverseFlow);
-                    results.UnionWith(downstreamNode.cord.GetConnectedJacks(reverseFlow, downstreamNode.nodeInCord));
-
-                    CordNode branchNode = handle.GetBranchNode();
-                    results.UnionWith(branchNode.cord.GetConnectedJacks(reverseFlow, branchNode.nodeInCord));
-                }else if (A.GetComponent<OwnedObject>()) {
-                    Transform owner = A.GetComponent<OwnedObject>().Owner;
-
-                    if (owner.GetComponent<Plug>()) {
-                        Plug plug = owner.GetComponent<Plug>();
-
-                        if(plug.DestinationJack != null) {
-                            results.Add(plug.DestinationJack);
+                        if (diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance()) {
+                            branchHandles[j].SetClosestPoint(i, diff.sqrMagnitude);
                         }
                     }
                 }
             }
-
-            return results;
         }
+        #endregion BranchHandle Management
 
+        #region Cord Connections
         /// <summary>
         /// Splits the cord so that this cord contains the points before splitPoint and splitCord contains the points after splitPoint
         /// </summary>
@@ -487,14 +377,14 @@ namespace ComposeVR {
                 splitPath.Add(path[i]);
             }
 
-            splitCord.SetColor(cordColor);
+            splitCord.Color = Color;
             splitCord.Flow = 0;
-            splitCord.ConnectCord(handle.transform, B);
-            if (B.GetComponent<BranchHandle>()) {
+            splitCord.Connect(handle.transform, B);
+            if (B.GetComponent<BranchHandle>() != null) {
                 B.GetComponent<BranchHandle>().ReplaceCord(this, splitCord);
             }
 
-            splitCord.SetPath(splitPath);
+            splitCord.Path = splitPath;
             splitCord.AllowBranching(true);
 
             int combinedPathLength = path.Count;
@@ -506,7 +396,7 @@ namespace ComposeVR {
             B = handle.transform;
 
             branchHandles.Remove(handle);
-            CreateBranchHandles(handle.GetTrackedController());
+            CreateBranchHandles(handle.TrackedController);
             UpdateBoundingBox();
 
             CordNode JunctionA = new CordNode(this, handle.transform);
@@ -515,33 +405,137 @@ namespace ComposeVR {
             return new CordJunction(JunctionA, JunctionB, Flow);
         }
 
-        public Transform GetCordStart() {
-            return A;
-        }
+        public void Connect(Transform start, Transform end) {
+            A = start;
+            B = end;
 
-        public Transform GetCordEnd() {
-            return B;
-        }
+            Plug plugA = A.GetComponentInOwner<Plug>();
+            ConnectPlug(plugA);
 
-        public Color GetColor() {
-            return cordColor;
-        }
+            Plug plugB = B.GetComponentInOwner<Plug>();
+            ConnectPlug(plugB);
 
-        public void SetColor(Color color) {
-            cordColor = color;
-            if (lineRenderer) {
-                lineRenderer.material.SetColor("_TintColor", cordColor);
+            if(Flow != 0) {
+                Flowing = true;
+            }
+            else {
+                Flowing = false;
             }
         }
 
+        private void ConnectPlug(Plug plug) {
+            if (plug == null) {
+                return;
+            }
+
+            plug.ConnectedCord = this;
+
+            if (plug.IsPluggedIn()) {
+                if (plug.DestinationJack.GetComponent<InputJack>() != null) {
+                    if (plug.CordAttachPoint.Equals(A)) {
+                        Flow = -1;
+                    }
+                    else {
+                        Flow = 1;
+                    }
+                }else if (plug.DestinationJack.GetComponent<OutputJack>() != null) {
+                    if (plug.CordAttachPoint.Equals(A)) {
+                        Flow = 1;
+                    }
+                    else {
+                        Flow = -1;
+                    }
+                }
+            }
+        }
+        #endregion Cord Connections
+
+        #region Finding Connected Jacks
+
+        /// <summary>
+        /// This method searches the network of cords connected to this cord in the direction determined by reverseFlow.
+        /// 
+        /// For a given cord, flow is positive if the cord flows from A -> B (i.e. A is the output and B is the input)
+        /// Flow is negative if the cords flows from B -> A
+        /// 
+        /// When searching, we look for nodes that are 'downstream' from the start point. This means we only take paths with positive flow during our search. 
+        /// This is reversed when searching for output jacks 
+        /// 
+        /// </summary>
+        /// <param name="reverseFlow"></param>
+        /// <param name="cordPos"></param>
+        /// <returns></returns>
+        public HashSet<Jack> GetConnectedJacks(bool reverseFlow, Transform searchStartNode) {
+            HashSet<Jack> results = new HashSet<Jack>();
+
+            float workingFlow = Flow; 
+            if (reverseFlow) {
+                workingFlow = -workingFlow;
+            }
+
+            if (workingFlow > 0 && !B.Equals(searchStartNode)) {
+                BranchHandle handleB = B.GetComponent<BranchHandle>();
+                results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleB));
+
+                Plug plugB = B.GetComponentInOwner<Plug>();
+                Jack connectedJack = GetJackConnectedToPlug(plugB);
+
+                if(connectedJack != null) {
+                    results.Add(connectedJack);
+                }
+            }
+            else if(workingFlow < 0 && !A.Equals(searchStartNode)){
+                BranchHandle handleA = A.GetComponent<BranchHandle>();
+                results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleA));
+
+                Plug plugA = A.GetComponentInOwner<Plug>();
+                Jack connectedJack = GetJackConnectedToPlug(plugA);
+
+                if(connectedJack != null) {
+                    results.Add(connectedJack);
+                }
+            }
+
+            return results;
+        }
+
+        private HashSet<Jack> GetJacksConnectedToHandle(bool reverseFlow, BranchHandle handle) {
+            HashSet<Jack> results = new HashSet<Jack>();
+            if(handle != null) {
+                CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
+                results.UnionWith(GetJacksConnectedToNode(reverseFlow, downstreamJunctionNode));
+
+                CordNode branchNode = handle.BranchNode;
+                results.UnionWith(GetJacksConnectedToNode(reverseFlow, branchNode));
+            }
+
+            return results;
+        }
+
+        private HashSet<Jack> GetJacksConnectedToNode(bool reverseFlow, CordNode node) {
+            return node.Cord.GetConnectedJacks(reverseFlow, node.transform);
+        }
+
+        private Jack GetJackConnectedToPlug(Plug plug) {
+            if(plug != null) {
+                if (plug.IsPluggedIn()) {
+                    return plug.DestinationJack;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region Collapsing
         public void Collapse() {
             Flow = 0;
-            SetFlowing(false);
+            Flowing = false;
 
             collapsing = true;
 
-            Plug plugA = GetPlugFromCordNode(A);
-            Plug plugB = GetPlugFromCordNode(B);
+            Plug plugA = A.GetComponentInOwner<Plug>();
+            Plug plugB = B.GetComponentInOwner<Plug>();
 
             collapseStart = 0;
             collapseEnd = path.Count - 1;
@@ -565,6 +559,32 @@ namespace ComposeVR {
             }
         }
 
+        private void OnCollapseFinished() {
+
+            if (A.GetComponent<BranchHandle>() != null) {
+                A.GetComponent<BranchHandle>().MergeRemainingCords(this);
+                Destroy(A.gameObject);
+            }
+            else {
+                Plug p = A.GetComponentInOwner<Plug>();
+                if(p != null) {
+                    p.DestroyPlug();
+                }
+            }
+
+            if (B.GetComponent<BranchHandle>() != null) {
+                B.GetComponent<BranchHandle>().MergeRemainingCords(this);
+                Destroy(B.gameObject);
+            }
+            else {
+                Plug p = B.GetComponentInOwner<Plug>();
+                if(p != null) {
+                    p.DestroyPlug();
+                }
+            }
+
+            DestroyCord();
+        }
 
         public void DestroyCord() {
             foreach(BranchHandle b in branchHandles) {
@@ -583,21 +603,7 @@ namespace ComposeVR {
             collapseEnd -= 1;
             plugBLookVector = -e.NextMoveVector;
         }
-
-        public Plug GetPlugFromCordNode(Transform cordAttachPoint) {
-            if(cordAttachPoint == null) {
-                return null;
-            }
-
-            if (cordAttachPoint.GetComponent<OwnedObject>()) {
-                Transform owner = cordAttachPoint.GetComponent<OwnedObject>().Owner;
-                if (owner.GetComponent<Plug>()) {
-                    return owner.GetComponent<Plug>();
-                }
-            }
-
-            return null;    
-        }
+        #endregion
 
     }
 }

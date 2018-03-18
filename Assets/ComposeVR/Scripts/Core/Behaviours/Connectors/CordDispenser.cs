@@ -20,7 +20,7 @@ namespace ComposeVR {
 
         public float ExtendDistance;
         public float ExtendSpeed;
-
+        public float ActivationWaitTime;
 
         private Plug primaryPlug;
         private Plug secondaryPlug;
@@ -52,6 +52,16 @@ namespace ComposeVR {
             state = State.Free;
 
             StartCoroutine(FSM());
+        }
+
+        private void OnEnable() {
+            state = State.Blocked;
+            StartCoroutine(UnblockAfterDelay());
+        }
+
+        private IEnumerator UnblockAfterDelay() {
+            yield return new WaitForSeconds(ActivationWaitTime);
+            state = State.Free;
         }
 
         // Update is called once per frame
@@ -134,14 +144,14 @@ namespace ComposeVR {
             normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
-            cord.ConnectCord(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
+            cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
 
             cord.Flow = 1;
 
             if(GetComponent<InputJack>() != null) {
                 cord.Flow = -cord.Flow;
             }
-            cord.SetFlowing(true);
+            cord.Flowing = true;
                 
             cord.gameObject.SetActive(false);
             primaryPlug.gameObject.SetActive(false);

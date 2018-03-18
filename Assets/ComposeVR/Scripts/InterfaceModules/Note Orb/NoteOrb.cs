@@ -141,7 +141,7 @@ namespace ComposeVR {
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
 
         private void OpenNoteChooser() {
-            noteChooser = ComposeVRManager.Instance.GetNoteChooserObject();
+            noteChooser = ComposeVRManager.Instance.NoteChooserObject;
             noteChooser.Display(true);
 
             noteChooser.NoteChoiceConfirmed += OnNoteChoiceConfirmed;
@@ -150,7 +150,12 @@ namespace ComposeVR {
             noteChooser.transform.parent.position = transform.position + Vector3.up * NOTE_CHOOSER_OFFSET;
             noteChooser.transform.parent.rotation = Quaternion.LookRotation(noteChooser.transform.parent.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
             noteChooser.transform.parent.position -= noteChooser.transform.parent.forward * 0.05f;
-            noteChooser.transform.parent.SetParent(this.transform);
+            noteChooser.transform.parent.SetParent(this.transform.parent);
+
+            Collider[] toIgnore = new Collider[1];
+            toIgnore[0] = noteChooser.GetComponent<Collider>();
+
+            transform.parent.GetComponent<VRTK_InteractableObject>().ignoredColliders = toIgnore;
         }
 
         private void OnNoteChoiceConfirmed(object sender, NoteChooserEventArgs args) {

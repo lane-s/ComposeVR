@@ -25,13 +25,13 @@ namespace ComposeVR {
             if (currentPointIndex != targetPointIndex && cord != null) {
                 int nextPointIndex = NextPointIndex();
 
-                Vector3 toNextPoint = (cord.GetPointAtIndex(nextPointIndex) - cord.GetPointAtIndex(currentPointIndex)).normalized;
+                Vector3 toNextPoint = (cord.GetPathPointAtIndex(nextPointIndex) - cord.GetPathPointAtIndex(currentPointIndex)).normalized;
 
                 Vector3 nextPos = transform.position + toNextPoint * Speed * Time.deltaTime;
 
-                Vector3 nextDiff = cord.GetPointAtIndex(nextPointIndex) - nextPos;
+                Vector3 nextDiff = cord.GetPathPointAtIndex(nextPointIndex) - nextPos;
 
-                if (!nextPos.Equals(cord.GetPointAtIndex(nextPointIndex))) {
+                if (!nextPos.Equals(cord.GetPathPointAtIndex(nextPointIndex))) {
 
                     while (Vector3.Dot(toNextPoint, nextDiff) < 0) {
                         Vector3 nextMove = Vector3.zero;
@@ -40,15 +40,15 @@ namespace ComposeVR {
                         nextPointIndex = NextPointIndex();
 
                         if (currentPointIndex == targetPointIndex) {
-                            nextPos = cord.GetPointAtIndex(targetPointIndex);
+                            nextPos = cord.GetPathPointAtIndex(targetPointIndex);
                             break;
                         }
                         else {
-                            nextMove = (cord.GetPointAtIndex(nextPointIndex) - cord.GetPointAtIndex(currentPointIndex)).normalized;
-                            nextPos = cord.GetPointAtIndex(currentPointIndex) + nextMove * nextDiff.magnitude;
+                            nextMove = (cord.GetPathPointAtIndex(nextPointIndex) - cord.GetPathPointAtIndex(currentPointIndex)).normalized;
+                            nextPos = cord.GetPathPointAtIndex(currentPointIndex) + nextMove * nextDiff.magnitude;
                         }
 
-                        nextDiff = cord.GetPointAtIndex(nextPointIndex) - nextPos;
+                        nextDiff = cord.GetPathPointAtIndex(nextPointIndex) - nextPos;
                         OnNextPointReached(nextMove);
                     }
 
@@ -57,7 +57,7 @@ namespace ComposeVR {
                 transform.position = nextPos;
             }
             else {
-                transform.position = Vector3.Lerp(transform.position, cord.GetPointAtIndex(targetPointIndex), Time.deltaTime * SNAP_TO_TARGET_SPEED);
+                transform.position = Vector3.Lerp(transform.position, cord.GetPathPointAtIndex(targetPointIndex), Time.deltaTime * SNAP_TO_TARGET_SPEED);
             }
         }
 
@@ -89,7 +89,7 @@ namespace ComposeVR {
 
         public void TeleportToPoint(int pointIndex) {
             currentPointIndex = pointIndex;
-            transform.position = cord.GetPointAtIndex(pointIndex);
+            transform.position = cord.GetPathPointAtIndex(pointIndex);
         }
     }
 

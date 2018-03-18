@@ -11,24 +11,24 @@ namespace ComposeVR {
         private ComposeVROSCEventDispatcher oscEventDispatcher;
         private int handlerCount = 0;
 
+        public DeviceBrowserObject DeviceBrowserObject {
+            get { return browserObject; }
+        }
+
+        public NoteChooser NoteChooserObject {
+            get { return noteChooser; }
+        }
+
+        public ComposeVROSCEventDispatcher OSCEventDispatcher {
+            get { return oscEventDispatcher; }
+        }
+
         // Use this for initialization
         void Awake() {
             browserObject = transform.Find("DeviceBrowser").GetComponent<DeviceBrowserObject>();
             noteChooser = transform.Find("NoteChooser").GetChild(0).GetComponent<NoteChooser>();
 
             oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
-        }
-
-        public DeviceBrowserObject GetBrowserObject() {
-            return browserObject;
-        }
-
-        public NoteChooser GetNoteChooserObject() {
-            return noteChooser;
-        }
-
-        public ComposeVROSCEventDispatcher GetOSCEventDispatcher() {
-            return oscEventDispatcher;
         }
 
         public string GetNewHandlerID() {

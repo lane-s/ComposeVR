@@ -46,7 +46,7 @@ namespace ComposeVR {
 
 
         void IBrowserColumn.UpdateItem(int itemIndex, string itemName) {
-            resultButtons[itemIndex].SetText(itemName);
+            resultButtons[itemIndex].Text = itemName;
         }
 
         void IBrowserColumn.SelectItem(int itemIndex) {
@@ -63,7 +63,7 @@ namespace ComposeVR {
         }
 
         string IBrowserColumn.GetItemText(int itemIndex) {
-            return resultButtons[itemIndex].GetText();
+            return resultButtons[itemIndex].Text;
         }
 
         void IBrowserColumn.SetArrowVisibility(Arrow arrow, bool visible) {

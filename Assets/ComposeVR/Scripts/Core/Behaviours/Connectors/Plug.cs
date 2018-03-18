@@ -5,6 +5,7 @@ using VRTK;
 
 namespace ComposeVR {
     [RequireComponent(typeof(VRTK_InteractableObject))]
+    [RequireComponent(typeof(CordFollower))]
     public sealed class Plug : MonoBehaviour {
 
         public Jack DestinationJack;
@@ -42,6 +43,14 @@ namespace ComposeVR {
         private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.02f;
 
         private IEnumerator snapToJackRoutine;
+
+        public Cord ConnectedCord {
+            get { return connectedCord; }
+            set {
+                connectedCord = value;
+                GetComponent<CordFollower>().SetCord(connectedCord);
+            }
+        }
 
         void Awake() {
             interactable = GetComponent<VRTK_InteractableObject>();
@@ -124,7 +133,7 @@ namespace ComposeVR {
             if (!IsPluggedIn() && connectedCord != null) {
 
                 Transform oppositeNode = GetOppositeCordNode();
-                Plug p = connectedCord.GetPlugFromCordNode(oppositeNode);
+                Plug p = oppositeNode.GetComponentInOwner<Plug>();
 
                 if(p != null && !p.IsPluggedIn()) {
                     connectedCord.Collapse();
@@ -136,11 +145,11 @@ namespace ComposeVR {
 
         private Transform GetOppositeCordNode() {
             if (connectedCord != null) {
-                if (connectedCord.GetCordStart().Equals(CordAttachPoint)) {
-                    return connectedCord.GetCordEnd();
+                if (connectedCord.StartNode.Equals(CordAttachPoint)) {
+                    return connectedCord.EndNode;
                 }
                 else {
-                    return connectedCord.GetCordStart();
+                    return connectedCord.StartNode;
                 }
             }
 
@@ -158,7 +167,7 @@ namespace ComposeVR {
             PlugTransform.GetComponent<CapsuleCollider>().height = plugColliderHeight;
 
             Transform oppositeNode = GetOppositeCordNode();
-            Plug p = connectedCord.GetPlugFromCordNode(oppositeNode);
+            Plug p = oppositeNode.GetComponentInOwner<Plug>();
 
             if(p != null && !p.IsPluggedIn()) {
                 connectedCord.Flow = 0;
@@ -182,7 +191,7 @@ namespace ComposeVR {
             if (interactable.IsGrabbed() && targetJack != null) {
 
                 float flow = connectedCord.Flow;
-                if (CordAttachPoint.Equals(connectedCord.GetCordStart())) {
+                if (CordAttachPoint.Equals(connectedCord.StartNode)) {
                     flow = -flow;
                 }
 
@@ -351,13 +360,13 @@ namespace ComposeVR {
         }
 
         public void ShrinkCollider() {
-            PlugTransform.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, PLUGGED_IN_COLLIDER_HEIGHT);
+            PlugTransform.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
             PlugTransform.GetComponent<CapsuleCollider>().height = PLUGGED_IN_COLLIDER_HEIGHT;
         }
 
         private void ConnectToDestinationJack() {
             float flow = 1;
-            if (CordAttachPoint.Equals(connectedCord.GetCordStart())) {
+            if (CordAttachPoint.Equals(connectedCord.StartNode)) {
                 flow = -flow;
             }
 
@@ -368,7 +377,7 @@ namespace ComposeVR {
                 connectedCord.Flow = -flow;
             }
 
-            connectedCord.SetFlowing(true);
+            connectedCord.Flowing = true;
 
             DestinationJack.Connect(connectedCord, CordAttachPoint);
         }
@@ -433,11 +442,6 @@ namespace ComposeVR {
             snapCooldown = false;
         }
 
-        public void SetCord(Cord c) {
-            this.connectedCord = c;
-            GetComponent<CordFollower>().SetCord(c);
-        }
-
         public void AddNearbyJack(Jack j) {
             if (!nearbyJacks.Contains(j)) {
                 nearbyJacks.Add(j);
@@ -458,6 +462,11 @@ namespace ComposeVR {
 
         public bool IsPluggedIn() {
             return DestinationJack != null;
+        }
+
+        public void DestroyPlug() {
+            ResetPlugTransform();
+            Destroy(gameObject);
         }
 
         private void OnDisable() {

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33114665651774240}
   - component: {fileID: 135088691384582406}
   - component: {fileID: 23491037208260470}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4231751995989948}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: OutputJack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4748578196222614}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: NoteOrb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 65825413433636634}
   - component: {fileID: 54746226292069748}
   - component: {fileID: 114823466778010140}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: NoteOrbPlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 33205289878930710}
   - component: {fileID: 23764729888890592}
   - component: {fileID: 95436838899458210}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: JackMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1375316441578576}
   m_LocalRotation: {x: -0, y: 0.99986535, z: -0, w: -0.016412877}
-  m_LocalPosition: {x: -5.678, y: 0.738, z: 7.14}
+  m_LocalPosition: {x: -1.1017404, y: 1.781, z: 2.5431912}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4748578196222614}
@@ -275,8 +275,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.15, y: 0.18, z: 0.15}
+  m_Center: {x: 0, y: 0.02, z: 0}
 --- !u!95 &95436838899458210
 Animator:
   serializedVersion: 3

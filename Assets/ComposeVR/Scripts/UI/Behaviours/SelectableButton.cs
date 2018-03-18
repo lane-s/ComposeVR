@@ -12,6 +12,20 @@ namespace ComposeVR {
         private Color normalColor;
         private bool selected = false;
 
+        public string Text {
+            get {
+                if(buttonText == null) {
+                    buttonText = GetComponentInChildren<Text>();
+                }
+
+                return buttonText.text;
+            }
+
+            set {
+                buttonText.text = value;
+            }
+        }
+
         // Use this for initialization
         void Awake() {
             button = GetComponent<Button>();
@@ -41,18 +55,6 @@ namespace ComposeVR {
             }
 
             return button;
-        }
-
-        public void SetText(string text) {
-            buttonText.text = text;
-        }
-
-        public string GetText() {
-            if(buttonText == null) {
-                buttonText = GetComponentInChildren<Text>();
-            }
-
-            return buttonText.text;
         }
 
         public bool IsSelected() {

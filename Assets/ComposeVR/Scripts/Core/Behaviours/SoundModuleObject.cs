@@ -20,7 +20,7 @@ namespace ComposeVR {
         }
 
         void IModule.PositionBrowserAtModule() {
-            DeviceBrowserObject browser = ComposeVRManager.Instance.GetBrowserObject();
+            DeviceBrowserObject browser = ComposeVRManager.Instance.DeviceBrowserObject;
 
             //Position browser above module
             browser.transform.position = transform.position + Vector3.up * Module.Config.browserYOffset;
@@ -31,11 +31,11 @@ namespace ComposeVR {
         }
 
         DeviceBrowserController IModule.GetBrowserController() {
-            return ComposeVRManager.Instance.GetBrowserObject().Controller;
+            return ComposeVRManager.Instance.DeviceBrowserObject.Controller;
         }
 
         ComposeVROSCEventDispatcher IModule.GetOSCEventDispatcher() {
-            return ComposeVRManager.Instance.GetOSCEventDispatcher();
+            return ComposeVRManager.Instance.OSCEventDispatcher;
         }
 
         InputJack IModule.GetInputJack() {

@@ -532,6 +532,7 @@ MonoBehaviour:
   ShrinkPlugScale: {x: 0.85, y: 0.85, z: 1}
   ExtendDistance: 0.3
   ExtendSpeed: 3
+  ActivationWaitTime: 1
 --- !u!114 &114366252635538502
 MonoBehaviour:
   m_ObjectHideFlags: 1
