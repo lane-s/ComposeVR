@@ -17,13 +17,6 @@ namespace ComposeVR {
         private void OnMenuButtonPressed(object sender, ControllerInteractionEventArgs e) {
             active = !active;
 
-            if (active) {
-                transform.parent.GetComponent<VRTK_InteractGrab>().enabled = false;
-            }
-            else {
-                transform.parent.GetComponent<VRTK_InteractGrab>().enabled = true;
-            }
-
             for(int i = 0; i < transform.childCount; i++) {
                 transform.GetChild(i).gameObject.SetActive(active);
             }

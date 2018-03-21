@@ -7,6 +7,7 @@ namespace ComposeVR {
 
         private DeviceBrowserObject browserObject;
         private NoteChooser noteChooser;
+        private SoundModuleMenu soundModuleMenu;
 
         private ComposeVROSCEventDispatcher oscEventDispatcher;
         private int handlerCount = 0;
@@ -19,6 +20,10 @@ namespace ComposeVR {
             get { return noteChooser; }
         }
 
+        public SoundModuleMenu SoundModuleMenu {
+            get { return soundModuleMenu; }
+        }
+
         public ComposeVROSCEventDispatcher OSCEventDispatcher {
             get { return oscEventDispatcher; }
         }
@@ -27,6 +32,7 @@ namespace ComposeVR {
         void Awake() {
             browserObject = transform.Find("DeviceBrowser").GetComponent<DeviceBrowserObject>();
             noteChooser = transform.Find("NoteChooser").GetChild(0).GetComponent<NoteChooser>();
+            soundModuleMenu = transform.Find("SoundModuleMenu").GetComponent<SoundModuleMenu>();
 
             oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
         }

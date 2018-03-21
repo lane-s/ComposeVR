@@ -55,9 +55,12 @@ namespace ComposeVR {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="moduleID">The module to browse on</param>
-        public void OpenBrowser(string moduleID, string deviceType) {
+        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice) {
             Protocol.Module.OpenBrowser openEvent = new Protocol.Module.OpenBrowser {
-                DeviceType = deviceType
+                DeviceType = deviceType,
+                ContentType = contentType,
+                DeviceIndex = deviceIndex,
+                ReplaceDevice = replaceDevice
             };
 
             Protocol.ModuleEvent moduleEvent = new Protocol.ModuleEvent {

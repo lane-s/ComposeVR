@@ -26,15 +26,17 @@ namespace ComposeVR.Protocol.Module {
           string.Concat(
             "CgxNb2R1bGUucHJvdG8SCUNvbXBvc2VWUiImChFDcmVhdGVTb3VuZE1vZHVs",
             "ZRIRCglzZW5kZXJfaWQYASABKAkiFgoUT25Tb3VuZE1vZHVsZUNyZWF0ZWQi",
-            "IgoLT3BlbkJyb3dzZXISEwoLZGV2aWNlX3R5cGUYAiABKAkiGAoITUlESU5v",
-            "dGUSDAoETUlESRgBIAEoDEI7Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90",
-            "b2NvbKoCGUNvbXBvc2VWUi5Qcm90b2NvbC5Nb2R1bGViBnByb3RvMw=="));
+            "ZgoLT3BlbkJyb3dzZXISEwoLZGV2aWNlX3R5cGUYAiABKAkSFAoMY29udGVu",
+            "dF90eXBlGAMgASgJEhQKDGRldmljZV9pbmRleBgEIAEoBRIWCg5yZXBsYWNl",
+            "X2RldmljZRgFIAEoCCIYCghNSURJTm90ZRIMCgRNSURJGAEgASgMQjsKHWNv",
+            "bS5sYXM0dmMuY29tcG9zZXZyLnByb3RvY29sqgIZQ29tcG9zZVZSLlByb3Rv",
+            "Y29sLk1vZHVsZWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.CreateSoundModule), global::ComposeVR.Protocol.Module.CreateSoundModule.Parser, new[]{ "SenderId" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OnSoundModuleCreated), global::ComposeVR.Protocol.Module.OnSoundModuleCreated.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OpenBrowser), global::ComposeVR.Protocol.Module.OpenBrowser.Parser, new[]{ "DeviceType" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.OpenBrowser), global::ComposeVR.Protocol.Module.OpenBrowser.Parser, new[]{ "DeviceType", "ContentType", "DeviceIndex", "ReplaceDevice" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Module.MIDINote), global::ComposeVR.Protocol.Module.MIDINote.Parser, new[]{ "MIDI" }, null, null, null)
           }));
     }
@@ -298,6 +300,9 @@ namespace ComposeVR.Protocol.Module {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public OpenBrowser(OpenBrowser other) : this() {
       deviceType_ = other.deviceType_;
+      contentType_ = other.contentType_;
+      deviceIndex_ = other.deviceIndex_;
+      replaceDevice_ = other.replaceDevice_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -317,6 +322,39 @@ namespace ComposeVR.Protocol.Module {
       }
     }
 
+    /// <summary>Field number for the "content_type" field.</summary>
+    public const int ContentTypeFieldNumber = 3;
+    private string contentType_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string ContentType {
+      get { return contentType_; }
+      set {
+        contentType_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "device_index" field.</summary>
+    public const int DeviceIndexFieldNumber = 4;
+    private int deviceIndex_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int DeviceIndex {
+      get { return deviceIndex_; }
+      set {
+        deviceIndex_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "replace_device" field.</summary>
+    public const int ReplaceDeviceFieldNumber = 5;
+    private bool replaceDevice_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool ReplaceDevice {
+      get { return replaceDevice_; }
+      set {
+        replaceDevice_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as OpenBrowser);
@@ -331,6 +369,9 @@ namespace ComposeVR.Protocol.Module {
         return true;
       }
       if (DeviceType != other.DeviceType) return false;
+      if (ContentType != other.ContentType) return false;
+      if (DeviceIndex != other.DeviceIndex) return false;
+      if (ReplaceDevice != other.ReplaceDevice) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -338,6 +379,9 @@ namespace ComposeVR.Protocol.Module {
     public override int GetHashCode() {
       int hash = 1;
       if (DeviceType.Length != 0) hash ^= DeviceType.GetHashCode();
+      if (ContentType.Length != 0) hash ^= ContentType.GetHashCode();
+      if (DeviceIndex != 0) hash ^= DeviceIndex.GetHashCode();
+      if (ReplaceDevice != false) hash ^= ReplaceDevice.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -355,6 +399,18 @@ namespace ComposeVR.Protocol.Module {
         output.WriteRawTag(18);
         output.WriteString(DeviceType);
       }
+      if (ContentType.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(ContentType);
+      }
+      if (DeviceIndex != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(DeviceIndex);
+      }
+      if (ReplaceDevice != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(ReplaceDevice);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -365,6 +421,15 @@ namespace ComposeVR.Protocol.Module {
       int size = 0;
       if (DeviceType.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(DeviceType);
+      }
+      if (ContentType.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ContentType);
+      }
+      if (DeviceIndex != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(DeviceIndex);
+      }
+      if (ReplaceDevice != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -380,6 +445,15 @@ namespace ComposeVR.Protocol.Module {
       if (other.DeviceType.Length != 0) {
         DeviceType = other.DeviceType;
       }
+      if (other.ContentType.Length != 0) {
+        ContentType = other.ContentType;
+      }
+      if (other.DeviceIndex != 0) {
+        DeviceIndex = other.DeviceIndex;
+      }
+      if (other.ReplaceDevice != false) {
+        ReplaceDevice = other.ReplaceDevice;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -393,6 +467,18 @@ namespace ComposeVR.Protocol.Module {
             break;
           case 18: {
             DeviceType = input.ReadString();
+            break;
+          }
+          case 26: {
+            ContentType = input.ReadString();
+            break;
+          }
+          case 32: {
+            DeviceIndex = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            ReplaceDevice = input.ReadBool();
             break;
           }
         }

@@ -64,7 +64,7 @@ namespace ComposeVR {
             GainDisplay.text = gainText;
         }
 
-        void IModule.PositionBrowserAtModule() {
+        void IModule.PositionBrowser() {
             DeviceBrowserObject browser = ComposeVRManager.Instance.DeviceBrowserObject;
 
             //Position browser above module
@@ -73,6 +73,15 @@ namespace ComposeVR {
             //Rotate browser towards user's headset
             Quaternion lookAtPlayer = Quaternion.LookRotation(browser.transform.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
             browser.transform.rotation = Quaternion.Euler(browser.transform.rotation.eulerAngles.x, lookAtPlayer.eulerAngles.y, browser.transform.rotation.eulerAngles.z);
+        }
+
+        void IModule.PositionModuleMenu() {
+            SoundModuleMenu menu = ComposeVRManager.Instance.SoundModuleMenu;
+
+            menu.transform.position = transform.position + Vector3.up * Module.Config.moduleMenuYOffset;
+
+            Quaternion lookAtPlayer = Quaternion.LookRotation(menu.transform.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
+            menu.transform.rotation = Quaternion.Euler(menu.transform.rotation.eulerAngles.x, lookAtPlayer.eulerAngles.y, menu.transform.rotation.eulerAngles.z);
         }
 
         DeviceBrowserController IModule.GetBrowserController() {
@@ -86,12 +95,18 @@ namespace ComposeVR {
         InputJack IModule.GetInputJack() {
             return input;
         }
+
+        SoundModuleMenu IModule.GetModuleMenu() {
+            return ComposeVRManager.Instance.SoundModuleMenu;
+        }
     }
 
     public interface IModule {
-        void PositionBrowserAtModule();
+        void PositionBrowser();
+        void PositionModuleMenu();
         DeviceBrowserController GetBrowserController();
         ComposeVROSCEventDispatcher GetOSCEventDispatcher();
         InputJack GetInputJack();
+        SoundModuleMenu GetModuleMenu();
     }
 }

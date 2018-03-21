@@ -8,6 +8,8 @@ namespace ComposeVR {
     [Serializable]
     public class DeviceBrowserController : RemoteEventHandler {
 
+        public event EventHandler<EventArgs> BrowserClosed;
+
         private IDeviceBrowser deviceBrowser;
 
         [Serializable]
@@ -45,16 +47,24 @@ namespace ComposeVR {
             }
         }
 
-        public void OpenBrowser(string moduleID, string deviceType) {
+        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice) {
+            if(BrowserClosed != null) {
+                BrowserClosed(this, new EventArgs());
+            }
+
             ResetBrowser();
 
             RemoteEventEmitter.Instance.CloseBrowser();
-            RemoteEventEmitter.Instance.OpenBrowser(moduleID, deviceType);
+            RemoteEventEmitter.Instance.OpenBrowser(moduleID, deviceType, contentType, deviceIndex, replaceDevice);
 
             State.TargetDeviceType = deviceType;
         }
 
         public void CloseBrowser() {
+            if(BrowserClosed != null) {
+                BrowserClosed(this, new EventArgs());
+            }
+
             SetVisible(false);
             deviceBrowser.Hide();
         }

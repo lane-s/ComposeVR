@@ -11,12 +11,14 @@ namespace ComposeVR {
         [Serializable]
         public class SoundModuleConfiguration {
             public float browserYOffset;
+            public float moduleMenuYOffset;
         }
 
         public SoundModuleConfiguration Config;
         private IModule Module;
 
         public void Initialize() {
+
             //Register with the router
             Register();
 
@@ -28,6 +30,34 @@ namespace ComposeVR {
             playingNotes = new int[127];
         } 
 
+        private void RequestMenu() {
+            Debug.Log("Sound module menu requested");
+            Module.PositionModuleMenu();
+            SoundModuleMenu menu = Module.GetModuleMenu();
+            menu.Display(true);
+            menu.MenuClosed += OnMenuClosed;
+            menu.ChangeInstrumentButtonClicked += OnChangeInstrumentButtonClicked;
+            menu.LoadPresetButtonClicked += OnLoadPresetButtonClicked;
+        }
+
+        private void OnMenuClosed(object sender, EventArgs e) {
+            SoundModuleMenu menu = Module.GetModuleMenu();
+            menu.MenuClosed -= OnMenuClosed;
+            menu.ChangeInstrumentButtonClicked -= OnChangeInstrumentButtonClicked;
+            menu.LoadPresetButtonClicked -= OnChangeInstrumentButtonClicked;
+        }
+
+        private void OnChangeInstrumentButtonClicked(object sender, EventArgs e) {
+            Debug.Log("Change instruments");
+            Module.GetModuleMenu().Display(false);
+            RequestBrowser("Instrument", "Devices", 0, true);
+        }
+
+        private void OnLoadPresetButtonClicked(object sender, EventArgs e) {
+            Module.GetModuleMenu().Display(false);
+            RequestBrowser("Instrument", "Presets", 0, true);
+        }
+
         public void SetController(IModule controller) {
             this.Module = controller;
         }
@@ -37,10 +67,24 @@ namespace ComposeVR {
         /// </summary>
         /// 
         public void OnSoundModuleCreated(Protocol.Event e) {
-            Module.PositionBrowserAtModule();
-
             Debug.Log("Track created with id " + GetID());
-            Module.GetBrowserController().OpenBrowser(GetID(), "Instrument");
+            RequestBrowser("Instrument", "Devices", 0, false);
+        }
+
+        private void RequestBrowser(string deviceType, string contentType, int deviceIndex, bool replaceDevice) {
+            Module.PositionBrowser();
+
+            DeviceBrowserController browser = Module.GetBrowserController();
+
+            browser.OpenBrowser(GetID(), deviceType, contentType, deviceIndex, replaceDevice);
+            browser.BrowserClosed += OnBrowserClosed;
+        }
+
+        private void OnBrowserClosed(object sender, EventArgs e) {
+            DeviceBrowserController browser = Module.GetBrowserController();
+            browser.BrowserClosed -= OnBrowserClosed;
+
+            RequestMenu();
         }
 
         void IJackInput.ReceiveData(WireData data) {

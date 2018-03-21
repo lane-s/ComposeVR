@@ -1152,6 +1152,7 @@ MonoBehaviour:
   Module:
     Config:
       browserYOffset: 1
+      moduleMenuYOffset: 0.2
 --- !u!114 &114496475389375626
 MonoBehaviour:
   m_ObjectHideFlags: 1
