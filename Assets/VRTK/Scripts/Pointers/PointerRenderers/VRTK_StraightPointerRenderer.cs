@@ -177,9 +177,9 @@ namespace VRTK
             if (rayHit)
             {
                 PointerEnter(pointerCollidedWith);
-
                 destinationHit = pointerCollidedWith;
                 ChangeColor(validCollisionColor);
+
             }
         }
 

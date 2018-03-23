@@ -147,7 +147,7 @@ namespace ComposeVR {
         public void OnItemSelected(int itemIndex) {
 
             //Deselect previously selected item
-            if(State.SelectedItemIndex != -1 && browserColumn.GetItemText(State.SelectedItemIndex).Equals(State.SelectedItemName)) {
+            if(State.SelectedItemIndex != -1) {
                 browserColumn.DeselectItem(State.SelectedItemIndex);
             }
 
@@ -172,7 +172,7 @@ namespace ComposeVR {
                 OnItemSelected(itemIndex);
             }
 
-            bool itemIsSelected = State.SelectedItemIndex == itemIndex && itemName.Equals(itemName);
+            bool itemIsSelected = State.SelectedItemIndex == itemIndex && itemName.Equals(State.SelectedItemName);
 
             if(itemIsSelected) {
                 browserColumn.SelectItem(itemIndex);
@@ -187,7 +187,7 @@ namespace ComposeVR {
             int totalResults = e.BrowserEvent.OnBrowserColumnChangedEvent.TotalResults;
             int resultsPerPage = e.BrowserEvent.OnBrowserColumnChangedEvent.ResultsPerPage;
 
-            browserColumn.ExpandToSize(resultsPerPage);
+            //browserColumn.ExpandToSize(resultsPerPage);
             State.ColumnSize = Math.Max(resultsPerPage, State.ColumnSize);
 
             if(DeviceTypeChanged != null) {

@@ -43,6 +43,14 @@ namespace ComposeVR {
         void IDeviceBrowser.Hide(){
             transform.position = Vector3.down * 1000;
         }
+
+        public void OnConfirmButtonClicked() {
+            Controller.OnConfirmButtonClicked();
+        }
+
+        public void OnCancelButtonClicked() {
+            Controller.OnCancelButtonClicked();
+        }
     }
 
     public interface IDeviceBrowser {

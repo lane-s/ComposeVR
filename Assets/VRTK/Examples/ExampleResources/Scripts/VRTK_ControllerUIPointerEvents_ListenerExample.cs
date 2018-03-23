@@ -4,63 +4,31 @@
 
     public class VRTK_ControllerUIPointerEvents_ListenerExample : MonoBehaviour
     {
-        public bool togglePointerOnHit = false;
+        public bool togglePointerOnHit = true;
 		public bool UIHover = false;
+
+        private bool validPointerState = false;
 
         private void Start()
         {
-            if (GetComponent<VRTK_UIPointer>() == null)
-            {
-                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_FROM_GAMEOBJECT, "VRTK_ControllerUIPointerEvents_ListenerExample", "VRTK_UIPointer", "the Controller Alias"));
-                return;
-            }
-
-            if (togglePointerOnHit)
-            {
-                GetComponent<VRTK_UIPointer>().activationMode = VRTK_UIPointer.ActivationMethods.AlwaysOn;
-            }
-
-            //Setup controller event listeners
-            GetComponent<VRTK_UIPointer>().UIPointerElementEnter += VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementEnter;
-            GetComponent<VRTK_UIPointer>().UIPointerElementExit += VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementExit;
-            GetComponent<VRTK_UIPointer>().UIPointerElementClick += VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementClick;
-            GetComponent<VRTK_UIPointer>().UIPointerElementDragStart += VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementDragStart;
-            GetComponent<VRTK_UIPointer>().UIPointerElementDragEnd += VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementDragEnd;
+            pointer = GetComponent<VRTK_Pointer>();
+            GetComponent<VRTK_Pointer>().PointerStateValid += OnPointerStateValid;
+            GetComponent<VRTK_Pointer>().PointerStateInvalid += OnPointerStateInvalid;
         }
 
-        private void VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementEnter(object sender, UIPointerEventArgs e)
-        {
-            //VRTK_Logger.Info("UI Pointer entered " + e.currentTarget.name + " on Controller index [" + VRTK_ControllerReference.GetRealIndex(e.controllerReference) + "] and the state was " + e.isActive + " ### World Position: " + e.raycastResult.worldPosition);
-            if (togglePointerOnHit && GetComponent<VRTK_Pointer>())
-            {
-				UIHover = true;
-                GetComponent<VRTK_Pointer>().Toggle(true);
-            }
+        VRTK_Pointer pointer;
+
+        private void Update() {
         }
 
-        private void VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementExit(object sender, UIPointerEventArgs e)
-        {
-            //VRTK_Logger.Info("UI Pointer exited " + e.previousTarget.name + " on Controller index [" + VRTK_ControllerReference.GetRealIndex(e.controllerReference) + "] and the state was " + e.isActive);
-            if (togglePointerOnHit && GetComponent<VRTK_Pointer>())
-            {
-				UIHover = false;
-                GetComponent<VRTK_Pointer>().Toggle(false);
-            }
+        private void OnPointerStateValid(object sender, DestinationMarkerEventArgs e) {
+            pointer.pointerRenderer.tracerVisibility = VRTK_BasePointerRenderer.VisibilityStates.AlwaysOn;
+            pointer.pointerRenderer.cursorVisibility = VRTK_BasePointerRenderer.VisibilityStates.AlwaysOn;
         }
 
-        private void VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementClick(object sender, UIPointerEventArgs e)
-        {
-            //VRTK_Logger.Info("UI Pointer clicked " + e.currentTarget.name + " on Controller index [" + VRTK_ControllerReference.GetRealIndex(e.controllerReference) + "] and the state was " + e.isActive + " ### World Position: " + e.raycastResult.worldPosition);
-        }
-
-        private void VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementDragStart(object sender, UIPointerEventArgs e)
-        {
-           //VRTK_Logger.Info("UI Pointer started dragging " + e.currentTarget.name + " on Controller index [" + VRTK_ControllerReference.GetRealIndex(e.controllerReference) + "] and the state was " + e.isActive + " ### World Position: " + e.raycastResult.worldPosition);
-        }
-
-        private void VRTK_ControllerUIPointerEvents_ListenerExample_UIPointerElementDragEnd(object sender, UIPointerEventArgs e)
-        {
-            //VRTK_Logger.Info("UI Pointer stopped dragging " + e.currentTarget.name + " on Controller index [" + VRTK_ControllerReference.GetRealIndex(e.controllerReference) + "] and the state was " + e.isActive + " ### World Position: " + e.raycastResult.worldPosition);
+        private void OnPointerStateInvalid(object sender, DestinationMarkerEventArgs e) {
+            pointer.pointerRenderer.tracerVisibility = VRTK_BasePointerRenderer.VisibilityStates.AlwaysOff;
+            pointer.pointerRenderer.cursorVisibility = VRTK_BasePointerRenderer.VisibilityStates.AlwaysOff;
         }
     }
 }

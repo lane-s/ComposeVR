@@ -44,7 +44,7 @@ namespace ComposeVR {
             SoundModuleMenu menu = Module.GetModuleMenu();
             menu.MenuClosed -= OnMenuClosed;
             menu.ChangeInstrumentButtonClicked -= OnChangeInstrumentButtonClicked;
-            menu.LoadPresetButtonClicked -= OnChangeInstrumentButtonClicked;
+            menu.LoadPresetButtonClicked -= OnLoadPresetButtonClicked;
         }
 
         private void OnChangeInstrumentButtonClicked(object sender, EventArgs e) {
@@ -55,7 +55,7 @@ namespace ComposeVR {
 
         private void OnLoadPresetButtonClicked(object sender, EventArgs e) {
             Module.GetModuleMenu().Display(false);
-            RequestBrowser("Instrument", "Presets", 0, true);
+            RequestBrowser("", "", 0, true);
         }
 
         public void SetController(IModule controller) {

@@ -12,6 +12,8 @@ namespace ComposeVR {
         private Color normalColor;
         private bool selected = false;
 
+        private const int MAX_TEXT_LENGTH = 25;
+
         public string Text {
             get {
                 if(buttonText == null) {
@@ -22,7 +24,12 @@ namespace ComposeVR {
             }
 
             set {
-                buttonText.text = value;
+                if(value.Length > MAX_TEXT_LENGTH) {
+                    buttonText.text = value.Substring(0, MAX_TEXT_LENGTH);
+                }
+                else {
+                    buttonText.text = value;
+                }
             }
         }
 

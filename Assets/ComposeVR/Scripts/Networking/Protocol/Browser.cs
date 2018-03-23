@@ -26,25 +26,28 @@ namespace ComposeVR.Protocol.Browser {
           string.Concat(
             "Cg1Ccm93c2VyLnByb3RvEglDb21wb3NlVlIiHgoMQ2xvc2VCcm93c2VyEg4K",
             "BmNvbW1pdBgBIAEoCCIiChFMb2FkRGV2aWNlQXRJbmRleBINCgVpbmRleBgB",
-            "IAEoBSIiChJMb2FkRGV2aWNlV2l0aE5hbWUSDAoEbmFtZRgBIAEoCSIQCg5P",
-            "bkRldmljZUxvYWRlZCISChBPbkRldmljZU5vdEZvdW5kIigKEUNoYW5nZVJl",
-            "c3VsdHNQYWdlEhMKC3BhZ2VfY2hhbmdlGAEgASgFIjwKEENoYW5nZUZpbHRl",
-            "clBhZ2USEwoLY29sdW1uX25hbWUYASABKAkSEwoLcGFnZV9jaGFuZ2UYAiAB",
-            "KAUiOwoQU2VsZWN0RmlsdGVySXRlbRITCgtjb2x1bW5fbmFtZRgBIAEoCRIS",
-            "CgppdGVtX2luZGV4GAIgASgFIj0KFE9uQnJvd3Nlckl0ZW1DaGFuZ2VkEhIK",
-            "Cml0ZW1faW5kZXgYASABKAUSEQoJaXRlbV9uYW1lGAIgASgJIl4KFk9uQnJv",
-            "d3NlckNvbHVtbkNoYW5nZWQSGAoQcmVzdWx0c19wZXJfcGFnZRgBIAEoBRIV",
-            "Cg10b3RhbF9yZXN1bHRzGAIgASgFEhMKC2RldmljZV90eXBlGAMgASgJIoAB",
-            "ChhPbkFycm93VmlzaWJpbGl0eUNoYW5nZWQSOAoFYXJyb3cYASABKA4yKS5D",
-            "b21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkLkFycm93Eg8KB3Zp",
-            "c2libGUYAiABKAgiGQoFQXJyb3cSBgoCVVAQABIICgRET1dOEAFCPAodY29t",
-            "LmxhczR2Yy5jb21wb3NldnIucHJvdG9jb2yqAhpDb21wb3NlVlIuUHJvdG9j",
-            "b2wuQnJvd3NlcmIGcHJvdG8z"));
+            "IAEoBSIhCg9Db21taXRTZWxlY3Rpb24SDgoGY29tbWl0GAEgASgIIh0KDFNl",
+            "bGVjdFJlc3VsdBINCgVpbmRleBgBIAEoBSIiChJMb2FkRGV2aWNlV2l0aE5h",
+            "bWUSDAoEbmFtZRgBIAEoCSIQCg5PbkRldmljZUxvYWRlZCISChBPbkRldmlj",
+            "ZU5vdEZvdW5kIigKEUNoYW5nZVJlc3VsdHNQYWdlEhMKC3BhZ2VfY2hhbmdl",
+            "GAEgASgFIjwKEENoYW5nZUZpbHRlclBhZ2USEwoLY29sdW1uX25hbWUYASAB",
+            "KAkSEwoLcGFnZV9jaGFuZ2UYAiABKAUiOwoQU2VsZWN0RmlsdGVySXRlbRIT",
+            "Cgtjb2x1bW5fbmFtZRgBIAEoCRISCgppdGVtX2luZGV4GAIgASgFIj0KFE9u",
+            "QnJvd3Nlckl0ZW1DaGFuZ2VkEhIKCml0ZW1faW5kZXgYASABKAUSEQoJaXRl",
+            "bV9uYW1lGAIgASgJIl4KFk9uQnJvd3NlckNvbHVtbkNoYW5nZWQSGAoQcmVz",
+            "dWx0c19wZXJfcGFnZRgBIAEoBRIVCg10b3RhbF9yZXN1bHRzGAIgASgFEhMK",
+            "C2RldmljZV90eXBlGAMgASgJIoABChhPbkFycm93VmlzaWJpbGl0eUNoYW5n",
+            "ZWQSOAoFYXJyb3cYASABKA4yKS5Db21wb3NlVlIuT25BcnJvd1Zpc2liaWxp",
+            "dHlDaGFuZ2VkLkFycm93Eg8KB3Zpc2libGUYAiABKAgiGQoFQXJyb3cSBgoC",
+            "VVAQABIICgRET1dOEAFCPAodY29tLmxhczR2Yy5jb21wb3NldnIucHJvdG9j",
+            "b2yqAhpDb21wb3NlVlIuUHJvdG9jb2wuQnJvd3NlcmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.CloseBrowser), global::ComposeVR.Protocol.Browser.CloseBrowser.Parser, new[]{ "Commit" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex), global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex.Parser, new[]{ "Index" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.CommitSelection), global::ComposeVR.Protocol.Browser.CommitSelection.Parser, new[]{ "Commit" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.SelectResult), global::ComposeVR.Protocol.Browser.SelectResult.Parser, new[]{ "Index" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.LoadDeviceWithName), global::ComposeVR.Protocol.Browser.LoadDeviceWithName.Parser, new[]{ "Name" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnDeviceLoaded), global::ComposeVR.Protocol.Browser.OnDeviceLoaded.Parser, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Browser.OnDeviceNotFound), global::ComposeVR.Protocol.Browser.OnDeviceNotFound.Parser, null, null, null, null),
@@ -318,6 +321,264 @@ namespace ComposeVR.Protocol.Browser {
 
   }
 
+  public sealed partial class CommitSelection : pb::IMessage<CommitSelection> {
+    private static readonly pb::MessageParser<CommitSelection> _parser = new pb::MessageParser<CommitSelection>(() => new CommitSelection());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<CommitSelection> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[2]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommitSelection() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommitSelection(CommitSelection other) : this() {
+      commit_ = other.commit_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public CommitSelection Clone() {
+      return new CommitSelection(this);
+    }
+
+    /// <summary>Field number for the "commit" field.</summary>
+    public const int CommitFieldNumber = 1;
+    private bool commit_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Commit {
+      get { return commit_; }
+      set {
+        commit_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as CommitSelection);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(CommitSelection other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Commit != other.Commit) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Commit != false) hash ^= Commit.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Commit != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(Commit);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Commit != false) {
+        size += 1 + 1;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(CommitSelection other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Commit != false) {
+        Commit = other.Commit;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Commit = input.ReadBool();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class SelectResult : pb::IMessage<SelectResult> {
+    private static readonly pb::MessageParser<SelectResult> _parser = new pb::MessageParser<SelectResult>(() => new SelectResult());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<SelectResult> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public SelectResult() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public SelectResult(SelectResult other) : this() {
+      index_ = other.index_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public SelectResult Clone() {
+      return new SelectResult(this);
+    }
+
+    /// <summary>Field number for the "index" field.</summary>
+    public const int IndexFieldNumber = 1;
+    private int index_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Index {
+      get { return index_; }
+      set {
+        index_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as SelectResult);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(SelectResult other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Index != other.Index) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Index != 0) hash ^= Index.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Index != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Index);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Index != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Index);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(SelectResult other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Index != 0) {
+        Index = other.Index;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Index = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class LoadDeviceWithName : pb::IMessage<LoadDeviceWithName> {
     private static readonly pb::MessageParser<LoadDeviceWithName> _parser = new pb::MessageParser<LoadDeviceWithName>(() => new LoadDeviceWithName());
     private pb::UnknownFieldSet _unknownFields;
@@ -326,7 +587,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[2]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -455,7 +716,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[3]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -556,7 +817,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[4]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -657,7 +918,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[5]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -786,7 +1047,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[6]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -943,7 +1204,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[7]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1100,7 +1361,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[8]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1257,7 +1518,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[9]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1442,7 +1703,7 @@ namespace ComposeVR.Protocol.Browser {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[10]; }
+      get { return global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

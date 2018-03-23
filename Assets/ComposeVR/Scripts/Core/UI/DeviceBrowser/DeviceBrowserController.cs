@@ -52,12 +52,12 @@ namespace ComposeVR {
                 BrowserClosed(this, new EventArgs());
             }
 
-            ResetBrowser();
-
             RemoteEventEmitter.Instance.CloseBrowser();
             RemoteEventEmitter.Instance.OpenBrowser(moduleID, deviceType, contentType, deviceIndex, replaceDevice);
 
             State.TargetDeviceType = deviceType;
+            ResetBrowser();
+            SetVisible(true);
         }
 
         public void CloseBrowser() {
@@ -98,8 +98,7 @@ namespace ComposeVR {
 
         private void OnItemSelected(object sender, ItemSelectedEventArgs e) {
             if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS) {
-                RemoteEventEmitter.Instance.LoadDeviceAtIndex(e.SelectionIndex);
-                CloseBrowser();
+                RemoteEventEmitter.Instance.SelectResult(e.SelectionIndex);
             }
             else if(e.ColumnType == BrowserColumnController.ColumnType.FILTER) {
                 RemoteEventEmitter.Instance.SelectFilterItem(e.ColumnName, e.SelectionIndex);
@@ -108,13 +107,24 @@ namespace ComposeVR {
 
         private void OnDeviceTypeChanged(object sender, DeviceTypeChangedEventArgs e) {
             State.CurrentDeviceType = e.DeviceType;
-
+            SetVisible(true);
+            /*
             if (State.CurrentDeviceType.Equals(State.TargetDeviceType)) {
                 SetVisible(true);
             }
             else {
                 SetVisible(false);
-            }
+            }*/
+        }
+
+        public void OnConfirmButtonClicked() {
+            CloseBrowser();
+            RemoteEventEmitter.Instance.CommitSelection(true);
+        }
+
+        public void OnCancelButtonClicked() {
+            CloseBrowser();
+            RemoteEventEmitter.Instance.CommitSelection(false);
         }
 
     }

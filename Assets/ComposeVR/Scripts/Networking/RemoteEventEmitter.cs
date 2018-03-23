@@ -130,6 +130,42 @@ namespace ComposeVR {
             Emitter.EmitEvent(remoteEvent);
         }
 
+        public void SelectResult(int selectionIndex) {
+            Protocol.Browser.SelectResult selectResult = new Protocol.Browser.SelectResult {
+                Index = selectionIndex
+            };
+
+            Protocol.BrowserEvent browserEvent = new Protocol.BrowserEvent {
+                Path = "",
+                SelectResultEvent = selectResult
+            };
+
+            Protocol.Event remoteEvent = new Protocol.Event {
+                BrowserEvent = browserEvent,
+                MethodName = "SelectResult"
+            };
+
+            Emitter.EmitEvent(remoteEvent);
+        }
+
+        public void CommitSelection(bool commit) {
+            Protocol.Browser.CommitSelection commitSelection = new Protocol.Browser.CommitSelection {
+                Commit = commit
+            };
+
+            Protocol.BrowserEvent browserEvent = new Protocol.BrowserEvent {
+                Path = "",
+                CommitSelectionEvent = commitSelection
+            };
+
+            Protocol.Event remoteEvent = new Protocol.Event {
+                BrowserEvent = browserEvent,
+                MethodName = "CommitSelection"
+            };
+
+            Emitter.EmitEvent(remoteEvent);
+        }
+
         public void ChangeFilterPage(string columnName, int pageChange) {
             Protocol.Browser.ChangeFilterPage changeFilterEvent = new Protocol.Browser.ChangeFilterPage {
                 ColumnName = columnName,

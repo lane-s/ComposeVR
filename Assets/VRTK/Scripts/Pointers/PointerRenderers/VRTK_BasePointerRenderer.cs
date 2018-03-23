@@ -348,11 +348,21 @@ namespace VRTK
         protected virtual void PointerEnter(RaycastHit givenHit)
         {
             controllingPointer.PointerEnter(givenHit);
+            if(givenHit.transform != null) {
+                if (givenHit.transform.GetComponent<PointerEnabledRaycaster>()) {
+                    givenHit.transform.GetComponent<PointerEnabledRaycaster>().PointerEnter();
+                }
+            }
         }
 
         protected virtual void PointerExit(RaycastHit givenHit)
         {
             controllingPointer.PointerExit(givenHit);
+            if (givenHit.transform != null) {
+                if (givenHit.transform.GetComponent<PointerEnabledRaycaster>()) {
+                    givenHit.transform.GetComponent<PointerEnabledRaycaster>().PointerExit();
+                }
+            }
         }
 
         protected virtual bool ValidDestination()

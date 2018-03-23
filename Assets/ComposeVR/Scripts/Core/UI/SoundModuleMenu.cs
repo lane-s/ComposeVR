@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class SoundModuleMenu : MonoBehaviour {
@@ -18,6 +19,11 @@ public class SoundModuleMenu : MonoBehaviour {
     }
 
     public void OnLoadPresetButtonClicked() {
+        StartCoroutine(PresetButtonClickedDelay());
+    }
+
+    private IEnumerator PresetButtonClickedDelay() {
+        yield return new WaitForSeconds(0.15f);
         if(LoadPresetButtonClicked != null) {
             LoadPresetButtonClicked(this, new EventArgs());
         }
