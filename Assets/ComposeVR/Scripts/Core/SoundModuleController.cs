@@ -102,13 +102,15 @@ namespace ComposeVR {
 
         private void PlayMIDINote(NoteData data) {
 
-            //Debug.Log("Playing note " + data.Note + " on " + GetID());
             string noteStatus;
             if(data.NoteStatus == NoteData.Status.On) {
                 noteStatus = "on";
                 playingNotes[data.Note] += 1;
+                Debug.Log("Note on " + data.Note);
             }
             else {
+                Debug.Log("Note off " + data.Note);
+
                 noteStatus = "off";
                 playingNotes[data.Note] -= 1;
                 if(playingNotes[data.Note] < 0) {
@@ -117,6 +119,7 @@ namespace ComposeVR {
 
                 //Only send a note off message if none of the inputs are playing the note
                 if(playingNotes[data.Note] != 0) {
+                    Debug.Log("Don't send note off because other orb is playing");
                     return;
                 }
             }

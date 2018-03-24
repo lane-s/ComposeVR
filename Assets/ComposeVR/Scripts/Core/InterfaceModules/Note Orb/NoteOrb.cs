@@ -37,7 +37,8 @@ namespace ComposeVR {
 
         private VRTK_ControllerReference controllerReference;
         private NoteChooser noteChooser;
-        private int numOn = 0;
+        public int numOn = 0;
+        private int hapticNote;
 
         private HashSet<VRTK_ControllerReference> nearbyControllers;
 
@@ -53,8 +54,8 @@ namespace ComposeVR {
         }
 
         void OnTriggerEnter(Collider other) {
-            Wand wand = other.GetComponent<Wand>();
-            if (wand) {
+            Baton baton = other.GetComponent<Baton>();
+            if (baton) {
                 SetShellColor(Color.green);
 
                 if (other.GetComponent<OwnedObject>()) {
@@ -63,21 +64,25 @@ namespace ComposeVR {
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!nearbyControllers.Contains(controllerReference)) {
                         if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                            OrbOn(wand.GetVelocity());
+                            OrbOn(baton.GetVelocity());
+                            if(selectedNotes.Count > 0) {
+                                baton.StartHapticFeedback(hapticNote);
+                            }
                         }
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased += OnControllerTriggerReleased;
 
                         nearbyControllers.Add(controllerReference);
+
                     }
                 }
             }
         }
 
         void OnTriggerExit(Collider other) {
-            Wand wand = other.GetComponent<Wand>();
-            if (wand) {
+            Baton baton = other.GetComponent<Baton>();
+            if (baton) {
                 SetShellColor(Color.white);
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
@@ -89,12 +94,16 @@ namespace ComposeVR {
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
+
+                        if(numOn > 0) {
+                            OrbOff();
+                            if(selectedNotes.Count > 0) {
+                                baton.StopHapticFeedback(hapticNote);
+                            }
+                        }
                     }
                 }
 
-                if (numOn > 0) {
-                    OrbOff();
-                }
             }
         }
 
@@ -131,11 +140,12 @@ namespace ComposeVR {
 
         private void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
             OrbOn((int)(e.buttonPressure * 127));
-            VRTK_ControllerHaptics.TriggerHapticPulse(controllerReference, TouchHapticsStrength, TouchHapticsDuration, TouchHapticsInterval);
+            e.controllerReference.actual.GetComponentInChildren<Baton>().StartHapticFeedback(hapticNote);
         }
 
         private void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
             OrbOff();
+            e.controllerReference.actual.GetComponentInChildren<Baton>().StopHapticFeedback(hapticNote);
         }
 
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
@@ -162,6 +172,10 @@ namespace ComposeVR {
             selectedNotes = args.SelectedNotes.ToList<int>();
             noteChooser.NoteChoiceConfirmed -= OnNoteChoiceConfirmed;
             noteChooser.NoteSelectionChanged -= OnNoteSelectionChanged;
+
+            if(selectedNotes.Count > 0) {
+                hapticNote = selectedNotes[0];
+            }
         }
 
         private void OnNoteSelectionChanged(object sender, NoteChooserEventArgs args) {

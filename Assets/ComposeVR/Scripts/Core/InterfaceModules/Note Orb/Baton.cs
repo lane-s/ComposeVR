@@ -6,7 +6,8 @@ using ComposeVR;
 
 namespace ComposeVR {
 
-    public class Wand : MonoBehaviour {
+    [RequireComponent(typeof(MIDINoteHaptics))]
+    public class Baton : MonoBehaviour {
 
         public float minVelocity = 1f;
         public float maxVelocity = 25.0f;
@@ -21,6 +22,7 @@ namespace ComposeVR {
 
         private bool onCooldown = false;
         private const float cooldownTime = 0.05f;
+        private int hapticNote;
 
         void Update() {
             VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(controller.gameObject);
@@ -48,6 +50,17 @@ namespace ComposeVR {
 
         public bool IsOnCooldown() {
             return onCooldown;
+        }
+
+        public void StartHapticFeedback(int hapticNote) {
+            this.hapticNote = hapticNote;
+            GetComponent<MIDINoteHaptics>().StartHapticFeedback(hapticNote); 
+        }
+
+        public void StopHapticFeedback(int hapticNote) {
+            if(this.hapticNote == hapticNote) {
+                GetComponent<MIDINoteHaptics>().StopHapticFeedback();
+            }
         }
     }
 }
