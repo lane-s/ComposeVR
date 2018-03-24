@@ -511,7 +511,6 @@ namespace ComposeVR {
                 results.UnionWith(GetJacksConnectedToNode(reverseFlow, branchNode));
             }
 
-            Debug.Log("Found "+results.Count+" jacks connected to handle");
             return results;
         }
 

@@ -51,7 +51,7 @@ namespace ComposeVR {
         private double MIDINoteToHapticFrequency(int note) {
             double noteFrequency = Math.Pow(2, (note - 69) / 12) * 440;
 
-            while(noteFrequency < hapticsRate) {
+            while(noteFrequency > maxFreq) {
                 noteFrequency = noteFrequency / 2;
             }
 

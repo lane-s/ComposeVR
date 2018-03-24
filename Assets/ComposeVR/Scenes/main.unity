@@ -13887,8 +13887,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70580aa52d1f8a846ab71bbb095dcba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BufferSize: 32
-  HapticGain: 4
+  BufferSize: 16
+  HapticGain: 5
   Channel: 1
 --- !u!82 &945465027
 AudioSource:
@@ -26110,8 +26110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70580aa52d1f8a846ab71bbb095dcba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BufferSize: 32
-  HapticGain: 4
+  BufferSize: 16
+  HapticGain: 5
   Channel: 0
 --- !u!82 &1801799490
 AudioSource:

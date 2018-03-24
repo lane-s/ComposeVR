@@ -29,6 +29,18 @@ namespace ComposeVR {
             GetComponentInChildren<Fader>().FaderValueChanged += OnFaderValueChanged;
             SetInitialFaderPosition();
         }
+        
+        void Update() {
+            if (Input.GetKeyDown(KeyCode.F)) {
+                Debug.Log("Notes playing on module " + Module.GetID());
+                int[] playingNotes = Module.GetPlayingNotes();
+                for(int i = 0; i < playingNotes.Length; i++) {
+                    if(playingNotes[i] > 0) {
+                        Debug.Log(i + " is playing on " + playingNotes[i] + " orbs");
+                    }
+                }
+            }
+        }
 
         private void SetInitialFaderPosition() {
             GetComponentInChildren<Fader>().SetNormalizedValue(INITIAL_FADER_POS);
