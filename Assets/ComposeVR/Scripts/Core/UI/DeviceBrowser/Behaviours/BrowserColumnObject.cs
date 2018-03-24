@@ -43,8 +43,6 @@ namespace ComposeVR {
             );
         }
 
-
-
         void IBrowserColumn.UpdateItem(int itemIndex, string itemName) {
             resultButtons[itemIndex].Text = itemName;
         }

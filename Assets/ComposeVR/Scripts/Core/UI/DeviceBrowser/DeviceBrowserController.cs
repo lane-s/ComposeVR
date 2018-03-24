@@ -18,6 +18,8 @@ namespace ComposeVR {
             public List<BrowserColumnController> FilterColumns;
             public string TargetDeviceType;
             public string CurrentDeviceType;
+
+            public bool displayTagColumn;
         }
 
         private DeviceBrowserState State = new DeviceBrowserState();
@@ -47,7 +49,7 @@ namespace ComposeVR {
             }
         }
 
-        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice) {
+        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn) {
             if(BrowserClosed != null) {
                 BrowserClosed(this, new EventArgs());
             }
@@ -57,6 +59,8 @@ namespace ComposeVR {
 
             State.TargetDeviceType = deviceType;
             ResetBrowser();
+
+            State.displayTagColumn = displayTagColumn;
             SetVisible(true);
         }
 
@@ -73,7 +77,12 @@ namespace ComposeVR {
             State.ResultColumn.SetVisible(visible);
 
             foreach(BrowserColumnController c in State.FilterColumns) {
-                c.SetVisible(visible);
+                if (c.Config.Name.Equals("Tags")) {
+                    c.SetVisible(visible && State.displayTagColumn);
+                }
+                else {
+                    c.SetVisible(visible);
+                }
             }
         }
 
@@ -85,6 +94,7 @@ namespace ComposeVR {
             State.ResultColumn.ResetColumn();
 
             State.CurrentDeviceType = "";
+            State.displayTagColumn = false;
         }
 
         private void OnPageChanged(object sender, PageChangedEventArgs e) {
@@ -107,7 +117,7 @@ namespace ComposeVR {
 
         private void OnDeviceTypeChanged(object sender, DeviceTypeChangedEventArgs e) {
             State.CurrentDeviceType = e.DeviceType;
-            SetVisible(true);
+            
             /*
             if (State.CurrentDeviceType.Equals(State.TargetDeviceType)) {
                 SetVisible(true);

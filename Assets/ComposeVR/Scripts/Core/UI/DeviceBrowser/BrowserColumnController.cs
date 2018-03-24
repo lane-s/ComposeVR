@@ -133,6 +133,11 @@ namespace ComposeVR {
         public void ResetColumn() {
             State.SelectedItemIndex = -1;
             State.SelectedItemName = "";
+
+            for(int i = 0; i < State.ColumnSize; i++) {
+                browserColumn.UpdateItem(i, "");
+            }
+
             SetVisible(false);
         }
 
@@ -165,7 +170,9 @@ namespace ComposeVR {
         public void OnBrowserItemChanged(Protocol.Event e) {
             int itemIndex = e.BrowserEvent.OnBrowserItemChangedEvent.ItemIndex;
             string itemName = e.BrowserEvent.OnBrowserItemChangedEvent.ItemName;
+
             browserColumn.UpdateItem(itemIndex, itemName);
+            browserColumn.SetItemVisibility(itemIndex, itemName.Length > 0 && !itemName.Equals("Results"));
 
             //Make default selection
             if(State.SelectedItemIndex == -1 && itemName.Equals(Config.DefaultSelection)) {
@@ -187,7 +194,7 @@ namespace ComposeVR {
             int totalResults = e.BrowserEvent.OnBrowserColumnChangedEvent.TotalResults;
             int resultsPerPage = e.BrowserEvent.OnBrowserColumnChangedEvent.ResultsPerPage;
 
-            //browserColumn.ExpandToSize(resultsPerPage);
+            browserColumn.ExpandToSize(resultsPerPage);
             State.ColumnSize = Math.Max(resultsPerPage, State.ColumnSize);
 
             if(DeviceTypeChanged != null) {

@@ -50,12 +50,12 @@ namespace ComposeVR {
         private void OnChangeInstrumentButtonClicked(object sender, EventArgs e) {
             Debug.Log("Change instruments");
             Module.GetModuleMenu().Display(false);
-            RequestBrowser("Instrument", "Devices", 0, true);
+            RequestBrowser("Instrument", "Devices", 0, true, false);
         }
 
         private void OnLoadPresetButtonClicked(object sender, EventArgs e) {
             Module.GetModuleMenu().Display(false);
-            RequestBrowser("", "", 0, true);
+            RequestBrowser("", "", 0, true, true);
         }
 
         public void SetController(IModule controller) {
@@ -68,15 +68,15 @@ namespace ComposeVR {
         /// 
         public void OnSoundModuleCreated(Protocol.Event e) {
             Debug.Log("Track created with id " + GetID());
-            RequestBrowser("Instrument", "Devices", 0, false);
+            RequestBrowser("Instrument", "Devices", 0, false, false);
         }
 
-        private void RequestBrowser(string deviceType, string contentType, int deviceIndex, bool replaceDevice) {
+        private void RequestBrowser(string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn) {
             Module.PositionBrowser();
 
             DeviceBrowserController browser = Module.GetBrowserController();
 
-            browser.OpenBrowser(GetID(), deviceType, contentType, deviceIndex, replaceDevice);
+            browser.OpenBrowser(GetID(), deviceType, contentType, deviceIndex, replaceDevice, displayTagColumn);
             browser.BrowserClosed += OnBrowserClosed;
         }
 
@@ -102,6 +102,7 @@ namespace ComposeVR {
 
         private void PlayMIDINote(NoteData data) {
 
+            //Debug.Log("Playing note " + data.Note + " on " + GetID());
             string noteStatus;
             if(data.NoteStatus == NoteData.Status.On) {
                 noteStatus = "on";

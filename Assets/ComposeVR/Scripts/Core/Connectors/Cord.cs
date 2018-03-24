@@ -378,7 +378,7 @@ namespace ComposeVR {
             }
 
             splitCord.Color = Color;
-            splitCord.Flow = 0;
+            splitCord.Flow = Flow;
             splitCord.Connect(handle.transform, B);
             if (B.GetComponent<BranchHandle>() != null) {
                 B.GetComponent<BranchHandle>().ReplaceCord(this, splitCord);
@@ -503,12 +503,15 @@ namespace ComposeVR {
             HashSet<Jack> results = new HashSet<Jack>();
             if(handle != null) {
                 CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
+                Transform other = downstreamJunctionNode.Cord.GetOppositeEnd(downstreamJunctionNode.transform);
+
                 results.UnionWith(GetJacksConnectedToNode(reverseFlow, downstreamJunctionNode));
 
                 CordNode branchNode = handle.BranchNode;
                 results.UnionWith(GetJacksConnectedToNode(reverseFlow, branchNode));
             }
 
+            Debug.Log("Found "+results.Count+" jacks connected to handle");
             return results;
         }
 
@@ -523,6 +526,15 @@ namespace ComposeVR {
                 }
             }
             return null;
+        }
+
+        public Transform GetOppositeEnd(Transform start) {
+            if (A.Equals(start)) {
+                return B;
+            }
+            else {
+                return A;
+            }
         }
 
         #endregion
