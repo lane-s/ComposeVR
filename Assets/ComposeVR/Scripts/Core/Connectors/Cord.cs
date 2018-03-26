@@ -206,7 +206,7 @@ namespace ComposeVR {
                     TranslateFlowTexture();
                 }
                 else if(collapsing) {
-                    if(collapseStart >= collapseEnd || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
+                    if(Math.Abs(collapseStart - collapseEnd) <= 1 || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
                         OnCollapseFinished();
                     }
                     else {
