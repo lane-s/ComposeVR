@@ -110,7 +110,7 @@ namespace ComposeVR {
             controllersPlayingOrb.Add(controller);
 
             if(selectedNotes.Count > 0) {
-                Baton baton = controller.actual.GetComponentInChildren<Baton>();
+                Baton baton = controller.actual.GetComponent<BatonHolder>().baton;
                 if(baton != null) {
                     baton.StartHapticFeedback(hapticNote);
                 }
@@ -135,7 +135,7 @@ namespace ComposeVR {
 
             controllersPlayingOrb.Remove(controller);
 
-            Baton baton = controller.actual.GetComponentInChildren<Baton>();
+            Baton baton = controller.actual.GetComponent<BatonHolder>().baton;
             if(baton != null) {
                 baton.StopHapticFeedback(hapticNote);
             }
