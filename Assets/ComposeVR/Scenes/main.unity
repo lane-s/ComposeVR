@@ -10388,6 +10388,7 @@ GameObject:
   - component: {fileID: 734900878}
   - component: {fileID: 734900879}
   - component: {fileID: 734900880}
+  - component: {fileID: 734900881}
   m_Layer: 0
   m_Name: LeftController
   m_TagString: Untagged
@@ -10412,9 +10413,9 @@ MonoBehaviour:
   useToggleButton: 3
   uiClickButton: 0
   menuToggleButton: 14
-  axisFidelity: 1
+  axisFidelity: 2
   triggerClickThreshold: 1
-  triggerForceZeroThreshold: 0.01
+  triggerForceZeroThreshold: 0.005
   triggerAxisZeroOnUntouch: 0
   gripClickThreshold: 1
   gripForceZeroThreshold: 0.01
@@ -10501,6 +10502,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baton: {fileID: 1801799484}
+--- !u!114 &734900881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 734900875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c9228e61807a244f9b5e584c540c70a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VelocityAxis: 1
+  VelocityFrames: 4
 --- !u!1 &748828080
 GameObject:
   m_ObjectHideFlags: 0
@@ -11005,7 +11019,8 @@ MonoBehaviour:
   _useExplicitConnection: 1
   _explicitConnection: {fileID: 392492853}
   _drawDefaultInspector: 1
-  _myOSCConnections: []
+  _myOSCConnections:
+  - {fileID: 392492853}
 --- !u!4 &778660830
 Transform:
   m_ObjectHideFlags: 0
@@ -28647,6 +28662,7 @@ GameObject:
   - component: {fileID: 1933670542}
   - component: {fileID: 1933670543}
   - component: {fileID: 1933670547}
+  - component: {fileID: 1933670548}
   m_Layer: 0
   m_Name: RightController
   m_TagString: Untagged
@@ -28773,9 +28789,9 @@ MonoBehaviour:
   useToggleButton: 3
   uiClickButton: 0
   menuToggleButton: 14
-  axisFidelity: 1
+  axisFidelity: 2
   triggerClickThreshold: 1
-  triggerForceZeroThreshold: 0.01
+  triggerForceZeroThreshold: 0.005
   triggerAxisZeroOnUntouch: 0
   gripClickThreshold: 1
   gripForceZeroThreshold: 0.01
@@ -28859,6 +28875,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baton: {fileID: 945465021}
+--- !u!114 &1933670548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1933670538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c9228e61807a244f9b5e584c540c70a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VelocityAxis: 2
+  VelocityFrames: 4
 --- !u!1 &1938553699
 GameObject:
   m_ObjectHideFlags: 0

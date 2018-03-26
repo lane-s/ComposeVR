@@ -110,7 +110,7 @@ namespace ComposeVR {
             controllersPlayingOrb.Add(controller);
 
             if(selectedNotes.Count > 0) {
-                Baton baton = controller.actual.GetComponent<BatonHolder>().baton;
+                Baton baton = controller.scriptAlias.GetComponent<BatonHolder>().baton;
                 if(baton != null) {
                     baton.StartHapticFeedback(hapticNote);
                 }
@@ -135,7 +135,7 @@ namespace ComposeVR {
 
             controllersPlayingOrb.Remove(controller);
 
-            Baton baton = controller.actual.GetComponent<BatonHolder>().baton;
+            Baton baton = controller.scriptAlias.GetComponent<BatonHolder>().baton;
             if(baton != null) {
                 baton.StopHapticFeedback(hapticNote);
             }
@@ -164,7 +164,8 @@ namespace ComposeVR {
         }
 
         private void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
-            OrbOnFromController((int)(e.buttonPressure * 127), e.controllerReference);
+            int velocity = e.controllerReference.scriptAlias.GetComponent<MIDINoteVelocityDetector>().GetNoteVelocity();
+            OrbOnFromController(velocity, e.controllerReference);
         }
 
         private void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
