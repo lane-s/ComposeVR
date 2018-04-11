@@ -55,7 +55,7 @@ namespace ComposeVR {
 
         private void OnLoadPresetButtonClicked(object sender, EventArgs e) {
             Module.GetModuleMenu().Display(false);
-            RequestBrowser("", "", 0, true, true);
+            RequestBrowser("Instrument", "", 0, true, true);
         }
 
         public void SetController(IModule controller) {
