@@ -206,12 +206,14 @@ namespace ComposeVR {
                     TranslateFlowTexture();
                 }
                 else if(collapsing) {
-                    if(Math.Abs(collapseStart - collapseEnd) <= 1 || collapseStart >= path.Count - 1 || collapseEnd <= 1) {
+                    int lineVertCount = collapseEnd - collapseStart;
+
+                    if(lineVertCount <= 1) {
                         OnCollapseFinished();
                     }
                     else {
                         //Only render the portion of the path that has not yet been collapsed
-                        lineRenderer.positionCount = collapseEnd - collapseStart + 1;
+                        lineRenderer.positionCount = lineVertCount + 1;
                         Vector3[] collapsingPath = new Vector3[lineRenderer.positionCount];
 
                         int j = 0;
