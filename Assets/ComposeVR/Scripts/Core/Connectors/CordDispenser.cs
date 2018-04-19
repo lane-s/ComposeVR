@@ -16,7 +16,6 @@ namespace ComposeVR {
 
         public SimpleTrigger BlockerDetector;
         public Transform ControllerDetectorVolume;
-        public Vector3 ShrinkPlugScale;
 
         public float ExtendDistance;
         public float ExtendSpeed;
@@ -34,23 +33,20 @@ namespace ComposeVR {
         public enum State {Free, WaitingForGrab, Blocked}
         private State state;
 
-        private Vector3 normalPlugScale;
-
         void Awake() {
-            controllerDetector = Instantiate(ControllerDetectorPrefab);
-
-            controllerDetector.TriggerEnter += OnControllerEnterArea;
-            controllerDetector.TriggerExit += OnControllerLeaveArea;
-
-            CreateCord();
-
             BlockerDetector.TriggerEnter += OnBlockerEnterArea;
             BlockerDetector.TriggerExit += OnBlockerLeaveArea;
 
             nearbyControllers = new List<VRTK_InteractGrab>();
+        }
 
+        private void Start() {
+            controllerDetector = Instantiate(ControllerDetectorPrefab);
+            controllerDetector.TriggerEnter += OnControllerEnterArea;
+            controllerDetector.TriggerExit += OnControllerLeaveArea;
+
+            CreateCord();
             state = State.Free;
-
             StartCoroutine(FSM());
         }
 
@@ -140,8 +136,6 @@ namespace ComposeVR {
             secondaryPlug.ShrinkCollider();
 
             secondaryPlug.DestinationJack = GetComponent<Jack>();
-
-            normalPlugScale = primaryPlug.GetComponent<Plug>().PlugTransform.localScale;
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
@@ -241,8 +235,6 @@ namespace ComposeVR {
             p.PlugTransform.rotation = PlugStart.rotation;
 
             p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
-            p.PlugTransform.localScale = ShrinkPlugScale;
-            p.PlugTransform.GetComponent<Scalable>().TargetScale = normalPlugScale;
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 
@@ -255,7 +247,6 @@ namespace ComposeVR {
         private IEnumerator RetractPlug(Plug p) {
 
             p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
-            p.PlugTransform.GetComponent<Scalable>().TargetScale = ShrinkPlugScale;
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
 

@@ -159,7 +159,6 @@ GameObject:
   - component: {fileID: 136068873205473358}
   - component: {fileID: 114487102969827112}
   - component: {fileID: 114972259037714616}
-  - component: {fileID: 114420235210983760}
   - component: {fileID: 114549354904918792}
   - component: {fileID: 54199316254713238}
   m_Layer: 13
@@ -611,19 +610,6 @@ MonoBehaviour:
   RotationSnapSpeed: 600
   PlugTransform: {fileID: 4837514403879456}
   CordAttachPoint: {fileID: 4780208642896398}
---- !u!114 &114420235210983760
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1945745975907880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1be8f134ab7ffb042b6d4e222b93ceaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetScale: {x: 0, y: 0, z: 0}
-  Smooth: 8
 --- !u!114 &114487102969827112
 MonoBehaviour:
   m_ObjectHideFlags: 1

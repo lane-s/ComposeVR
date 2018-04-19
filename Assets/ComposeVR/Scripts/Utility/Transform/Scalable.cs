@@ -9,7 +9,9 @@ namespace ComposeVR {
         public float Smooth;
 
         private void Awake() {
-            TargetScale = transform.localScale;
+            if (TargetScale == Vector3.zero) {
+                TargetScale = transform.localScale;
+            }
         }
 
         // Update is called once per frame

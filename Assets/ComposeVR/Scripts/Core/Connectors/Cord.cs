@@ -37,11 +37,11 @@ namespace ComposeVR {
         private int collapseStart;
         private int collapseEnd;
         private bool collapsing = false;
-        private float collapseAccel = 0.01f;
-        private const float COLLAPSE_ROTATION_SPEED = 20f;
         private Vector3 plugALookVector;
         private Vector3 plugBLookVector;
         private ParticleSystem collapseParticles;
+        private float COLLAPSE_ACCELERATION = 0.005f;
+        private const float COLLAPSE_ROTATION_SPEED = 20f;
         private const int COLLAPSE_PARTICLE_FIRE_COUNT = 20; //How small should the cord be when the collapse particle system fires
 
         private bool updateLine;
@@ -230,7 +230,7 @@ namespace ComposeVR {
                             if (plugALookVector != Vector3.zero) {
                                 plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
                             }
-                            plugA.GetComponent<CordFollower>().Speed += collapseAccel;
+                            plugA.GetComponent<CordFollower>().Speed += COLLAPSE_ACCELERATION;
                         }
 
                          Plug plugB = B.GetComponentInOwner<Plug>();
@@ -238,7 +238,7 @@ namespace ComposeVR {
                             if (plugBLookVector != Vector3.zero) {
                                 plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
                             }
-                            plugB.GetComponent<CordFollower>().Speed += collapseAccel;
+                            plugB.GetComponent<CordFollower>().Speed += COLLAPSE_ACCELERATION;
                         }
 
                         //Play the collapse particle effect when the cord is almost completely collapsed

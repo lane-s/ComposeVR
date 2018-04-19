@@ -353,7 +353,7 @@ namespace ComposeVR {
 
             ConnectToDestinationJack();
 
-            transform.SetParent(DestinationJack.PlugStart);
+            transform.SetParent(DestinationJack.PlugConnectionPoint);
             ShrinkCollider();
 
             yield return null;

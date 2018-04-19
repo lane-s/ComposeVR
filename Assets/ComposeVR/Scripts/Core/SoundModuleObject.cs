@@ -9,9 +9,10 @@ namespace ComposeVR {
     /// <summary>
     /// Sound Modules contain samples or virtual instruments
     /// </summary>
+    [RequireComponent(typeof(VRTK_InteractableObject))]
     public sealed class SoundModuleObject : MonoBehaviour, IModule {
 
-        public Text GainDisplay;
+        public Transform FaderSystemPrefab;
         public SoundModuleController Module;
         private InputJack input;
 
@@ -19,15 +20,25 @@ namespace ComposeVR {
         private const float FADER_MAX = 6.021f;
         private const float INITIAL_FADER_POS = 0.540f;
 
+        private bool isPlaced = false;
+        private Transform faderSystem;
+        private Text gainDisplay;
+
         void Awake() {
             input = GetComponentInChildren<InputJack>();
 
             Module.SetController(this);
-            Module.Initialize();
 
-            //Throwaway code for temporary volume faders
-            GetComponentInChildren<Fader>().FaderValueChanged += OnFaderValueChanged;
-            SetInitialFaderPosition();
+            GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnUngrabbed;
+        }
+
+        void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
+            if (!isPlaced) {
+                InitializeFaderSystem();
+                GetComponentInChildren<CordDispenser>().enabled = true;
+                Module.Initialize();
+                isPlaced = true;
+            } 
         }
         
         void Update() {
@@ -42,8 +53,18 @@ namespace ComposeVR {
             }
         }
 
+        private void InitializeFaderSystem() {
+            Transform faderAttachPoint = transform.Find("FaderAttachPoint");
+            faderSystem = Instantiate(FaderSystemPrefab, faderAttachPoint.position, faderAttachPoint.rotation);
+            faderSystem.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = faderAttachPoint.gameObject;
+            //Throwaway code for temporary volume faders
+            faderSystem.GetComponentInChildren<Fader>().FaderValueChanged += OnFaderValueChanged;
+            gainDisplay = faderSystem.GetComponentInChildren<Text>();
+            SetInitialFaderPosition();
+        }
+
         private void SetInitialFaderPosition() {
-            GetComponentInChildren<Fader>().SetNormalizedValue(INITIAL_FADER_POS);
+            faderSystem.GetComponentInChildren<Fader>().SetNormalizedValue(INITIAL_FADER_POS);
             SetGainDisplayText(FaderPercentageToGain(INITIAL_FADER_POS));
         }
 
@@ -73,7 +94,7 @@ namespace ComposeVR {
                 gainText = "- " + gainText;
             }
 
-            GainDisplay.text = gainText;
+            gainDisplay.text = gainText;
         }
 
         void IModule.PositionBrowser() {
