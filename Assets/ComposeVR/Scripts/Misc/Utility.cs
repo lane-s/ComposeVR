@@ -16,6 +16,16 @@ namespace ComposeVR {
             return layerMask == (layerMask | (1 << layer));
         }
 
+        /// <summary>
+        /// Project the vector U onto v
+        /// </summary>
+        /// <param name="U"></param>
+        /// <param name="V"></param>
+        /// <returns></returns>
+        public static Vector3 ProjectVector(Vector3 U, Vector3 V) {
+            return (Vector3.Dot(U, V) * V / V.sqrMagnitude);
+        }
+
         public static Vector3 ProjectPointOnSegment(Vector3 point, Vector3 start, Vector3 end) {
             Vector3 segmentAxis = (end - start);
             Vector3 projectionOnAxis = Vector3.Project(point - start, segmentAxis) + start;
