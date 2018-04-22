@@ -125,4 +125,11 @@ public class Deque<T> {
 
         return buffer[idx];
     }
+
+    public void Clear() {
+        int N = numElements;
+        for(int i = 0; i < N; i++) {
+            PopBack();
+        }
+    }
 }

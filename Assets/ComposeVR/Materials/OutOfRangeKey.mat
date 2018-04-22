@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: OutOfRangeKey
   m_Shader: {fileID: 4800000, guid: eb27d070b42edd14699aaa1be80de7e7, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: CLIP_TWO
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -74,9 +74,9 @@ Material:
     m_Colors:
     - _Color: {r: 0.44117647, g: 0.44117647, b: 0.44117647, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _planeNorm: {r: 0, g: 1, b: 0, a: 1}
-    - _planeNorm2: {r: 0, g: 1, b: 0, a: 1}
+    - _planeNorm: {r: -0.22271308, g: -0.9677557, b: -0.11767939, a: 0}
+    - _planeNorm2: {r: 0.22271308, g: 0.9677557, b: 0.11767891, a: 0}
     - _planeNorm3: {r: 0, g: 1, b: 0, a: 1}
-    - _planePos: {r: 0, g: 0, b: 0, a: 1}
-    - _planePos2: {r: 0, g: 0, b: 0, a: 1}
+    - _planePos: {r: 0.9084573, g: 1.9557688, b: 0.51915544, a: 0}
+    - _planePos2: {r: 0.82654345, g: 1.5998285, b: 0.47587305, a: 0}
     - _planePos3: {r: 0, g: 0, b: 0, a: 1}

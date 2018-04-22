@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 135663180809844396}
   - component: {fileID: 23789692726076784}
   m_Layer: 0
-  m_Name: Sphere (1)
+  m_Name: Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 54230237750913426}
   - component: {fileID: 114664380406755744}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Shell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,7 +253,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1648545843110850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.40546, y: -6.037341, z: -4.894305}
+  m_LocalPosition: {x: 1.6959488, y: 0.5, z: 3.1217065}
   m_LocalScale: {x: 0.4187693, y: 0.418769, z: 0.4187693}
   m_Children:
   - {fileID: 4560826446569750}

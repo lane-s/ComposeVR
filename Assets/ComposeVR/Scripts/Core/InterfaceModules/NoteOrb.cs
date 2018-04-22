@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
+
+    using ControllerHand = SDK_BaseController.ControllerHand;
 
     public class NoteData : WireData {
         public enum Status { On, Off };
@@ -19,7 +20,10 @@ namespace ComposeVR {
         }
     }
 
+    [RequireComponent(typeof(Scalable))]
+    [RequireComponent(typeof(VRTK_InteractableObject))]
     public class NoteOrb : MonoBehaviour {
+        
 
         public float HitEmissionGain;
         public float TouchHapticsStrength;
@@ -28,7 +32,6 @@ namespace ComposeVR {
 
         private List<int> selectedNotes;
 
-        private UDPClient client;
         private OutputJack output;
         private float originalEmissionGain;
 
@@ -36,13 +39,24 @@ namespace ComposeVR {
         private const float cooldownTime = 0.3f;
 
         private VRTK_ControllerReference controllerReference;
-        private NoteChooser noteChooser;
         private int hapticNote;
 
         private HashSet<VRTK_ControllerReference> nearbyControllers;
         private HashSet<VRTK_ControllerReference> controllersPlayingOrb;
+        private VRTK_InteractableObject interactable;
+        private Miniature miniature;
+
+        private bool displayingNoteSelector;
+        private const float NOTE_SELECTOR_RIGHT_OFFSET = 0.2f;
+        private const float NOTE_SELECTOR_LEFT_OFFSET = 0.275f;
+            
+        private ControllerHand noteSelectorHand;
+        private Transform HMD;
+        private NoteSelector noteSelector;
+        private Transform core;
 
         void Awake() {
+            core = transform.Find("Core");
             Material mat = GetComponentInChildren<MeshRenderer>().material;
             originalEmissionGain = mat.GetFloat("_EmissionGain");
 
@@ -51,13 +65,62 @@ namespace ComposeVR {
             controllersPlayingOrb = new HashSet<VRTK_ControllerReference>();
 
             selectedNotes = new List<int>();
-            output.GetComponent<Jack>().PlugConnected += OnPlugConnected;
+
+            interactable = transform.parent.GetComponent<VRTK_InteractableObject>();
+            interactable.InteractableObjectUngrabbed += OnUngrabbed;
+
+            miniature = transform.parent.GetComponent<Miniature>();
+
+            HMD = GameObject.FindGameObjectWithTag("Headset").transform;
+
+            noteSelector = ComposeVRManager.Instance.NoteSelectorObject;
+        }
+
+        //How close to full scale does the orb need to be before the selector is displayed
+        private const float DISPLAY_SIZE_DIFFERENCE = 0.45f;
+
+        void Update() {
+            if((miniature.FullScale - transform.parent.localScale).magnitude < DISPLAY_SIZE_DIFFERENCE && interactable.IsGrabbed() && !displayingNoteSelector) {
+                ControllerHand grabbingHand = VRTK_ControllerReference.GetControllerReference(interactable.GetGrabbingObject()).hand;
+                noteSelectorHand = grabbingHand == ControllerHand.Left ? ControllerHand.Right : ControllerHand.Left;
+
+                int selectedNote = selectedNotes.Count > 0 ? selectedNotes[0] : -1;
+
+                displayingNoteSelector = noteSelector.Request(noteSelectorHand, selectedNote);
+                if (displayingNoteSelector) {
+                    noteSelector.NoteSelected += OnNoteSelectionChanged;
+                    SelectNote(noteSelector.GetSelectedNote());
+                }
+            }
+
+            if (displayingNoteSelector && interactable.GetGrabbingObject() != null) {
+                Vector3 toHMD = HMD.position - noteSelector.transform.position;
+                noteSelector.transform.rotation = Quaternion.LookRotation(toHMD);
+
+                Vector3 offset;
+                if (noteSelectorHand == ControllerHand.Left) {
+                    offset = (-interactable.GetGrabbingObject().transform.right * 0.25f - HMD.right * 0.75f) * NOTE_SELECTOR_LEFT_OFFSET;
+                }
+                else {
+                    offset = (interactable.GetGrabbingObject().transform.right * 0.25f + HMD.right * 0.75f) * NOTE_SELECTOR_RIGHT_OFFSET;
+                }
+
+                noteSelector.transform.position = transform.position + offset;
+            }
+        }
+
+        private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
+            if (displayingNoteSelector) {
+                noteSelector.NoteSelected -= OnNoteSelectionChanged;
+                noteSelector.Release();
+                displayingNoteSelector = false;
+            }
         }
 
         void OnTriggerEnter(Collider other) {
             Baton baton = other.GetComponent<Baton>();
             if (baton) {
-                SetShellColor(Color.green);
+                SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
 
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
@@ -65,7 +128,7 @@ namespace ComposeVR {
                     controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!nearbyControllers.Contains(controllerReference)) {
                         if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                            OrbOnFromController(baton.GetVelocity(), controllerReference);
+                            OrbOnFromControllerEnter(baton.GetVelocity(), controllerReference);
                         }
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
@@ -92,17 +155,16 @@ namespace ComposeVR {
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
 
-                        OrbOffFromController(controllerReference);
+                        OrbOffFromControllerExit(controllerReference);
                         if(selectedNotes.Count > 0) {
                             baton.StopHapticFeedback(hapticNote);
                         }
                     }
                 }
-
             }
         }
 
-        private void OrbOnFromController(int velocity, VRTK_ControllerReference controller) {
+        private void OrbOnFromControllerEnter(int velocity, VRTK_ControllerReference controller) {
             if (controllersPlayingOrb.Contains(controller)) {
                 return;
             }
@@ -128,7 +190,7 @@ namespace ComposeVR {
             mat.SetFloat("_EmissionGain", HitEmissionGain);
         }
 
-        private void OrbOffFromController(VRTK_ControllerReference controller) {
+        private void OrbOffFromControllerExit(VRTK_ControllerReference controller) {
             if (!controllersPlayingOrb.Contains(controller)) {
                 return;
             }
@@ -165,52 +227,30 @@ namespace ComposeVR {
 
         private void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
             int velocity = e.controllerReference.scriptAlias.GetComponent<MIDINoteVelocityDetector>().GetNoteVelocity();
-            OrbOnFromController(velocity, e.controllerReference);
+            OrbOnFromControllerEnter(velocity, e.controllerReference);
         }
 
         private void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
-            OrbOffFromController(e.controllerReference);
+            OrbOffFromControllerExit(e.controllerReference);
         }
 
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
 
-        private void OpenNoteChooser() {
-            noteChooser = ComposeVRManager.Instance.NoteChooserObject;
-            noteChooser.Display(true);
-
-            noteChooser.NoteChoiceConfirmed += OnNoteChoiceConfirmed;
-            noteChooser.NoteSelectionChanged += OnNoteSelectionChanged;
-
-            noteChooser.transform.parent.position = transform.position + Vector3.up * NOTE_CHOOSER_OFFSET;
-            noteChooser.transform.parent.rotation = Quaternion.LookRotation(noteChooser.transform.parent.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
-            noteChooser.transform.parent.position -= noteChooser.transform.parent.forward * 0.05f;
-            noteChooser.transform.parent.SetParent(this.transform.parent);
-
-            Collider[] toIgnore = new Collider[1];
-            toIgnore[0] = noteChooser.GetComponent<Collider>();
-
-            transform.parent.GetComponent<VRTK_InteractableObject>().ignoredColliders = toIgnore;
+        private void OnNoteSelectionChanged(object sender, NoteSelectionEventArgs args) {
+            SelectNote(args.Note);
+            StartCoroutine(PreviewSelection());
         }
 
-        private void OnNoteChoiceConfirmed(object sender, NoteChooserEventArgs args) {
-            selectedNotes = args.SelectedNotes.ToList<int>();
-            noteChooser.NoteChoiceConfirmed -= OnNoteChoiceConfirmed;
-            noteChooser.NoteSelectionChanged -= OnNoteSelectionChanged;
-
-            if(selectedNotes.Count > 0) {
-                hapticNote = selectedNotes[0];
-            }
+        private void SelectNote(int note) {
+            selectedNotes.Clear();
+            selectedNotes.Add(note);
+            SetCoreColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(note));
         }
 
-        private void OnNoteSelectionChanged(object sender, NoteChooserEventArgs args) {
-            selectedNotes = args.SelectedNotes.ToList<int>();
-            StartCoroutine(previewSelection());
-        }
-
-        private IEnumerator previewSelection() {
-            SetShellColor(Color.green);
+        private IEnumerator PreviewSelection() {
+            SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
             OrbOn(95);
-            yield return new WaitForSecondsRealtime(0.25f);
+            yield return new WaitForSecondsRealtime(0.1f);
             SetShellColor(Color.white);
             OrbOff();
         }
@@ -220,8 +260,8 @@ namespace ComposeVR {
             mat.SetColor("_TintColor", c);
         }
 
-        private void OnPlugConnected(object sender, JackEventArgs args) {
-            OpenNoteChooser();
+        private void SetCoreColor(Color c) {
+            core.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", c);
         }
     }
 }

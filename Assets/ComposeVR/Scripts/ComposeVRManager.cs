@@ -4,37 +4,53 @@ using UnityEngine;
 
 namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
+        public NoteColorScheme NoteColors;
 
         private DeviceBrowserObject browserObject;
-        private NoteChooser noteChooser;
+        private NoteSelector noteSelector;
         private SoundModuleMenu soundModuleMenu;
 
         private ComposeVROSCEventDispatcher oscEventDispatcher;
         private int handlerCount = 0;
 
         public DeviceBrowserObject DeviceBrowserObject {
-            get { return browserObject; }
+            get {
+                if(browserObject == null) {
+                    browserObject = transform.Find("DeviceBrowser").GetComponent<DeviceBrowserObject>();
+                }
+                return browserObject;
+            }
         }
 
-        public NoteChooser NoteChooserObject {
-            get { return noteChooser; }
+        public NoteSelector NoteSelectorObject {
+            get {
+                if(noteSelector == null) {
+                    noteSelector = transform.Find("NoteSelector").GetComponent<NoteSelector>();
+                }
+                return noteSelector;
+            }
         }
 
         public SoundModuleMenu SoundModuleMenu {
-            get { return soundModuleMenu; }
+            get {
+                if(soundModuleMenu == null) {
+                    soundModuleMenu = transform.Find("SoundModuleMenu").GetComponent<SoundModuleMenu>();
+                }
+                return soundModuleMenu;
+            }
         }
 
         public ComposeVROSCEventDispatcher OSCEventDispatcher {
-            get { return oscEventDispatcher; }
+            get {
+                if(oscEventDispatcher == null) {
+                    oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
+                }
+                return oscEventDispatcher;
+            }
         }
 
         // Use this for initialization
         void Awake() {
-            browserObject = transform.Find("DeviceBrowser").GetComponent<DeviceBrowserObject>();
-            noteChooser = transform.Find("NoteChooser").GetChild(0).GetComponent<NoteChooser>();
-            soundModuleMenu = transform.Find("SoundModuleMenu").GetComponent<SoundModuleMenu>();
-
-            oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
         }
 
         public string GetNewHandlerID() {

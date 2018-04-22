@@ -1,29 +1,86 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
 
 namespace ComposeVR {
-    public class NoteSelector : MonoBehaviour {
+    public class NoteSelectionEventArgs : EventArgs {
+        private int selectedNote;
+                
+        public NoteSelectionEventArgs(int selectedNote) {
+            this.selectedNote = selectedNote;
+        }
+
+        public int Note {
+            get { return selectedNote; }
+            set { selectedNote = value; }
+        }
+    }
+
+    public sealed class NoteSelector : MonoBehaviour {
+
+        public event EventHandler<NoteSelectionEventArgs> NoteSelected;
 
         [Tooltip("The total number of keys in the frame will be HalfKeys * 2 + 1")]
         public int HalfKeys = 9;
 
         public float KeySpacing = 0.001f;
+        public float TickStrength = 20f;
 
         private Deque<Key> keys;
         private ObjectPool keyPool;
 
         private Transform selectedTransform;
+
         private Transform clipTop;
         private Transform clipBottom;
+
+        private Transform selectorFrame;
+        private Transform leftHandFrame;
+        private Transform rightHandFrame;
+
         private VRTK_InteractableObject selectorHandle;
         private Text noteDisplay;
 
         private Key selectedKey;
+        private NoteSelectionEventArgs noteArgs;
+        private int lastNoteSelected = 60;
         private float selectedKeyOffset;
         private Vector3 lastHandlePos;
+
+        private SDK_BaseController.ControllerHand targetHand;
+
+        public bool Request(SDK_BaseController.ControllerHand hand, int initialNote) {
+            if(targetHand != SDK_BaseController.ControllerHand.None) {
+                return false;
+            }
+
+            targetHand = hand;
+
+            if(targetHand == SDK_BaseController.ControllerHand.Left) {
+                selectorFrame.transform.position = leftHandFrame.position;
+                selectorFrame.transform.rotation = leftHandFrame.rotation;
+                noteDisplay.transform.parent.localRotation = Quaternion.Euler(0, 0, 180);
+                noteDisplay.transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+            else {
+                selectorFrame.transform.position = rightHandFrame.position;
+                selectorFrame.transform.rotation = rightHandFrame.rotation;
+                noteDisplay.transform.parent.localRotation = Quaternion.Euler(0, 0, 0);
+                noteDisplay.transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+
+            Init(initialNote);
+            return true;
+        }
+
+        public void Release() {
+            Cleanup();
+            targetHand = SDK_BaseController.ControllerHand.None;
+            transform.SetParent(ComposeVRManager.Instance.transform);
+        }
 
         // Use this for initialization
         void Awake () {
@@ -37,14 +94,27 @@ namespace ComposeVR {
             selectorHandle = transform.Find("SelectorHandle").GetComponent<VRTK_InteractableObject>();
             selectorHandle.InteractableObjectUngrabbed += OnHandleUngrabbed;
 
-            noteDisplay = transform.Find("Canvas").Find("NoteDisplay").GetComponent<Text>();
+            selectorFrame = transform.Find("NoteSelectorFrame");
+            noteDisplay = selectorFrame.Find("Canvas").Find("NoteDisplay").GetComponent<Text>();
 
-            Init(36);
+            leftHandFrame = transform.Find("LeftHandFrame");
+            rightHandFrame = transform.Find("RightHandFrame");
+
+            targetHand = SDK_BaseController.ControllerHand.None;
+
+            noteArgs = new NoteSelectionEventArgs(60);
         }
 
         void Init(int selectedNote) {
+            if(selectedNote < 0) {
+                selectedNote = lastNoteSelected;
+            }
+
+            gameObject.SetActive(true);
+
             selectedKey = keyPool.GetObject(selectedTransform.position, selectedTransform.rotation).GetComponent<Key>();
             selectedKey.Note = selectedNote;
+            selectedKey.transform.SetParent(transform);
             keys.PushFront(selectedKey);
 
             InitHalfKeyboard(1);
@@ -72,9 +142,11 @@ namespace ComposeVR {
         void Cleanup() {
             for(int i = 0; i < keys.Count; i++) {
                 keys.Get(i).GetComponent<Poolable>().ReturnToPool();
-                keys.PopBack();
             }
+            keys.Clear();
+
             selectedKey = null;
+            gameObject.SetActive(false);
         }
 
         private void OnHandleGrabbed(object sender, InteractableObjectEventArgs e) {
@@ -97,9 +169,9 @@ namespace ComposeVR {
 
                 //Lock movement if we are out of MIDI note range
                 Vector3 localMove = transform.InverseTransformVector(keyMove);
-                if(localMove.y > 0 && selectedKey.Note == 0 && selectedKey.transform.localPosition.y >= selectedTransform.localPosition.y) {
+                if(localMove.y > 0 && selectedKey.Note == 0 && selectedKey.transform.localPosition.y > selectedTransform.localPosition.y) {
                     return;
-                }else if(localMove.y < 0 && selectedKey.Note == 127 && selectedTransform.transform.localPosition.y <= selectedTransform.localPosition.y) {
+                }else if(localMove.y < 0 && selectedKey.Note == 127 && selectedTransform.transform.localPosition.y < selectedTransform.localPosition.y) {
                     return;
                 }
 
@@ -154,7 +226,7 @@ namespace ComposeVR {
                 Key key = keys.Get(i);
                 key.transform.position += move;
                 
-                //Movement limits
+                //If the last key was moved passed the limits, move all the keys back so that the limit is enforced
                 if(key.Note == 0 && key.transform.localPosition.y > selectedTransform.localPosition.y) {
                     limitAdjustment = new Vector3(key.transform.localPosition.x, selectedTransform.localPosition.y, key.transform.localPosition.z) - key.transform.localPosition;
                 }else if(key.Note == 127 && key.transform.localPosition.y < selectedTransform.localPosition.y) {
@@ -168,6 +240,8 @@ namespace ComposeVR {
         }
 
         private void HandleSelectionChange(Vector3 move) {
+            Key prevSelected = selectedKey;
+
             Vector3 localMove = transform.InverseTransformVector(move);
 
             if(Vector3.Distance(selectedKey.transform.position, selectedTransform.position) > selectedKey.transform.localScale.y/2 + KeySpacing) {
@@ -194,11 +268,34 @@ namespace ComposeVR {
                 selectedKey = keys.Get(HalfKeys);
             }
 
+            if (!selectedKey.Equals(prevSelected)) {
+                PlayHapticTick();
+                lastNoteSelected = selectedKey.Note;
+
+                if(NoteSelected != null) {
+                    noteArgs.Note = selectedKey.Note;
+                    NoteSelected(this, noteArgs);
+                }
+            }
+
         }
 
         private Vector3 GetNextKeyPosition(Key key, int dir) {
             return key.transform.position + (key.transform.localScale.y + KeySpacing) * transform.up * dir;
         }
 
+        private void PlayHapticTick() {
+            //Use hand opposite the target hand for haptic feedback
+            SDK_BaseController.ControllerHand hapticHand = targetHand == SDK_BaseController.ControllerHand.Right ? SDK_BaseController.ControllerHand.Left : SDK_BaseController.ControllerHand.Right;
+
+            VRTK_ControllerHaptics.TriggerHapticPulse(VRTK_ControllerReference.GetControllerReference(hapticHand), TickStrength);
+        }
+
+        public int GetSelectedNote() {
+            if(selectedKey != null) {
+                return selectedKey.Note;
+            }
+            return -1;
+        }
     }
 }

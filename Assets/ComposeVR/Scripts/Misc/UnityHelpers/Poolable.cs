@@ -31,6 +31,7 @@ namespace ComposeVR {
 
         public void ReturnToPool() {
             inPool = true;
+            gameObject.transform.SetParent(null);
             gameObject.SetActive(false);
             pool.ReturnObject(this);
         }
