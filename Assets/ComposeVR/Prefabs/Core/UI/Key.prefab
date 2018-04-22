@@ -106,3 +106,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WhiteKeyMaterial: {fileID: 2100000, guid: 2f3e4cb13f8f8dd45aa5be1bf93747d4, type: 2}
   BlackKeyMaterial: {fileID: 2100000, guid: 452cb67394861eb4a8622cb735011b2f, type: 2}
+  OutOfRangeMaterial: {fileID: 2100000, guid: b48c8e1bd467d3e498706521d5724485, type: 2}

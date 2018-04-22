@@ -5,6 +5,7 @@ using UnityEngine;
 public class Key : MonoBehaviour {
     public Material WhiteKeyMaterial;
     public Material BlackKeyMaterial;
+    public Material OutOfRangeMaterial;
 
     private int note;
 
@@ -14,16 +15,18 @@ public class Key : MonoBehaviour {
     public int Note {
         set {
             note = value;
-            if(note < 0) {
-                note = 120 + note;
-            }
-
-            if(WhiteKeys[note % 12]) {
-                GetComponent<MeshRenderer>().material = WhiteKeyMaterial;
+            if(note < 0 || note > 127) {
+                GetComponent<MeshRenderer>().material = OutOfRangeMaterial;
             }
             else {
-                GetComponent<MeshRenderer>().material = BlackKeyMaterial;
+                if(WhiteKeys[note % 12]) {
+                    GetComponent<MeshRenderer>().material = WhiteKeyMaterial;
+                }
+                else {
+                    GetComponent<MeshRenderer>().material = BlackKeyMaterial;
+                }
             }
+
         }
         get { return note; }
     }
