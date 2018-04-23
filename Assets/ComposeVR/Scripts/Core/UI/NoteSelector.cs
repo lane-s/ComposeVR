@@ -47,8 +47,11 @@ namespace ComposeVR {
         private Key selectedKey;
         private NoteSelectionEventArgs noteArgs;
         private int lastNoteSelected = 60;
-        private float selectedKeyOffset;
+        private double selectedKeyOffset;
         private Vector3 lastHandlePos;
+
+        private double maxKeyPositionY;
+        private double selectedKeyPositionY;
 
         private SDK_BaseController.ControllerHand targetHand;
 
@@ -103,6 +106,7 @@ namespace ComposeVR {
             targetHand = SDK_BaseController.ControllerHand.None;
 
             noteArgs = new NoteSelectionEventArgs(60);
+
         }
 
         void Init(int selectedNote) {
@@ -121,6 +125,10 @@ namespace ComposeVR {
             InitHalfKeyboard(-1);
 
             selectedKeyOffset = 0;
+
+            maxKeyPositionY = NoteToKeyPosition(127);
+            selectedKeyPositionY = NoteToKeyPosition(selectedNote);
+            Debug.Log("Start pos: " + selectedKeyPositionY);
         }
 
         private void InitHalfKeyboard(int dir) {
@@ -167,19 +175,11 @@ namespace ComposeVR {
                 //Get movement along selector up axis since last frame
                 Vector3 keyMove = GetHandleMovement();
 
-                //Lock movement if we are out of MIDI note range
-                Vector3 localMove = transform.InverseTransformVector(keyMove);
-                if(localMove.y > 0 && selectedKey.Note == 0 && selectedKey.transform.localPosition.y > selectedTransform.localPosition.y) {
-                    return;
-                }else if(localMove.y < 0 && selectedKey.Note == 127 && selectedTransform.transform.localPosition.y < selectedTransform.localPosition.y) {
-                    return;
-                }
-
                 //Apply movement to all keys
                 MoveKeys(keyMove);
 
                 //Detect if the selected key has changed
-                HandleSelectionChange(keyMove);
+                HandleSelectionChange();
             }
             lastHandlePos = selectorHandle.transform.position;
         }
@@ -214,48 +214,48 @@ namespace ComposeVR {
         private Vector3 GetHandleMovement() {
             //Project handle movement vector onto handle's local y axis
             Vector3 handleMove = selectorHandle.transform.position - lastHandlePos;
-            Vector3 projectionOnUpAxis = Utility.ProjectVector(handleMove, transform.up);
+            double yMove = transform.InverseTransformVector(handleMove).y;
 
-            return projectionOnUpAxis;
+            double nextKeyPosition = selectedKeyPositionY - yMove;
+            if(nextKeyPosition >= maxKeyPositionY) {
+                yMove = -(maxKeyPositionY - selectedKeyPositionY);
+                selectedKeyPositionY = maxKeyPositionY;
+            }else if(nextKeyPosition <= 0.0) {
+                yMove = selectedKeyPositionY;
+                selectedKeyPositionY = 0.0;
+            }
+            else {
+                selectedKeyPositionY -= yMove;
+            }
+            
+            Vector3 keyMove = new Vector3(0, (float)yMove, 0);
+            return keyMove;
         }
 
         private void MoveKeys(Vector3 move) {
-            Vector3 limitAdjustment = Vector3.zero;
 
             for(int i = 0; i < keys.Count; i++) {
                 Key key = keys.Get(i);
-                key.transform.position += move;
-                
-                //If the last key was moved passed the limits, move all the keys back so that the limit is enforced
-                if(key.Note == 0 && key.transform.localPosition.y > selectedTransform.localPosition.y) {
-                    limitAdjustment = new Vector3(key.transform.localPosition.x, selectedTransform.localPosition.y, key.transform.localPosition.z) - key.transform.localPosition;
-                }else if(key.Note == 127 && key.transform.localPosition.y < selectedTransform.localPosition.y) {
-                    limitAdjustment = new Vector3(key.transform.localPosition.x, selectedTransform.localPosition.y, key.transform.localPosition.z) - key.transform.localPosition;
-                }
-            }
-
-            if(limitAdjustment != Vector3.zero) {
-                MoveKeys(limitAdjustment);
+                key.transform.localPosition += move;
             }
         }
 
-        private void HandleSelectionChange(Vector3 move) {
+        private void HandleSelectionChange() {
             Key prevSelected = selectedKey;
 
-            Vector3 localMove = transform.InverseTransformVector(move);
-
             if(Vector3.Distance(selectedKey.transform.position, selectedTransform.position) > selectedKey.transform.localScale.y/2 + KeySpacing) {
-                if(localMove.y > 0) {
+                if (selectedKey.transform.localPosition.y > selectedTransform.localPosition.y && selectedKey.Note > 0) {
+                    Key lowestKey = keys.PeekBack();
+
                     selectedKeyOffset -= (selectedKey.transform.localScale.y + KeySpacing);
                     keys.PopFront().GetComponent<Poolable>().ReturnToPool();
-                        
-                    Key lowestKey = keys.PeekBack();
+
                     Key nextKey = keyPool.GetObject(GetNextKeyPosition(lowestKey, -1), lowestKey.transform.rotation).GetComponent<Key>();
                     nextKey.transform.SetParent(transform);
                     nextKey.Note = lowestKey.Note - 1;
                     keys.PushBack(nextKey);
                 }
-                else {
+                else if (selectedKey.transform.localPosition.y < selectedTransform.localPosition.y && selectedKey.Note < 127){
                     selectedKeyOffset += (selectedKey.transform.localScale.y + KeySpacing);
                     keys.PopBack().GetComponent<Poolable>().ReturnToPool();
 
@@ -281,7 +281,7 @@ namespace ComposeVR {
         }
 
         private Vector3 GetNextKeyPosition(Key key, int dir) {
-            return key.transform.position + (key.transform.localScale.y + KeySpacing) * transform.up * dir;
+            return transform.TransformPoint(key.transform.localPosition + (key.transform.localScale.y + KeySpacing) * Vector3.up * dir);
         }
 
         private void PlayHapticTick() {
@@ -296,6 +296,10 @@ namespace ComposeVR {
                 return selectedKey.Note;
             }
             return -1;
+        }
+
+        private double NoteToKeyPosition(int note) {
+            return note * (selectedKey.transform.localScale.y + KeySpacing);
         }
     }
 }

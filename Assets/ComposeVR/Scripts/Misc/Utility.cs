@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using ComposeVR;
+﻿using UnityEngine;
 
 namespace ComposeVR {
     public static class Utility {
@@ -24,6 +21,12 @@ namespace ComposeVR {
         /// <returns></returns>
         public static Vector3 ProjectVector(Vector3 U, Vector3 V) {
             return (Vector3.Dot(U, V) * V / V.sqrMagnitude);
+        }
+
+        public static Vector3 ProjectVectorOntoPlane(Vector3 vec, Vector3 planeOrigin, Vector3 planeNormal) {
+            Vector3 originToPoint = vec - planeOrigin;
+            float perpendicularDistance = Vector3.Dot(originToPoint, planeNormal.normalized);
+            return vec - planeNormal.normalized * perpendicularDistance;
         }
 
         public static Vector3 ProjectPointOnSegment(Vector3 point, Vector3 start, Vector3 end) {

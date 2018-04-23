@@ -32,6 +32,13 @@ public class Key : MonoBehaviour {
     }
 
     public string NoteName {
-        get { return NoteNames[note % 12]; }
+        get {
+            if(note < 0) {
+                return "-";
+            }
+
+            return NoteNames[note % 12];
+        }
+
     }
 }

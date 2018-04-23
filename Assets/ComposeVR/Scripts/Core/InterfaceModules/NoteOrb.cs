@@ -48,7 +48,7 @@ namespace ComposeVR {
 
         private bool displayingNoteSelector;
         private const float NOTE_SELECTOR_RIGHT_OFFSET = 0.2f;
-        private const float NOTE_SELECTOR_LEFT_OFFSET = 0.275f;
+        private const float NOTE_SELECTOR_LEFT_OFFSET = 0.325f;
             
         private ControllerHand noteSelectorHand;
         private Transform HMD;
@@ -94,18 +94,17 @@ namespace ComposeVR {
             }
 
             if (displayingNoteSelector && interactable.GetGrabbingObject() != null) {
-                Vector3 toHMD = HMD.position - noteSelector.transform.position;
-                noteSelector.transform.rotation = Quaternion.LookRotation(toHMD);
+                Vector3 selectorToHMD = HMD.position - noteSelector.transform.position;
+                noteSelector.transform.rotation = Quaternion.LookRotation(selectorToHMD, HMD.up);
 
-                Vector3 offset;
-                if (noteSelectorHand == ControllerHand.Left) {
-                    offset = (-interactable.GetGrabbingObject().transform.right * 0.25f - HMD.right * 0.75f) * NOTE_SELECTOR_LEFT_OFFSET;
-                }
-                else {
-                    offset = (interactable.GetGrabbingObject().transform.right * 0.25f + HMD.right * 0.75f) * NOTE_SELECTOR_RIGHT_OFFSET;
-                }
+                Vector3 upVec = noteSelectorHand == ControllerHand.Left ? -HMD.up : HMD.up;
+                Vector3 orbToHMD = (HMD.position - transform.position).normalized;
 
-                noteSelector.transform.position = transform.position + offset;
+                Vector3 selectorOffset = Vector3.Cross(orbToHMD, upVec);
+                selectorOffset = noteSelectorHand == ControllerHand.Left ? selectorOffset * NOTE_SELECTOR_LEFT_OFFSET : selectorOffset * NOTE_SELECTOR_RIGHT_OFFSET;
+
+                noteSelector.transform.position = transform.position + selectorOffset + selectorToHMD * 0.15f;
+                
             }
         }
 
