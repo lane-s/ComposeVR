@@ -9,11 +9,11 @@ public class SoundModuleMenu : MonoBehaviour {
     public event EventHandler<EventArgs> MenuClosed;
 
     private void Awake() {
-        Display(false); 
+        Display(false);
     }
 
     public void OnChangeInstrumentButtonClicked() {
-        if(ChangeInstrumentButtonClicked != null) {
+        if (ChangeInstrumentButtonClicked != null) {
             ChangeInstrumentButtonClicked(this, new EventArgs());
         }
     }
@@ -24,7 +24,7 @@ public class SoundModuleMenu : MonoBehaviour {
 
     private IEnumerator PresetButtonClickedDelay() {
         yield return new WaitForSeconds(0.15f);
-        if(LoadPresetButtonClicked != null) {
+        if (LoadPresetButtonClicked != null) {
             LoadPresetButtonClicked(this, new EventArgs());
         }
     }
@@ -34,7 +34,7 @@ public class SoundModuleMenu : MonoBehaviour {
     }
 
     public void OnMenuClosed() {
-        if(MenuClosed != null) {
+        if (MenuClosed != null) {
             MenuClosed(this, new EventArgs());
         }
     }

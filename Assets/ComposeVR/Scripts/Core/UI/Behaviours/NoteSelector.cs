@@ -128,7 +128,6 @@ namespace ComposeVR {
 
             maxKeyPositionY = NoteToKeyPosition(127);
             selectedKeyPositionY = NoteToKeyPosition(selectedNote);
-            Debug.Log("Start pos: " + selectedKeyPositionY);
         }
 
         private void InitHalfKeyboard(int dir) {

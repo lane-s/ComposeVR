@@ -5,6 +5,7 @@ using UnityEngine;
 namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
         public NoteColorScheme NoteColors;
+        public int LastNoteSelected = 60;
 
         private DeviceBrowserObject browserObject;
         private NoteSelector noteSelector;
@@ -12,6 +13,8 @@ namespace ComposeVR {
 
         private ComposeVROSCEventDispatcher oscEventDispatcher;
         private int handlerCount = 0;
+
+        private ModuleMenu moduleMenu;
 
         public DeviceBrowserObject DeviceBrowserObject {
             get {
@@ -46,6 +49,15 @@ namespace ComposeVR {
                     oscEventDispatcher = transform.Find("OSCEventDispatcher").GetComponent<ComposeVROSCEventDispatcher>();
                 }
                 return oscEventDispatcher;
+            }
+        }
+
+        public  ModuleMenu ModuleMenu {
+            get {
+                if(moduleMenu == null) {
+                    moduleMenu = GameObject.FindGameObjectWithTag("ModuleMenu").GetComponent<ModuleMenu>();
+                }
+                return moduleMenu;
             }
         }
 

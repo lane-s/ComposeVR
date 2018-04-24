@@ -90,6 +90,7 @@ namespace ComposeVR {
                 if (displayingNoteSelector) {
                     noteSelector.NoteSelected += OnNoteSelectionChanged;
                     SelectNote(noteSelector.GetSelectedNote());
+                    ComposeVRManager.Instance.ModuleMenu.Hide();
                 }
             }
 
@@ -113,6 +114,7 @@ namespace ComposeVR {
                 noteSelector.NoteSelected -= OnNoteSelectionChanged;
                 noteSelector.Release();
                 displayingNoteSelector = false;
+                ComposeVRManager.Instance.ModuleMenu.Display();
             }
         }
 
@@ -240,10 +242,11 @@ namespace ComposeVR {
             StartCoroutine(PreviewSelection());
         }
 
-        private void SelectNote(int note) {
+        public void SelectNote(int note) {
             selectedNotes.Clear();
             selectedNotes.Add(note);
             SetCoreColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(note));
+            ComposeVRManager.Instance.LastNoteSelected = note;
         }
 
         private IEnumerator PreviewSelection() {

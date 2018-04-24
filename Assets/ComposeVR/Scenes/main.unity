@@ -925,34 +925,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 68489583}
---- !u!1 &68793861
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 68793862}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &68793862
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 68793861}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.64279854, y: 0.99184895, z: -1.4645405}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 930166651}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &71104152
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,6 +2103,7 @@ MonoBehaviour:
   Prefab: {fileID: 114779029635642784, guid: 5ff14a5263eed2b4baf965c73cfa0056, type: 2}
   SpinSpeed: 24
   ReleaseDistance: 0.075
+  HideMenuOnRelease: 1
 --- !u!1 &158442034
 GameObject:
   m_ObjectHideFlags: 0
@@ -3680,7 +3653,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 592816079}
+      - m_Target: {fileID: 0}
         m_MethodName: OnLoadPresetButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -5541,9 +5514,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 354900954}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8b7e4ab99cbdd94a93f9be620c4634e, type: 3}
+  m_Script: {fileID: 11500000, guid: b6a73363219dc2f4f8e359a89f62784f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offHandController: {fileID: 734900876}
 --- !u!1 &364296479
 GameObject:
   m_ObjectHideFlags: 0
@@ -6536,7 +6510,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 592816079}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChangeInstrumentButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -8892,7 +8866,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4023601340385052, guid: e5db947ef1639114381333e51462768f, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 224142232935249138, guid: e5db947ef1639114381333e51462768f,
         type: 2}
@@ -8970,7 +8944,7 @@ Transform:
   m_Children:
   - {fileID: 493092189}
   m_Father: {fileID: 930166651}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &592816079
 MonoBehaviour:
@@ -8980,7 +8954,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 592816077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5585c10d7bc126549a9d9e2c153fa652, type: 3}
+  m_Script: {fileID: 11500000, guid: 7094b80758063464fb63c6694b941b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &597759835
@@ -12288,7 +12262,7 @@ Transform:
   m_Children:
   - {fileID: 590854138}
   m_Father: {fileID: 930166651}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &828135392
 GameObject:
@@ -13838,7 +13812,6 @@ Transform:
   - {fileID: 778660830}
   - {fileID: 1613411907}
   - {fileID: 525263125}
-  - {fileID: 68793862}
   - {fileID: 827370161}
   - {fileID: 288070155}
   - {fileID: 592816078}
@@ -13858,6 +13831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NoteColors: {fileID: 11400000, guid: c140233e39837d84abcb2f7c59c5ddad, type: 2}
+  LastNoteSelected: 60
 --- !u!1 &934981563
 GameObject:
   m_ObjectHideFlags: 0
@@ -14216,7 +14190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 5
+  HapticGain: 0.5
   Channel: 1
 --- !u!82 &945465027
 AudioSource:
@@ -18717,6 +18691,7 @@ MonoBehaviour:
   Prefab: {fileID: 114156612307153794, guid: 7aac26f07be2de24aaf25c3de50b95ca, type: 2}
   SpinSpeed: 24
   ReleaseDistance: 0.075
+  HideMenuOnRelease: 0
 --- !u!1 &1231426892
 GameObject:
   m_ObjectHideFlags: 0
@@ -22682,7 +22657,7 @@ Transform:
   - {fileID: 1385121262}
   - {fileID: 1376173610}
   m_Father: {fileID: 930166651}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: -88.225006, z: 0}
 --- !u!114 &1534112725
 MonoBehaviour:
@@ -26838,7 +26813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 5
+  HapticGain: 0.5
   Channel: 0
 --- !u!82 &1801799490
 AudioSource:
@@ -28307,7 +28282,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 479208, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 22476268, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
       propertyPath: m_SizeDelta.x
