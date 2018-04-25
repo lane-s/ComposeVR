@@ -34,6 +34,7 @@ namespace ComposeVR {
 
         void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
             if (!isPlaced) {
+                Debug.Log("Ungrabbed!");
                 InitializeFaderSystem();
                 GetComponentInChildren<CordDispenser>().enabled = true;
                 Module.Initialize();

@@ -18,7 +18,7 @@ namespace ComposeVR {
         private IModule Module;
 
         public void Initialize() {
-
+            Debug.Log("moduel init");
             //Register with the router
             Register();
 

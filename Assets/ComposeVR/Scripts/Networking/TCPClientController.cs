@@ -229,26 +229,30 @@ namespace ComposeVR {
         }
 
         public void EmitEvent(Protocol.Event outgoingEvent) {
-            //Debug.Log("Sending event " + outgoingEvent.MethodName);
-            NetworkStream networkStream = State.Client.GetStream();
+            try {
+                //Debug.Log("Sending event " + outgoingEvent.MethodName);
+                NetworkStream networkStream = State.Client.GetStream();
 
-            //Clear the output stream
-            State.OutStream.SetLength(0);
-            
-            //Bitwig requires a 32bit integer header specifying the length of the data to follow 
-            byte[] header = BitConverter.GetBytes(outgoingEvent.CalculateSize() + 1); //Add 1 to the calculated size to account for the delimiter
+                //Clear the output stream
+                State.OutStream.SetLength(0);
 
-            //The header must be in big endian format
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(header, 0, header.Length);
+                //Bitwig requires a 32bit integer header specifying the length of the data to follow 
+                byte[] header = BitConverter.GetBytes(outgoingEvent.CalculateSize() + 1); //Add 1 to the calculated size to account for the delimiter
 
-            //Write the data and the header to the stream
-            State.OutStream.Write(header, 0, header.Length);
-            outgoingEvent.WriteDelimitedTo(State.OutStream);
+                //The header must be in big endian format
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(header, 0, header.Length);
 
-            //Get the data from the memory stream and write it to the network stream
-            byte[] data = State.OutStream.ToArray();
-            networkStream.BeginWrite(data, 0, data.Length, new AsyncCallback(WriteCallback), data);
+                //Write the data and the header to the stream
+                State.OutStream.Write(header, 0, header.Length);
+                outgoingEvent.WriteDelimitedTo(State.OutStream);
+
+                //Get the data from the memory stream and write it to the network stream
+                byte[] data = State.OutStream.ToArray();
+                networkStream.BeginWrite(data, 0, data.Length, new AsyncCallback(WriteCallback), data);
+            }catch(IOException e) {
+                Debug.LogError("Can't emit event. Not connected.");
+            }
         }
 
     }
