@@ -135,14 +135,14 @@ namespace ComposeVR {
             secondaryPlug.transform.SetParent(PlugStart);
             secondaryPlug.ShrinkCollider();
 
-            secondaryPlug.DestinationJack = GetComponent<Jack>();
+            secondaryPlug.DestinationJack = GetComponent<PlugSocket>();
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
 
             cord.Flow = 1;
 
-            if(GetComponent<InputJack>() != null) {
+            if(GetComponent<PhysicalDataInput>() != null) {
                 cord.Flow = -cord.Flow;
             }
             cord.Flowing = true;
@@ -197,10 +197,10 @@ namespace ComposeVR {
             while (state == State.WaitingForGrab) {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                     StartCoroutine(ExtendPlug(secondaryPlug, SecondaryPlugTarget.position));
-                    secondaryPlug.DestinationJack = GetComponent<Jack>();
+                    secondaryPlug.DestinationJack = GetComponent<PlugSocket>();
 
-                    if (GetComponent<Jack>()) {
-                        GetComponent<Jack>().Block();
+                    if (GetComponent<PlugSocket>()) {
+                        GetComponent<PlugSocket>().Block();
                     }
 
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);

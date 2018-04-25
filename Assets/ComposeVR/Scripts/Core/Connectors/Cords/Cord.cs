@@ -433,14 +433,14 @@ namespace ComposeVR {
             plug.ConnectedCord = this;
 
             if (plug.IsPluggedIn()) {
-                if (plug.DestinationJack.GetComponent<InputJack>() != null) {
+                if (plug.DestinationJack.GetComponent<PhysicalDataInput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = -1;
                     }
                     else {
                         Flow = 1;
                     }
-                }else if (plug.DestinationJack.GetComponent<OutputJack>() != null) {
+                }else if (plug.DestinationJack.GetComponent<PhysicalDataOutput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = 1;
                     }
@@ -467,8 +467,8 @@ namespace ComposeVR {
         /// <param name="reverseFlow"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<Jack> GetConnectedJacks(bool reverseFlow, Transform searchStartNode) {
-            HashSet<Jack> results = new HashSet<Jack>();
+        public HashSet<PlugSocket> GetConnectedJacks(bool reverseFlow, Transform searchStartNode) {
+            HashSet<PlugSocket> results = new HashSet<PlugSocket>();
 
             float workingFlow = Flow; 
             if (reverseFlow) {
@@ -480,7 +480,7 @@ namespace ComposeVR {
                 results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleB));
 
                 Plug plugB = B.GetComponentInOwner<Plug>();
-                Jack connectedJack = GetJackConnectedToPlug(plugB);
+                PlugSocket connectedJack = GetJackConnectedToPlug(plugB);
 
                 if(connectedJack != null) {
                     results.Add(connectedJack);
@@ -491,7 +491,7 @@ namespace ComposeVR {
                 results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleA));
 
                 Plug plugA = A.GetComponentInOwner<Plug>();
-                Jack connectedJack = GetJackConnectedToPlug(plugA);
+                PlugSocket connectedJack = GetJackConnectedToPlug(plugA);
 
                 if(connectedJack != null) {
                     results.Add(connectedJack);
@@ -501,8 +501,8 @@ namespace ComposeVR {
             return results;
         }
 
-        private HashSet<Jack> GetJacksConnectedToHandle(bool reverseFlow, BranchHandle handle) {
-            HashSet<Jack> results = new HashSet<Jack>();
+        private HashSet<PlugSocket> GetJacksConnectedToHandle(bool reverseFlow, BranchHandle handle) {
+            HashSet<PlugSocket> results = new HashSet<PlugSocket>();
             if(handle != null) {
                 CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
                 Transform other = downstreamJunctionNode.Cord.GetOppositeEnd(downstreamJunctionNode.transform);
@@ -516,11 +516,11 @@ namespace ComposeVR {
             return results;
         }
 
-        private HashSet<Jack> GetJacksConnectedToNode(bool reverseFlow, CordNode node) {
+        private HashSet<PlugSocket> GetJacksConnectedToNode(bool reverseFlow, CordNode node) {
             return node.Cord.GetConnectedJacks(reverseFlow, node.transform);
         }
 
-        private Jack GetJackConnectedToPlug(Plug plug) {
+        private PlugSocket GetJackConnectedToPlug(Plug plug) {
             if(plug != null) {
                 if (plug.IsPluggedIn()) {
                     return plug.DestinationJack;

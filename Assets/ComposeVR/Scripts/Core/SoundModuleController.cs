@@ -6,7 +6,7 @@ using OSCsharp.Data;
 
 namespace ComposeVR {
     [Serializable]
-    public class SoundModuleController : RemoteEventHandler, IJackInput {
+    public class SoundModuleController : RemoteEventHandler, IPhysicalDataInput {
 
         [Serializable]
         public class SoundModuleConfiguration {
@@ -87,7 +87,7 @@ namespace ComposeVR {
             RequestMenu();
         }
 
-        void IJackInput.ReceiveData(WireData data) {
+        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data) {
             NoteData incomingMIDI = data as NoteData;
 
             if(incomingMIDI != null) {

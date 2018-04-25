@@ -6,7 +6,7 @@ using VRTK;
 namespace ComposeVR {
     public class TestOutputModule : MonoBehaviour, IJackOutput {
 
-        public OutputJack OutputJack;
+        public PhysicalDataOutput OutputJack;
 
         private IJackOutput output;
 
@@ -14,12 +14,12 @@ namespace ComposeVR {
         
         }
 
-        public void SendData(WireData data) {
+        public void SendData(PhysicalDataPacket data) {
             OutputJack.SendData(data);
         }
     }
 
-    public class TestData : WireData {
+    public class TestData : PhysicalDataPacket {
         public Control3DEventArgs controlData;
     }
 }

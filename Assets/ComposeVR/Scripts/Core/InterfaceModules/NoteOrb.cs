@@ -7,7 +7,7 @@ namespace ComposeVR {
 
     using ControllerHand = SDK_BaseController.ControllerHand;
 
-    public class NoteData : WireData {
+    public class NoteData : PhysicalDataPacket {
         public enum Status { On, Off };
         public Status NoteStatus;
         public int Note;
@@ -30,57 +30,61 @@ namespace ComposeVR {
         public float TouchHapticsDuration;
         public float TouchHapticsInterval;
 
-        private List<int> selectedNotes;
-
-        private OutputJack output;
-        private float originalEmissionGain;
-
-        private bool onCooldown = false;
-        private const float cooldownTime = 0.3f;
-
-        private VRTK_ControllerReference controllerReference;
-        private int hapticNote;
-
-        private HashSet<VRTK_ControllerReference> nearbyControllers;
-        private HashSet<VRTK_ControllerReference> controllersPlayingOrb;
-        private VRTK_InteractableObject interactable;
-        private Miniature miniature;
-
+        private ControllerHand noteSelectorHand;
+        private NoteSelector noteSelector;
         private bool displayingNoteSelector;
         private const float NOTE_SELECTOR_RIGHT_OFFSET = 0.2f;
         private const float NOTE_SELECTOR_LEFT_OFFSET = 0.325f;
-            
-        private ControllerHand noteSelectorHand;
+        private const float DISPLAY_SIZE_DIFFERENCE = 0.45f; //How close to full scale does the orb need to be before the selector is displayed
+
+        private VRTK_InteractableObject interactable;
+        private Miniature miniature;
+
         private Transform HMD;
-        private NoteSelector noteSelector;
         private Transform core;
+        private PhysicalDataOutput output;
+
+        private List<int> selectedNotes;
+        private int hapticNote;
+
+        private SimpleTrigger shellTrigger;
+        private HashSet<VRTK_ControllerReference> collidingControllers;
+        private HashSet<VRTK_ControllerReference> controllersPlayingOrb;
+            
+        private bool onCooldown = false;
+        private const float cooldownTime = 0.3f;
+        private float baseShellEmissionGain;
 
         void Awake() {
-            core = transform.Find("Core");
-            Material mat = GetComponentInChildren<MeshRenderer>().material;
-            originalEmissionGain = mat.GetFloat("_EmissionGain");
 
-            output = transform.parent.GetComponentInChildren<OutputJack>();
-            nearbyControllers = new HashSet<VRTK_ControllerReference>();
+            output = GetComponentInChildren<PhysicalDataOutput>();
+
+            shellTrigger = transform.Find("Shell").GetComponent<SimpleTrigger>();
+            shellTrigger.TriggerEnter += OnShellTriggerEnter;
+            shellTrigger.TriggerExit += OnShellTriggerExit;
+                    
+            Material shellMat = shellTrigger.transform.GetComponent<MeshRenderer>().material;
+            baseShellEmissionGain = shellMat.GetFloat("_EmissionGain");
+
+            core = transform.Find("Core");
+
+            collidingControllers = new HashSet<VRTK_ControllerReference>();
             controllersPlayingOrb = new HashSet<VRTK_ControllerReference>();
 
             selectedNotes = new List<int>();
 
-            interactable = transform.parent.GetComponent<VRTK_InteractableObject>();
+            interactable = GetComponent<VRTK_InteractableObject>();
             interactable.InteractableObjectUngrabbed += OnUngrabbed;
 
-            miniature = transform.parent.GetComponent<Miniature>();
+            miniature = GetComponent<Miniature>();
 
             HMD = GameObject.FindGameObjectWithTag("Headset").transform;
 
             noteSelector = ComposeVRManager.Instance.NoteSelectorObject;
         }
 
-        //How close to full scale does the orb need to be before the selector is displayed
-        private const float DISPLAY_SIZE_DIFFERENCE = 0.45f;
-
         void Update() {
-            if((miniature.FullScale - transform.parent.localScale).magnitude < DISPLAY_SIZE_DIFFERENCE && interactable.IsGrabbed() && !displayingNoteSelector) {
+            if((miniature.FullScale - transform.localScale).magnitude < DISPLAY_SIZE_DIFFERENCE && interactable.IsGrabbed() && !displayingNoteSelector) {
                 ControllerHand grabbingHand = VRTK_ControllerReference.GetControllerReference(interactable.GetGrabbingObject()).hand;
                 noteSelectorHand = grabbingHand == ControllerHand.Left ? ControllerHand.Right : ControllerHand.Left;
 
@@ -118,7 +122,9 @@ namespace ComposeVR {
             }
         }
 
-        void OnTriggerEnter(Collider other) {
+        void OnShellTriggerEnter(object sender, SimpleTriggerEventArgs args) {
+            Collider other = args.other;
+
             Baton baton = other.GetComponent<Baton>();
             if (baton) {
                 SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
@@ -126,8 +132,8 @@ namespace ComposeVR {
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
 
-                    controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
-                    if (!nearbyControllers.Contains(controllerReference)) {
+                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
+                    if (!collidingControllers.Contains(controllerReference)) {
                         if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
                             OrbOnFromControllerEnter(baton.GetVelocity(), controllerReference);
                         }
@@ -135,23 +141,25 @@ namespace ComposeVR {
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased += OnControllerTriggerReleased;
 
-                        nearbyControllers.Add(controllerReference);
+                        collidingControllers.Add(controllerReference);
                     }
                 }
             }
         }
 
-        void OnTriggerExit(Collider other) {
+        void OnShellTriggerExit(object sender, SimpleTriggerEventArgs args) {
+            Collider other = args.other;
+
             Baton baton = other.GetComponent<Baton>();
             if (baton) {
                 SetShellColor(Color.white);
                 if (other.GetComponent<OwnedObject>()) {
                     Transform owner = other.GetComponent<OwnedObject>().Owner;
 
-                    controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
+                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
 
-                    if (nearbyControllers.Contains(controllerReference)) {
-                        nearbyControllers.Remove(controllerReference);
+                    if (collidingControllers.Contains(controllerReference)) {
+                        collidingControllers.Remove(controllerReference);
 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
                         owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
@@ -187,8 +195,7 @@ namespace ComposeVR {
                 NoteOn(note, velocity);
             }
 
-            Material mat = GetComponentInChildren<MeshRenderer>().material;
-            mat.SetFloat("_EmissionGain", HitEmissionGain);
+            SetShellEmissionGain(HitEmissionGain);
         }
 
         private void OrbOffFromControllerExit(VRTK_ControllerReference controller) {
@@ -211,8 +218,7 @@ namespace ComposeVR {
                 NoteOff(note);
             }
 
-            Material mat = GetComponentInChildren<MeshRenderer>().material;
-            mat.SetFloat("_EmissionGain", originalEmissionGain);
+            SetShellEmissionGain(baseShellEmissionGain);
         }
 
         private void NoteOn(int note, int velocity) {
@@ -243,6 +249,7 @@ namespace ComposeVR {
         }
 
         public void SelectNote(int note) {
+            hapticNote = note;
             selectedNotes.Clear();
             selectedNotes.Add(note);
             SetCoreColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(note));
@@ -258,8 +265,13 @@ namespace ComposeVR {
         }
 
         private void SetShellColor(Color c) {
-            Material mat = GetComponentInChildren<MeshRenderer>().material;
+            Material mat = shellTrigger.GetComponent<MeshRenderer>().material;
             mat.SetColor("_TintColor", c);
+        }
+
+        private void SetShellEmissionGain(float gain) {
+            Material shellMat = shellTrigger.GetComponent<MeshRenderer>().material;
+            shellMat.SetFloat("_EmissionGain", gain);
         }
 
         private void SetCoreColor(Color c) {

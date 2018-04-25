@@ -11,7 +11,7 @@ namespace ComposeVR {
             this.other = other;
         }
 
-        public Collider other { get; private set; }
+        public Collider other { get; set; }
     }
 
     public class SimpleTrigger : MonoBehaviour {
@@ -19,16 +19,22 @@ namespace ComposeVR {
         public event EventHandler<SimpleTriggerEventArgs> TriggerEnter;
         public event EventHandler<SimpleTriggerEventArgs> TriggerExit;
 
+        private SimpleTriggerEventArgs args;
+
+        private void Awake() {
+            args = new SimpleTriggerEventArgs(null);
+        }
+
         void OnTriggerEnter(Collider other) {
             if (TriggerEnter != null) {
-                SimpleTriggerEventArgs args = new SimpleTriggerEventArgs(other);
+                args.other = other;
                 TriggerEnter(this, args);
             }
         }
 
         void OnTriggerExit(Collider other) {
             if (TriggerExit != null) {
-                SimpleTriggerEventArgs args = new SimpleTriggerEventArgs(other);
+                args.other = other;
                 TriggerExit(this, args);
             }
         }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace ComposeVR {
 
-    public class TestInputModule : MonoBehaviour, IJackInput {
+    public class TestInputModule : MonoBehaviour, IPhysicalDataInput {
 
-        public InputJack input;
+        public PhysicalDataInput input;
         private Color originalColor;
 
         // Use this for initialization
@@ -15,7 +15,7 @@ namespace ComposeVR {
             originalColor = GetComponent<MeshRenderer>().material.color;
         }
 
-        void IJackInput.ReceiveData(WireData data) {
+        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data) {
             TestData d = data as TestData;
 
             if (d != null) {

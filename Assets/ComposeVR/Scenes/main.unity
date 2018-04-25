@@ -13468,7 +13468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 0.5
+  HapticGain: 0.25
   Channel: 1
 --- !u!82 &945465027
 AudioSource:
@@ -25632,7 +25632,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 0.5
+  HapticGain: 0.25
   Channel: 0
 --- !u!82 &1801799490
 AudioSource:

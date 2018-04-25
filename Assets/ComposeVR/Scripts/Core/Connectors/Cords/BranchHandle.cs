@@ -28,10 +28,10 @@ namespace ComposeVR {
     }
 
     public class JacksConnectedByHandle {
-        public HashSet<IJackInput> Inputs;
-        public List<OutputJack> Outputs;
+        public HashSet<IPhysicalDataInput> Inputs;
+        public List<PhysicalDataOutput> Outputs;
 
-        public JacksConnectedByHandle(HashSet<IJackInput> Inputs, List<OutputJack> Outputs) {
+        public JacksConnectedByHandle(HashSet<IPhysicalDataInput> Inputs, List<PhysicalDataOutput> Outputs) {
             this.Inputs = Inputs;
             this.Outputs = Outputs;
         }
@@ -468,19 +468,19 @@ namespace ComposeVR {
         JacksConnectedByHandle GetJacksConnectedByHandle() {
             bool branchFlowsIntoJunction = branchNode.Cord.EndNode.Equals(transform) ? branchNode.Cord.Flow > 0 : branchNode.Cord.Flow < 0;
 
-            HashSet<Jack> jacksConnectedToBranch = branchNode.Cord.GetConnectedJacks(branchFlowsIntoJunction, transform);
-            HashSet<Jack> jacksConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedJacks(!branchFlowsIntoJunction, transform);
+            HashSet<PlugSocket> jacksConnectedToBranch = branchNode.Cord.GetConnectedJacks(branchFlowsIntoJunction, transform);
+            HashSet<PlugSocket> jacksConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedJacks(!branchFlowsIntoJunction, transform);
 
-            HashSet<IJackInput> connectedInputs = new HashSet<IJackInput>();
-            List<OutputJack> outputs = new List<OutputJack>();
+            HashSet<IPhysicalDataInput> connectedInputs = new HashSet<IPhysicalDataInput>();
+            List<PhysicalDataOutput> outputs = new List<PhysicalDataOutput>();
 
-            foreach(Jack jack in jacksConnectedToBranch) {
-                OutputJack output = jack.GetComponent<OutputJack>();
+            foreach(PlugSocket jack in jacksConnectedToBranch) {
+                PhysicalDataOutput output = jack.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);
                 }
                 else {
-                    InputJack input = jack.GetComponent<InputJack>();
+                    PhysicalDataInput input = jack.GetComponent<PhysicalDataInput>();
                     if(input != null) {
                         connectedInputs.UnionWith(input.GetConnectedInputs());
                     }
@@ -488,13 +488,13 @@ namespace ComposeVR {
 
             }
 
-            foreach(Jack jack in jacksConnectedToJunction) {
-                OutputJack output = jack.GetComponent<OutputJack>();
+            foreach(PlugSocket jack in jacksConnectedToJunction) {
+                PhysicalDataOutput output = jack.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);
                 }
                 else {
-                    InputJack input = jack.GetComponent<InputJack>();
+                    PhysicalDataInput input = jack.GetComponent<PhysicalDataInput>();
                     if(input != null) {
                         connectedInputs.UnionWith(input.GetConnectedInputs());
                     }

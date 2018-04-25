@@ -8,7 +8,7 @@ namespace ComposeVR {
     [RequireComponent(typeof(CordFollower))]
     public sealed class Plug : MonoBehaviour {
 
-        public Jack DestinationJack;
+        public PlugSocket DestinationJack;
 
         public float AutoPlugDistance = 0.5f;
         public float MaxHandSeparationBeforeUnsnap = 1.0f;
@@ -22,8 +22,8 @@ namespace ComposeVR {
         public Transform PlugTransform;
         public Transform CordAttachPoint;
 
-        private Jack targetJack;
-        private List<Jack> nearbyJacks;
+        private PlugSocket targetJack;
+        private List<PlugSocket> nearbyJacks;
 
         private Cord connectedCord;
 
@@ -54,7 +54,7 @@ namespace ComposeVR {
 
         void Awake() {
             interactable = GetComponent<VRTK_InteractableObject>();
-            nearbyJacks = new List<Jack>();
+            nearbyJacks = new List<PlugSocket>();
 
             interactable.InteractableObjectGrabbed += OnGrabbed;
             interactable.InteractableObjectUngrabbed += OnUngrabbed;
@@ -78,7 +78,7 @@ namespace ComposeVR {
         /// </summary>
         private void SnapToNearbyJacks() {
             if (targetJack == null && !snapCooldown && snappingEnabled) {
-                foreach (Jack j in nearbyJacks) {
+                foreach (PlugSocket j in nearbyJacks) {
 
                     if (!j.IsBlocked()) {
                         targetJack = j;
@@ -195,7 +195,7 @@ namespace ComposeVR {
                     flow = -flow;
                 }
 
-                bool validJackType = (flow > 0 && targetJack.GetComponent<InputJack>() != null) || (flow < 0 && targetJack.GetComponent<OutputJack>() != null) || flow == 0;
+                bool validJackType = (flow > 0 && targetJack.GetComponent<PhysicalDataInput>() != null) || (flow < 0 && targetJack.GetComponent<PhysicalDataOutput>() != null) || flow == 0;
 
                 Vector3 snapPoint = GetSnapPoint();
                 bool jackInRange = Vector3.Distance(snapPoint, targetJack.PlugConnectionPoint.position) < MaxJackDistanceBeforeUnsnap;
@@ -370,7 +370,7 @@ namespace ComposeVR {
                 flow = -flow;
             }
 
-            if (DestinationJack.GetComponent<InputJack>()) {
+            if (DestinationJack.GetComponent<PhysicalDataInput>()) {
                 connectedCord.Flow = flow;
             }
             else {
@@ -442,13 +442,13 @@ namespace ComposeVR {
             snapCooldown = false;
         }
 
-        public void AddNearbyJack(Jack j) {
+        public void AddNearbySocket(PlugSocket j) {
             if (!nearbyJacks.Contains(j)) {
                 nearbyJacks.Add(j);
             }
         }
 
-        public void RemoveNearbyJack(Jack j) {
+        public void RemoveNearbySocket(PlugSocket j) {
             nearbyJacks.Remove(j);
         }
 
@@ -470,7 +470,7 @@ namespace ComposeVR {
         }
 
         private void OnDisable() {
-            foreach(Jack j in nearbyJacks) {
+            foreach(PlugSocket j in nearbyJacks) {
                 if (j != null) {
                     if (j.GetComponent<CordDispenser>()) {
                         j.GetComponent<CordDispenser>().OnBlockerDestroyed();

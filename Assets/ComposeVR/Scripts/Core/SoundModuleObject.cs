@@ -14,7 +14,7 @@ namespace ComposeVR {
 
         public Transform FaderSystemPrefab;
         public SoundModuleController Module;
-        private InputJack input;
+        private PhysicalDataInput input;
 
         private const float FADER_MIN = -252f;
         private const float FADER_MAX = 6.021f;
@@ -25,7 +25,7 @@ namespace ComposeVR {
         private Text gainDisplay;
 
         void Awake() {
-            input = GetComponentInChildren<InputJack>();
+            input = GetComponentInChildren<PhysicalDataInput>();
 
             Module.SetController(this);
 
@@ -126,7 +126,7 @@ namespace ComposeVR {
             return ComposeVRManager.Instance.OSCEventDispatcher;
         }
 
-        InputJack IModule.GetInputJack() {
+        PhysicalDataInput IModule.GetInputJack() {
             return input;
         }
 
@@ -140,7 +140,7 @@ namespace ComposeVR {
         void PositionModuleMenu();
         DeviceBrowserController GetBrowserController();
         ComposeVROSCEventDispatcher GetOSCEventDispatcher();
-        InputJack GetInputJack();
+        PhysicalDataInput GetInputJack();
         SoundModuleMenu GetModuleMenu();
     }
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ComposeVR {
-    public class JackEventArgs : EventArgs {
+    public class PhysicalConnectionEventArgs : EventArgs {
         private Cord connectedCord;
         private Transform plugEnd;
 
-        public JackEventArgs(Cord connectedCord, Transform plugEnd) {
+        public PhysicalConnectionEventArgs(Cord connectedCord, Transform plugEnd) {
             this.connectedCord = connectedCord;
             this.plugEnd = plugEnd;
         }
@@ -31,15 +31,15 @@ namespace ComposeVR {
     /// Jacks may also have a CordDispenser so that they give the user a cord when their hand comes near the jack
     /// 
     /// </summary>
-    public sealed class Jack : MonoBehaviour {
+    public sealed class PlugSocket : MonoBehaviour {
 
         public Transform PlugStart;
         public Transform PlugConnectionPoint;
 
         public SimpleTrigger PlugDetector;
 
-        public EventHandler<JackEventArgs> PlugConnected;
-        public EventHandler<JackEventArgs> PlugDisconnected;
+        public EventHandler<PhysicalConnectionEventArgs> PlugConnected;
+        public EventHandler<PhysicalConnectionEventArgs> PlugDisconnected;
 
         private bool blocked;
 
@@ -58,7 +58,7 @@ namespace ComposeVR {
             if(o != null) {
                 Plug p = o.Owner.GetComponent<Plug>();
                 if(p != null) {
-                    p.AddNearbyJack(this);
+                    p.AddNearbySocket(this);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace ComposeVR {
             if(o != null) {
                 Plug p = o.Owner.GetComponent<Plug>();
                 if(p != null) {
-                    p.RemoveNearbyJack(this);
+                    p.RemoveNearbySocket(this);
                 }
             }
         }
@@ -93,13 +93,13 @@ namespace ComposeVR {
 
         public void Connect(Cord connectedCord, Transform plugNodeInCord) {
             if(PlugConnected != null) {
-                PlugConnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
+                PlugConnected(this, new PhysicalConnectionEventArgs(connectedCord, plugNodeInCord));
             }
         }
 
         public void Disconnect(Cord connectedCord, Transform plugNodeInCord) {
             if(PlugDisconnected != null) {
-                PlugDisconnected(this, new JackEventArgs(connectedCord, plugNodeInCord));
+                PlugDisconnected(this, new PhysicalConnectionEventArgs(connectedCord, plugNodeInCord));
             }
         }
     }
