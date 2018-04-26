@@ -133,7 +133,7 @@ namespace ComposeVR {
             if (!IsPluggedIn() && connectedCord != null) {
 
                 Transform oppositeNode = GetOppositeCordNode();
-                Plug p = oppositeNode.GetComponentInOwner<Plug>();
+                Plug p = oppositeNode.GetComponentInActor<Plug>();
 
                 if(p != null && !p.IsPluggedIn()) {
                     connectedCord.Collapse();
@@ -167,7 +167,7 @@ namespace ComposeVR {
             PlugTransform.GetComponent<CapsuleCollider>().height = plugColliderHeight;
 
             Transform oppositeNode = GetOppositeCordNode();
-            Plug p = oppositeNode.GetComponentInOwner<Plug>();
+            Plug p = oppositeNode.GetComponentInActor<Plug>();
 
             if(p != null && !p.IsPluggedIn()) {
                 connectedCord.Flow = 0;

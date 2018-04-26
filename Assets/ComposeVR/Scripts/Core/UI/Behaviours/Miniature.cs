@@ -26,7 +26,6 @@ namespace ComposeVR {
 
         private void OnMiniatureUngrabbed(object sender, InteractableObjectEventArgs e) {
             if (released) {
-                Debug.Log("Ungrabbed!!!");
                 transform.SetParent(null);
                 GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed -= OnMiniatureUngrabbed;
             }

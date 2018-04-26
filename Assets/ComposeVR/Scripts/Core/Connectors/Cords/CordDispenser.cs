@@ -77,8 +77,8 @@ namespace ComposeVR {
         /// <param name="e"></param>
         void OnBlockerEnterArea(object sender, SimpleTriggerEventArgs e) {
             Plug p = e.other.GetComponent<Plug>();
-            if(p == null && e.other.GetComponent<OwnedObject>()){
-                p = e.other.GetComponent<OwnedObject>().Owner.GetComponent<Plug>();
+            if(p == null && e.other.GetComponent<ActorSubObject>()){
+                p = e.other.GetComponent<ActorSubObject>().Actor.GetComponent<Plug>();
             }
 
             if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug))) {
@@ -90,8 +90,8 @@ namespace ComposeVR {
 
         void OnBlockerLeaveArea(object sender, SimpleTriggerEventArgs e) {
             Plug p = e.other.GetComponent<Plug>();
-            if(p == null && e.other.GetComponent<OwnedObject>()){
-                p = e.other.GetComponent<OwnedObject>().Owner.GetComponent<Plug>();
+            if(p == null && e.other.GetComponent<ActorSubObject>()){
+                p = e.other.GetComponent<ActorSubObject>().Actor.GetComponent<Plug>();
             }
 
             if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug))) {

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
-        public NoteColorScheme NoteColors;
         public int LastNoteSelected = 60;
 
         private DeviceBrowserObject browserObject;

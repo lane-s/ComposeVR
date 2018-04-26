@@ -363,7 +363,7 @@ namespace ComposeVR {
         /// </summary>
         /// <param name="collision"></param>
         private void OnTriggerEnter(Collider other) {
-            Plug touchingPlug = other.transform.GetComponentInOwner<Plug>();
+            Plug touchingPlug = other.transform.GetComponentInActor<Plug>();
 
             if(touchingPlug != null) {
                 VRTK_InteractableObject plugInteractable = touchingPlug.GetComponent<VRTK_InteractableObject>();
@@ -381,7 +381,7 @@ namespace ComposeVR {
         /// </summary>
         /// <param name="collision"></param>
         private void OnTriggerExit(Collider other) {
-            Plug touchingPlug = other.transform.GetComponentInOwner<Plug>();
+            Plug touchingPlug = other.transform.GetComponentInActor<Plug>();
 
             if(touchingPlug != null) {
                 VRTK_InteractableObject plugInteractable = touchingPlug.GetComponent<VRTK_InteractableObject>();

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
@@ -23,7 +24,12 @@ namespace ComposeVR {
     [RequireComponent(typeof(Scalable))]
     [RequireComponent(typeof(VRTK_InteractableObject))]
     public class NoteOrb : MonoBehaviour {
-        
+
+        public event EventHandler<EventArgs> SelfDestruct;
+        private EventArgs defaultSelfDestructArgs;
+
+        public NoteColorScheme NoteColors;
+        public NoteCoreArrangementScheme NoteArrangements;
 
         public float HitEmissionGain;
         public float TouchHapticsStrength;
@@ -41,8 +47,11 @@ namespace ComposeVR {
         private Miniature miniature;
 
         private Transform HMD;
-        private Transform core;
+        private NoteCore rootCore;
         private PhysicalDataOutput output;
+
+        private List<NoteCore> noteCores;//TODO: Optimal data structure would be something like Java's LinkedHashMap, but the core number will remain small enough for it to not matter
+        private Dictionary<NoteOrb, List<NoteCore>> foreignCores;
 
         private List<int> selectedNotes;
         private int hapticNote;
@@ -54,9 +63,9 @@ namespace ComposeVR {
         private bool onCooldown = false;
         private const float cooldownTime = 0.3f;
         private float baseShellEmissionGain;
+        private Color baseShellColor;
 
         void Awake() {
-
             output = GetComponentInChildren<PhysicalDataOutput>();
 
             shellTrigger = transform.Find("Shell").GetComponent<SimpleTrigger>();
@@ -65,8 +74,13 @@ namespace ComposeVR {
                     
             Material shellMat = shellTrigger.transform.GetComponent<MeshRenderer>().material;
             baseShellEmissionGain = shellMat.GetFloat("_EmissionGain");
+            baseShellColor = shellMat.GetColor("_TintColor");
 
-            core = transform.Find("Core");
+            foreignCores = new Dictionary<NoteOrb, List<NoteCore>>();
+
+            rootCore = transform.Find("Core").GetComponent<NoteCore>();
+            noteCores = new List<NoteCore>();
+            noteCores.Add(rootCore);
 
             collidingControllers = new HashSet<VRTK_ControllerReference>();
             controllersPlayingOrb = new HashSet<VRTK_ControllerReference>();
@@ -81,24 +95,37 @@ namespace ComposeVR {
             HMD = GameObject.FindGameObjectWithTag("Headset").transform;
 
             noteSelector = ComposeVRManager.Instance.NoteSelectorObject;
+            defaultSelfDestructArgs = new EventArgs();
         }
 
         void Update() {
-            if((miniature.FullScale - transform.localScale).magnitude < DISPLAY_SIZE_DIFFERENCE && interactable.IsGrabbed() && !displayingNoteSelector) {
-                ControllerHand grabbingHand = VRTK_ControllerReference.GetControllerReference(interactable.GetGrabbingObject()).hand;
-                noteSelectorHand = grabbingHand == ControllerHand.Left ? ControllerHand.Right : ControllerHand.Left;
+            bool scaledUp = (miniature.FullScale - transform.localScale).magnitude < DISPLAY_SIZE_DIFFERENCE;
 
-                int selectedNote = selectedNotes.Count > 0 ? selectedNotes[0] : -1;
-
-                displayingNoteSelector = noteSelector.Request(noteSelectorHand, selectedNote);
-                if (displayingNoteSelector) {
-                    noteSelector.NoteSelected += OnNoteSelectionChanged;
-                    SelectNote(noteSelector.GetSelectedNote());
-                    ComposeVRManager.Instance.ModuleMenu.Hide();
-                }
+            if(scaledUp && interactable.IsGrabbed() && !displayingNoteSelector && selectedNotes.Count > 0) {
+                RequestNoteSelector();
             }
 
             if (displayingNoteSelector && interactable.GetGrabbingObject() != null) {
+                PositionNoteSelector();
+            }
+
+        }
+
+        private void RequestNoteSelector() {
+            ControllerHand grabbingHand = VRTK_ControllerReference.GetControllerReference(interactable.GetGrabbingObject()).hand;
+            noteSelectorHand = grabbingHand == ControllerHand.Left ? ControllerHand.Right : ControllerHand.Left;
+
+            int selectedNote = selectedNotes.Count > 0 ? selectedNotes[0] : -1;
+
+            displayingNoteSelector = noteSelector.Request(noteSelectorHand, selectedNote);
+            if (displayingNoteSelector) {
+                noteSelector.NoteSelected += OnNoteSelectionChanged;
+                SetRootNote(noteSelector.GetSelectedNote());
+                ComposeVRManager.Instance.ModuleMenu.Hide();
+            }
+        }
+
+        private void PositionNoteSelector() {
                 Vector3 selectorToHMD = HMD.position - noteSelector.transform.position;
                 noteSelector.transform.rotation = Quaternion.LookRotation(selectorToHMD, HMD.up);
 
@@ -109,28 +136,102 @@ namespace ComposeVR {
                 selectorOffset = noteSelectorHand == ControllerHand.Left ? selectorOffset * NOTE_SELECTOR_LEFT_OFFSET : selectorOffset * NOTE_SELECTOR_RIGHT_OFFSET;
 
                 noteSelector.transform.position = transform.position + selectorOffset + selectorToHMD * 0.15f;
-                
-            }
         }
 
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
             if (displayingNoteSelector) {
-                noteSelector.NoteSelected -= OnNoteSelectionChanged;
-                noteSelector.Release();
-                displayingNoteSelector = false;
-                ComposeVRManager.Instance.ModuleMenu.Display();
+                StopDisplayingNoteSelector();
             }
+
+            if(noteCores.Count == 0) {
+                if(SelfDestruct != null) {
+                    SelfDestruct(this, defaultSelfDestructArgs);
+                }
+                Destroy(gameObject);
+            }
+        }
+
+        private void StopDisplayingNoteSelector() {
+            noteSelector.NoteSelected -= OnNoteSelectionChanged;
+            noteSelector.Release();
+            displayingNoteSelector = false;
+            ComposeVRManager.Instance.ModuleMenu.Display();
         }
 
         void OnShellTriggerEnter(object sender, SimpleTriggerEventArgs args) {
             Collider other = args.other;
 
+            HandleNoteOrbCollisionEnter(other);
+            HandleBatonCollisionEnter(other);
+        }
+
+        void OnShellTriggerExit(object sender, SimpleTriggerEventArgs args) {
+            Collider other = args.other;
+
+            HandleNoteOrbCollisionExit(other);
+            HandleBatonCollisionExit(other);
+        }
+
+        private void HandleNoteOrbCollisionEnter(Collider other) {
+            NoteOrb otherOrb = other.gameObject.GetComponentInActor<NoteOrb>();
+
+            if (!otherOrb)
+                return;
+
+            if (!IsAbsorbedOrb())
+                return;
+
+            otherOrb.GiveCores(this, noteCores);
+
+            noteCores.Clear();
+            selectedNotes.Clear();
+            StopDisplayingNoteSelector();
+        }
+
+        private void HandleNoteOrbCollisionExit(Collider other) {
+            NoteOrb otherOrb = other.gameObject.GetComponentInActor<NoteOrb>();
+
+            if (!otherOrb)
+                return;
+
+            if (IsAbsorbedOrb()) 
+                return;
+
+            if (foreignCores.ContainsKey(otherOrb)) {
+                otherOrb.GiveCores(this, foreignCores[otherOrb]);
+                otherOrb.MergeCores(this);
+
+                for(int i = 0; i < foreignCores[otherOrb].Count; i++) {
+                    selectedNotes.Remove(foreignCores[otherOrb][i].Note);
+                    noteCores.Remove(foreignCores[otherOrb][i]);
+                }
+                UpdateCorePositions();
+
+                foreignCores.Remove(otherOrb);
+            }
+        }
+
+        /// <summary>
+        /// Determine if this orb should be absorbed or if it is the absorbing orb when two orbs intersect to create a chord
+        /// </summary>
+        /// <returns></returns>
+        private bool IsAbsorbedOrb() {
+            if(noteCores.Count == 0) {
+                return true;
+            }else if (!interactable.IsGrabbed()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void HandleBatonCollisionEnter(Collider other) {
             Baton baton = other.GetComponent<Baton>();
             if (baton) {
-                SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
+                SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
 
-                if (other.GetComponent<OwnedObject>()) {
-                    Transform owner = other.GetComponent<OwnedObject>().Owner;
+                if (other.GetComponent<ActorSubObject>()) {
+                    Transform owner = other.GetComponent<ActorSubObject>().Actor;
 
                     VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!collidingControllers.Contains(controllerReference)) {
@@ -147,22 +248,20 @@ namespace ComposeVR {
             }
         }
 
-        void OnShellTriggerExit(object sender, SimpleTriggerEventArgs args) {
-            Collider other = args.other;
-
+        private void HandleBatonCollisionExit(Collider other) {
             Baton baton = other.GetComponent<Baton>();
             if (baton) {
-                SetShellColor(Color.white);
-                if (other.GetComponent<OwnedObject>()) {
-                    Transform owner = other.GetComponent<OwnedObject>().Owner;
+                SetShellColor(baseShellColor);
+                if (other.GetComponent<ActorSubObject>()) {
+                    Transform actor = other.GetComponent<ActorSubObject>().Actor;
 
-                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
+                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(actor.gameObject);
 
                     if (collidingControllers.Contains(controllerReference)) {
                         collidingControllers.Remove(controllerReference);
 
-                        owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
-                        owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
+                        actor.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
+                        actor.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
 
                         OrbOffFromControllerExit(controllerReference);
                         if(selectedNotes.Count > 0) {
@@ -190,14 +289,6 @@ namespace ComposeVR {
             OrbOn(velocity);
         }
 
-        private void OrbOn(int velocity) {
-            foreach (int note in selectedNotes) {
-                NoteOn(note, velocity);
-            }
-
-            SetShellEmissionGain(HitEmissionGain);
-        }
-
         private void OrbOffFromControllerExit(VRTK_ControllerReference controller) {
             if (!controllersPlayingOrb.Contains(controller)) {
                 return;
@@ -211,6 +302,14 @@ namespace ComposeVR {
             }
 
             OrbOff();
+        }
+
+        private void OrbOn(int velocity) {
+            foreach (int note in selectedNotes) {
+                NoteOn(note, velocity);
+            }
+
+            SetShellEmissionGain(HitEmissionGain);
         }
 
         private void OrbOff() {
@@ -244,23 +343,40 @@ namespace ComposeVR {
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
 
         private void OnNoteSelectionChanged(object sender, NoteSelectionEventArgs args) {
-            SelectNote(args.Note);
+            SetRootNote(args.Note);
             StartCoroutine(PreviewSelection());
         }
 
-        public void SelectNote(int note) {
+        public void SetRootNote(int note) {
             hapticNote = note;
-            selectedNotes.Clear();
-            selectedNotes.Add(note);
-            SetCoreColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(note));
+
+            if(selectedNotes.Count > 0) {
+                //Transpose the chord based on the difference between the new root note and the previous one
+                int previousRootNote = selectedNotes[0];
+                for(int i = 0; i < selectedNotes.Count; i++) {
+                    int interval = selectedNotes[i] - previousRootNote;
+                    selectedNotes[i] = note + interval;
+                    SetCoreNote(noteCores[i], selectedNotes[i]);
+                }
+            }
+            else {
+                selectedNotes.Add(note);
+                SetCoreNote(rootCore, note);
+            }
+
             ComposeVRManager.Instance.LastNoteSelected = note;
         }
 
+        private void SetCoreNote(NoteCore core, int note) {
+            core.Note = note;
+            core.SetColor(NoteColors.GetNoteColor(note));
+        }
+
         private IEnumerator PreviewSelection() {
-            SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
+            SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
             OrbOn(95);
             yield return new WaitForSecondsRealtime(0.1f);
-            SetShellColor(Color.white);
+            SetShellColor(baseShellColor);
             OrbOff();
         }
 
@@ -274,8 +390,41 @@ namespace ComposeVR {
             shellMat.SetFloat("_EmissionGain", gain);
         }
 
-        private void SetCoreColor(Color c) {
-            core.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", c);
+        /// <summary>
+        /// The NoteOrb receives cores from a foreign orb. It keeps track of which cores belong to which foreign orb in case it needs to return them.
+        /// </summary>
+        /// <param name="foreignOrb"></param>
+        /// <param name="foreignOrbCores"></param>
+        public void GiveCores(NoteOrb foreignOrb, List<NoteCore> foreignOrbCores) {
+            List<NoteCore> coresCopy = new List<NoteCore>(foreignOrbCores);
+            foreignCores.Add(foreignOrb, coresCopy);
+
+            for(int i = 0; i < foreignOrbCores.Count; i++) {
+                foreignOrbCores[i].transform.SetParent(transform);
+                noteCores.Add(foreignOrbCores[i]);
+                selectedNotes.Add(foreignOrbCores[i].Note);
+            }
+
+            UpdateCorePositions();
+            foreignOrb.SelfDestruct += OnForeignOrbSelfDestruct;
+        }
+
+        public void MergeCores(NoteOrb foreignOrb) {
+            foreignOrb.SelfDestruct -= OnForeignOrbSelfDestruct;
+            foreignCores.Remove(foreignOrb);
+        }
+
+        private void UpdateCorePositions() {
+            NoteCoreArrangement arrangement = NoteArrangements.GetArrangement(noteCores.Count);
+            for(int i = 0; i < noteCores.Count; i++) {
+                noteCores[i].SetPosition(arrangement.corePositions[i]);
+                noteCores[i].SetScale(arrangement.coreScale);
+            }
+        }
+
+        private void OnForeignOrbSelfDestruct(object sender, EventArgs args) {
+            NoteOrb foreignOrb = sender as NoteOrb;
+            MergeCores(foreignOrb);
         }
     }
 }

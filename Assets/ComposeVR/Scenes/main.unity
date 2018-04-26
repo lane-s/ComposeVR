@@ -13108,7 +13108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c29f1620f00f7e24fbde1ad5274ac7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoteColors: {fileID: 11400000, guid: c140233e39837d84abcb2f7c59c5ddad, type: 2}
   LastNoteSelected: 60
 --- !u!1 &934981563
 GameObject:
@@ -13455,7 +13454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 1933670545}
+  Actor: {fileID: 1933670545}
 --- !u!114 &945465026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25619,7 +25618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 734900877}
+  Actor: {fileID: 734900877}
 --- !u!114 &1801799489
 MonoBehaviour:
   m_ObjectHideFlags: 0

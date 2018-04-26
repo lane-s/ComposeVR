@@ -13,8 +13,12 @@ namespace ComposeVR {
         public event EventHandler<EventArgs> MoveCancelled;
 
         public float closeEnoughDistance = 0.01f;
+
+        [Tooltip("Useful when the snap position is constantly changing. If there was some time left over after the previous snap finished, the next snap will start from this time")]
         public bool carryTimeBetweenSnaps = false;
+
         public bool HasReachedTarget = false;
+        public bool UseLocalPosition = false;
         
         private Vector3 targetPosition;
         private float speed;
@@ -75,10 +79,11 @@ namespace ComposeVR {
                 t = Mathf.Pow(t, 0.5f);
             }
 
-            if (rb != null) {
+            if (rb != null && !UseLocalPosition) {
                 rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, t));
-            }
-            else {
+            }else if (UseLocalPosition) {
+                transform.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
+            }else {
                 transform.position = Vector3.Lerp(startPosition, targetPosition, t);
             }
         }
@@ -88,7 +93,13 @@ namespace ComposeVR {
             this.speed = speed;
             this.interpolationType = interpolationType;
 
-            startPosition = transform.position;
+            if (UseLocalPosition) {
+                startPosition = transform.localPosition;
+            }
+            else {
+                startPosition = transform.position;
+            }
+
             totalDistanceToTarget = Vector3.Distance(startPosition, targetPosition);
 
             if(totalDistanceToTarget < closeEnoughDistance) {

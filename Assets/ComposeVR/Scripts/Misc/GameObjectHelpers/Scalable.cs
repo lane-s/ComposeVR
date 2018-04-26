@@ -7,6 +7,8 @@ namespace ComposeVR {
 
         public Vector3 TargetScale;
         public float Smooth;
+        public float CloseEnoughScale = 0.0f;
+
         public bool TargetReached {
             get { return transform.localScale == TargetScale; }
         }
@@ -25,7 +27,8 @@ namespace ComposeVR {
             if (transform.localScale != TargetScale) {
                 transform.localScale = Vector3.Lerp(transform.localScale, TargetScale, Time.deltaTime * Smooth);
 
-                if((transform.localScale - TargetScale).magnitude < epsilon) {
+                float workingEpsilon = CloseEnoughScale == 0.0f ? epsilon : CloseEnoughScale;
+                if((transform.localScale - TargetScale).magnitude < workingEpsilon) {
                     transform.localScale = TargetScale;
                 }
             }

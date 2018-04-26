@@ -8,17 +8,22 @@ namespace ComposeVR {
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         }
 
-        public static T GetComponentInOwner<T>(this Transform transform) {
-            OwnedObject ownedObject = transform.GetComponent<OwnedObject>();
+        public static T GetComponentInActor<T>(this Transform transform) {
+            ActorSubObject ownedObject = transform.GetComponent<ActorSubObject>();
+            T component;
 
             if(ownedObject != null) {
-                Transform owner = ownedObject.Owner;
-                T component = owner.GetComponent<T>();
-
+                Transform actor = ownedObject.Actor;
+                component = actor.GetComponent<T>();
                 return component;
             }
 
-            return default(T);
+            component = transform.GetComponent<T>();
+            return component;
+        }
+
+        public static T GetComponentInActor<T>(this GameObject gameObject) {
+            return gameObject.transform.GetComponentInActor<T>();
         }
     }
 }

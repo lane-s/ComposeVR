@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 4601306996117448}
+  Actor: {fileID: 4601306996117448}
 --- !u!114 &114549663857069864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 4601306996117448}
+  Actor: {fileID: 4601306996117448}
 --- !u!114 &114620639719833418
 MonoBehaviour:
   m_ObjectHideFlags: 1

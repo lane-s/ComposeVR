@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2feebd16d593bb74997d51c57a619797, type: 3}
-  m_Name: Default
+  m_Name: DefaultNoteColors
   m_EditorClassIdentifier: 
   NoteColors:
   - {r: 0.972549, g: 0.8862745, b: 0.19607843, a: 1}

@@ -54,9 +54,9 @@ namespace ComposeVR {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void OnPlugEnterArea(object sender, SimpleTriggerEventArgs e) {
-            OwnedObject o = e.other.GetComponent<OwnedObject>();
+            ActorSubObject o = e.other.GetComponent<ActorSubObject>();
             if(o != null) {
-                Plug p = o.Owner.GetComponent<Plug>();
+                Plug p = o.Actor.GetComponent<Plug>();
                 if(p != null) {
                     p.AddNearbySocket(this);
                 }
@@ -64,9 +64,9 @@ namespace ComposeVR {
         }
 
         void OnPlugLeaveArea(object sender, SimpleTriggerEventArgs e) {
-            OwnedObject o = e.other.GetComponent<OwnedObject>();
+            ActorSubObject o = e.other.GetComponent<ActorSubObject>();
             if(o != null) {
-                Plug p = o.Owner.GetComponent<Plug>();
+                Plug p = o.Actor.GetComponent<Plug>();
                 if(p != null) {
                     p.RemoveNearbySocket(this);
                 }

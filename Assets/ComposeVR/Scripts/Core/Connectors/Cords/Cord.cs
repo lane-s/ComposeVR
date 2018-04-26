@@ -225,7 +225,7 @@ namespace ComposeVR {
                         lineRenderer.SetPositions(collapsingPath);
 
                         //Rotate plugs to point away from their movement direction
-                        Plug plugA = A.GetComponentInOwner<Plug>();
+                        Plug plugA = A.GetComponentInActor<Plug>();
                         if(plugA != null) {
                             if (plugALookVector != Vector3.zero) {
                                 plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
@@ -233,7 +233,7 @@ namespace ComposeVR {
                             plugA.GetComponent<CordFollower>().Speed += COLLAPSE_ACCELERATION;
                         }
 
-                         Plug plugB = B.GetComponentInOwner<Plug>();
+                         Plug plugB = B.GetComponentInActor<Plug>();
                         if(plugB != null) {
                             if (plugBLookVector != Vector3.zero) {
                                 plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
@@ -411,10 +411,10 @@ namespace ComposeVR {
             A = start;
             B = end;
 
-            Plug plugA = A.GetComponentInOwner<Plug>();
+            Plug plugA = A.GetComponentInActor<Plug>();
             ConnectPlug(plugA);
 
-            Plug plugB = B.GetComponentInOwner<Plug>();
+            Plug plugB = B.GetComponentInActor<Plug>();
             ConnectPlug(plugB);
 
             if(Flow != 0) {
@@ -479,7 +479,7 @@ namespace ComposeVR {
                 BranchHandle handleB = B.GetComponent<BranchHandle>();
                 results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleB));
 
-                Plug plugB = B.GetComponentInOwner<Plug>();
+                Plug plugB = B.GetComponentInActor<Plug>();
                 PlugSocket connectedJack = GetJackConnectedToPlug(plugB);
 
                 if(connectedJack != null) {
@@ -490,7 +490,7 @@ namespace ComposeVR {
                 BranchHandle handleA = A.GetComponent<BranchHandle>();
                 results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleA));
 
-                Plug plugA = A.GetComponentInOwner<Plug>();
+                Plug plugA = A.GetComponentInActor<Plug>();
                 PlugSocket connectedJack = GetJackConnectedToPlug(plugA);
 
                 if(connectedJack != null) {
@@ -547,8 +547,8 @@ namespace ComposeVR {
 
             collapsing = true;
 
-            Plug plugA = A.GetComponentInOwner<Plug>();
-            Plug plugB = B.GetComponentInOwner<Plug>();
+            Plug plugA = A.GetComponentInActor<Plug>();
+            Plug plugB = B.GetComponentInActor<Plug>();
 
             collapseStart = 0;
             collapseEnd = path.Count - 1;
@@ -579,7 +579,7 @@ namespace ComposeVR {
                 Destroy(A.gameObject);
             }
             else {
-                Plug p = A.GetComponentInOwner<Plug>();
+                Plug p = A.GetComponentInActor<Plug>();
                 if(p != null) {
                     p.DestroyPlug();
                 }
@@ -590,7 +590,7 @@ namespace ComposeVR {
                 Destroy(B.gameObject);
             }
             else {
-                Plug p = B.GetComponentInOwner<Plug>();
+                Plug p = B.GetComponentInActor<Plug>();
                 if(p != null) {
                     p.DestroyPlug();
                 }

@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OwnedObject : MonoBehaviour {
-    public Transform Owner;
+public class ActorSubObject : MonoBehaviour {
+    public Transform Actor;
 }

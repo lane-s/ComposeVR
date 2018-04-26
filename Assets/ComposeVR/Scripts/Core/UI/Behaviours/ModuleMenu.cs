@@ -24,7 +24,7 @@ namespace ComposeVR {
             gameObject.SetActive(true);
             NoteOrb noteMini = GetComponentInChildren<NoteOrb>();
             if(noteMini != null) {
-                noteMini.SelectNote(ComposeVRManager.Instance.LastNoteSelected);
+                noteMini.SetRootNote(ComposeVRManager.Instance.LastNoteSelected);
             }
         }
 
