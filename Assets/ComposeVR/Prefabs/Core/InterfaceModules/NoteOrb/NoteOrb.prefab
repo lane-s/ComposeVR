@@ -587,7 +587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f67e26a6e5f3c4088a808301632e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoteColors: {fileID: 11400000, guid: c140233e39837d84abcb2f7c59c5ddad, type: 2}
+  NoteColors: {fileID: 11400000, guid: bdb18bd807d3f4040871e30e3468e171, type: 2}
   NoteArrangements: {fileID: 11400000, guid: 9e8eda8a3a3cd8541a26fe39fd2b7074, type: 2}
   HitEmissionGain: 0.32
   TouchHapticsStrength: 1.5

@@ -128,7 +128,10 @@ namespace ComposeVR {
                 cordJunction = SplitCord(sourceCord);
                 StopMovementAlongCord();
 
-                StartCoroutine(GrabPlug(branchPlug, null));
+                grabber.ForceGrab(branchPlug.GetComponent<VRTK_InteractableObject>(), () => {
+                    GetComponent<VRTK_InteractableObject>().isGrabbable = true;
+                    branchPlug.EnableSnapping();
+                });
             }
         }
 
@@ -166,11 +169,14 @@ namespace ComposeVR {
             }
             else {
                 branchNode.Cord.Connect(branchNode.Cord.StartNode, disconnectedPlug.CordAttachPoint);
-            } 
+            }
 
-            StartCoroutine(GrabPlug(disconnectedPlug, OnPlugGrabbed));
+            grabber.ForceGrab(disconnectedPlug.GetComponent<VRTK_InteractableObject>(), () => {
+                disconnectedPlug.EnableSnapping();
+                sourceCord.AllowBranching(true);
+                Destroy(this.gameObject);
+            });
         }
-
 
         void Update() {
             if (ungrabbableTimeElapsed < UNGRABBABLE_TIME) {
@@ -322,7 +328,6 @@ namespace ComposeVR {
             }
         }
 
-
         private Plug CreatePlug() {
             Plug p = Instantiate(PlugPrefab).GetComponent<Plug>();
             p.transform.position = transform.position;
@@ -330,31 +335,6 @@ namespace ComposeVR {
             p.DisableSnapping();
             p.GetComponent<VRTK_InteractableObject>().ForceStopInteracting();
             return p;
-        }
-
-        private IEnumerator GrabPlug(Plug p, PlugGrabbed OnPlugGrabbed) {
-            while (!p.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
-                p.transform.rotation = Quaternion.LookRotation(grabber.controllerAttachPoint.transform.forward);
-                p.transform.position = grabber.controllerAttachPoint.transform.position;
-                grabber.AttemptGrab();
-                yield return new WaitForEndOfFrame();
-            }
-
-            yield return new WaitForEndOfFrame();
-
-            p.EnableSnapping();
-            GetComponent<VRTK_InteractableObject>().isGrabbable = true;
-
-            if(OnPlugGrabbed != null) {
-                OnPlugGrabbed();
-            }
-
-            yield return null;
-        }
-
-        private void OnPlugGrabbed() {
-            sourceCord.AllowBranching(true);
-            Destroy(this.gameObject);
         }
 
         /// <summary>
