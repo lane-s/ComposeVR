@@ -1,0 +1,69 @@
+ManifestFileVersion: 0
+CRC: 2692917889
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 31c35f5622c1bbe39eadb722b36078ca
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 47e237b26fc690d5034169e619c7fe75
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 87123092e0f24f1418ed74d994a8db6a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc748bd3d640b424299809d973084cd0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1be8f134ab7ffb042b6d4e222b93ceaa, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a3abaf4521bf2344ea21ed3020b98eb2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 496f4906fedd66c4da5d74084e5c1517, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2feebd16d593bb74997d51c57a619797, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a3f67e26a6e5f3c4088a808301632e14, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5ec2ac476f2fc9a45a4e69712580a603, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 38203e47a528d4c498d0a1764db37b1e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: bca7dadcc5b3e56428a2a22c9189166a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 135
+  Script: {instanceID: 0}
+Assets:
+- Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Chromatic.asset
+- Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteOrb.prefab
+- Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Zieverink.asset
+- Assets/ComposeVR/ScriptableObjects/DefaultCoreArrangements.asset
+- Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteCore.prefab
+- Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Scriabin.asset
+Dependencies: []

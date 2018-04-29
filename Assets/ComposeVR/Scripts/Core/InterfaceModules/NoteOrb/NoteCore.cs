@@ -7,6 +7,18 @@ namespace ComposeVR {
     [RequireComponent(typeof(Scalable))]
     public class NoteCore : MonoBehaviour {
         public int Note;
+
+        private Color _color;
+        public Color Color {
+            get {
+                return _color;
+            }
+            set {
+                _color = value;
+                GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _color);
+            }
+        }
+
         private SnapToTargetPosition positionSnap;
         private Scalable scalable;
         private const float CORE_SNAP_SPEED = 0.65f;
@@ -17,10 +29,6 @@ namespace ComposeVR {
 
             scalable = GetComponent<Scalable>();
             scalable.TargetScale = transform.localScale;
-        }
-
-        public void SetColor(Color c) {
-            GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", c);
         }
 
         public void SetPosition(Vector3 pos) {

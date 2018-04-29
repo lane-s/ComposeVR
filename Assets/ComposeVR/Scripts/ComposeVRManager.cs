@@ -5,6 +5,8 @@ using UnityEngine;
 namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
         public int LastNoteSelected = 60;
+        public NoteColorScheme NoteColors;
+        public NoteCoreArrangementScheme NoteArrangements;
 
         private DeviceBrowserObject browserObject;
         private NoteSelector noteSelector;
@@ -62,6 +64,7 @@ namespace ComposeVR {
 
         // Use this for initialization
         void Awake() {
+            AssetLoader.GetCoreAssetBundle();
         }
 
         public string GetNewHandlerID() {
