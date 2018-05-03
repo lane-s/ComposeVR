@@ -7234,6 +7234,7 @@ GameObject:
   - component: {fileID: 513183782}
   - component: {fileID: 513183781}
   - component: {fileID: 513183780}
+  - component: {fileID: 513183783}
   m_Layer: 10
   m_Name: RGrabCollider
   m_TagString: Untagged
@@ -7305,6 +7306,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 513183778}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &513183783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 513183778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Actor: {fileID: 1933670545}
 --- !u!1 &516866299
 GameObject:
   m_ObjectHideFlags: 0
@@ -7659,6 +7672,7 @@ GameObject:
   m_Component:
   - component: {fileID: 573200848}
   - component: {fileID: 573200849}
+  - component: {fileID: 573200850}
   m_Layer: 2
   m_Name: LAttachPoint
   m_TagString: Untagged
@@ -7694,6 +7708,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &573200850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 573200847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Actor: {fileID: 734900877}
 --- !u!1 &575808920
 GameObject:
   m_ObjectHideFlags: 0
@@ -10596,8 +10622,7 @@ MonoBehaviour:
   _useExplicitConnection: 1
   _explicitConnection: {fileID: 392492853}
   _drawDefaultInspector: 1
-  _myOSCConnections:
-  - {fileID: 392492853}
+  _myOSCConnections: []
 --- !u!4 &778660830
 Transform:
   m_ObjectHideFlags: 0
@@ -13469,7 +13494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 0.25
+  HapticGain: 0.005
   Channel: 1
 --- !u!82 &945465027
 AudioSource:
@@ -19181,6 +19206,21 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1350849672 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 151380, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
+  m_PrefabInternal: {fileID: 1860628841}
+--- !u!114 &1350849674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1350849672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 254625db034b5fd418ea038fe03da68d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1352095213
 GameObject:
   m_ObjectHideFlags: 0
@@ -23877,6 +23917,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1699637866}
   - component: {fileID: 1699637867}
+  - component: {fileID: 1699637868}
   m_Layer: 2
   m_Name: RAttachPoint
   m_TagString: Untagged
@@ -23912,6 +23953,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1699637868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1699637865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Actor: {fileID: 1933670545}
 --- !u!1 &1709504524
 GameObject:
   m_ObjectHideFlags: 0
@@ -25633,7 +25686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BufferSize: 16
-  HapticGain: 0.25
+  HapticGain: 0.005
   Channel: 0
 --- !u!82 &1801799490
 AudioSource:
@@ -27246,7 +27299,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11415184, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
       propertyPath: buttonOneText
-      value: 
+      value: Duplicate
       objectReference: {fileID: 0}
     - target: {fileID: 11415184, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
       propertyPath: buttonTwoText
@@ -27255,6 +27308,11 @@ Prefab:
     - target: {fileID: 11415184, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
       propertyPath: startMenuText
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012444902488, guid: 910be6460ba00dc4bb13725c3ff972cb,
+        type: 2}
+      propertyPath: displayText
+      value: Duplicate
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 910be6460ba00dc4bb13725c3ff972cb, type: 2}
@@ -29096,6 +29154,7 @@ GameObject:
   - component: {fileID: 2026247829}
   - component: {fileID: 2026247828}
   - component: {fileID: 2026247827}
+  - component: {fileID: 2026247830}
   m_Layer: 10
   m_Name: LGrabCollider
   m_TagString: Untagged
@@ -29167,6 +29226,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2026247825}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2026247830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2026247825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Actor: {fileID: 734900877}
 --- !u!1 &2026767078
 GameObject:
   m_ObjectHideFlags: 0

@@ -69,8 +69,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4051622371851572}
-  - component: {fileID: 114414445123971574}
+  - component: {fileID: 114298726447072872}
   - component: {fileID: 114339798080295990}
+  - component: {fileID: 114512790094220938}
   - component: {fileID: 114468649313764038}
   m_Layer: 0
   m_Name: PhysicalSocket
@@ -203,9 +204,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363072638215408}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0, z: 0.532}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalRotation: {x: -2.2204458e-16, y: 6.236794e-23, z: -5.6843412e-14, w: 1}
+  m_LocalPosition: {x: 0.016382596, y: 0, z: 0.53438234}
+  m_LocalScale: {x: 8.127272, y: 8.127275, z: 8.127268}
   m_Children:
   - {fileID: 4672822431426868}
   - {fileID: 4215379520491632}
@@ -314,8 +315,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1920282621336474}
   m_LocalRotation: {x: 0, y: 0, z: -1, w: 0.00000028088027}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 0.20835847, y: 0.20835844, z: 0.20835844}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 0.12818483, y: 0.1281848, z: 0.1281848}
   m_Children:
   - {fileID: 4305536829597764}
   - {fileID: 4051622371851572}
@@ -342,7 +343,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1586048614035974}
   m_LocalRotation: {x: -0, y: 0.012851693, z: -0, w: 0.99991745}
-  m_LocalPosition: {x: 0.148, y: 1.624, z: 0.7721}
+  m_LocalPosition: {x: 0.11314088, y: 2.158, z: -2.1004686}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 4727844773649192}
@@ -565,6 +566,24 @@ MonoBehaviour:
   throwVelocityWithAttachDistance: 0
   throwMultiplier: 1
   onGrabCollisionDelay: 0
+--- !u!114 &114298726447072872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363072638215408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxControllerSeparation: 0.14
+  PositionSnapSpeed: 0.2
+  RotationSnapSpeed: 900
+  PlugDetector: {fileID: 114562055169207344}
+  PlugConnectionPoint: {fileID: 4258723983952294}
+  AutoPlugDistance: 0.16
+  MinInitialSocketDistance: 0.12
 --- !u!114 &114339798080295990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -600,20 +619,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc748bd3d640b424299809d973084cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114414445123971574
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1363072638215408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlugStart: {fileID: 4215379520491632}
-  PlugConnectionPoint: {fileID: 4258723983952294}
-  PlugDetector: {fileID: 114562055169207344}
 --- !u!114 &114467179629197636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -657,6 +662,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ed76bb0360d78408b107d0578eed38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114512790094220938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363072638215408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5982102e1cf606d40a08172f3c6c75c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114562055169207344
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -698,3 +714,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetScale: {x: 0, y: 0, z: 0}
   Smooth: 8
+  CloseEnoughScale: 0

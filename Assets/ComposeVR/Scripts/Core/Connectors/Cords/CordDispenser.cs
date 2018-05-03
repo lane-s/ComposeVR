@@ -135,7 +135,7 @@ namespace ComposeVR {
             secondaryPlug.transform.SetParent(PlugStart);
             secondaryPlug.ShrinkCollider();
 
-            secondaryPlug.DestinationJack = GetComponent<PlugSocket>();
+            secondaryPlug.DestinationReceptacle = GetComponent<PlugReceptacle>();
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
@@ -197,11 +197,7 @@ namespace ComposeVR {
             while (state == State.WaitingForGrab) {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                     StartCoroutine(ExtendPlug(secondaryPlug, SecondaryPlugTarget.position));
-                    secondaryPlug.DestinationJack = GetComponent<PlugSocket>();
-
-                    if (GetComponent<PlugSocket>()) {
-                        GetComponent<PlugSocket>().Block();
-                    }
+                    secondaryPlug.DestinationReceptacle = GetComponent<PlugReceptacle>();
 
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 

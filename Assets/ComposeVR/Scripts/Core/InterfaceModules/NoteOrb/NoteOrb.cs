@@ -131,9 +131,12 @@ namespace ComposeVR {
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
             e.interactingObject.GetComponent<VRTK_ControllerEvents>().ButtonOnePressed += OnDuplicateButtonPressed;
+            e.interactingObject.GetComponentInChildren<VRTK_ControllerTooltips>().ToggleTips(true, VRTK_ControllerTooltips.TooltipButtons.ButtonOneTooltip);
         }
 
         private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
+            e.interactingObject.GetComponentInChildren<VRTK_ControllerTooltips>().ToggleTips(false, VRTK_ControllerTooltips.TooltipButtons.ButtonOneTooltip );
+
             if (displayingNoteSelector) {
                 StopDisplayingNoteSelector();
             }
@@ -437,11 +440,19 @@ namespace ComposeVR {
         }
 
         private IEnumerator PreviewSelection() {
+            //Copy current selection so that the correct notes are turned off
+            List<int> currentSelection = new List<int>(selectedNotes);
+            
             SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
             OrbOn(95);
             yield return new WaitForSecondsRealtime(0.1f);
             SetShellColor(baseShellColor);
-            OrbOff();
+
+            foreach(int note in currentSelection) {
+                NoteOff(note);
+            }
+
+            SetShellEmissionGain(baseShellEmissionGain);
         }
 
         private void SetShellColor(Color c) {

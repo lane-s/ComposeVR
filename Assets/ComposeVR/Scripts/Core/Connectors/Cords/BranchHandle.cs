@@ -27,11 +27,11 @@ namespace ComposeVR {
         }
     }
 
-    public class JacksConnectedByHandle {
+    public class ConnectedDataEndpoints {
         public HashSet<IPhysicalDataInput> Inputs;
         public List<PhysicalDataOutput> Outputs;
 
-        public JacksConnectedByHandle(HashSet<IPhysicalDataInput> Inputs, List<PhysicalDataOutput> Outputs) {
+        public ConnectedDataEndpoints(HashSet<IPhysicalDataInput> Inputs, List<PhysicalDataOutput> Outputs) {
             this.Inputs = Inputs;
             this.Outputs = Outputs;
         }
@@ -430,37 +430,37 @@ namespace ComposeVR {
         }
 
         private void ConnectBranchToJunction() {
-            JacksConnectedByHandle connectedJacks = GetJacksConnectedByHandle();
+            ConnectedDataEndpoints endpoints = GetDataEndpointsConnectedByHandle();
 
-            for(int i = 0; i < connectedJacks.Outputs.Count; i++) {
-                connectedJacks.Outputs[i].ConnectInputs(connectedJacks.Inputs);
+            for(int i = 0; i < endpoints.Outputs.Count; i++) {
+                endpoints.Outputs[i].ConnectInputs(endpoints.Inputs);
             }
         }
 
         private void DisconnectBranchFromJunction() {
-            JacksConnectedByHandle connectedJacks = GetJacksConnectedByHandle();
+            ConnectedDataEndpoints endpoints = GetDataEndpointsConnectedByHandle();
 
-            for(int i = 0; i < connectedJacks.Outputs.Count; i++) {
-                connectedJacks.Outputs[i].DisconnectInputs(connectedJacks.Inputs);
+            for(int i = 0; i < endpoints.Outputs.Count; i++) {
+                endpoints.Outputs[i].DisconnectInputs(endpoints.Inputs);
             }
         }
 
-        JacksConnectedByHandle GetJacksConnectedByHandle() {
+        ConnectedDataEndpoints GetDataEndpointsConnectedByHandle() {
             bool branchFlowsIntoJunction = branchNode.Cord.EndNode.Equals(transform) ? branchNode.Cord.Flow > 0 : branchNode.Cord.Flow < 0;
 
-            HashSet<PlugSocket> jacksConnectedToBranch = branchNode.Cord.GetConnectedJacks(branchFlowsIntoJunction, transform);
-            HashSet<PlugSocket> jacksConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedJacks(!branchFlowsIntoJunction, transform);
+            HashSet<PlugReceptacle> receptaclesConnectedToBranch = branchNode.Cord.GetConnectedReceptacles(branchFlowsIntoJunction, transform);
+            HashSet<PlugReceptacle> receptaclesConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedReceptacles(!branchFlowsIntoJunction, transform);
 
             HashSet<IPhysicalDataInput> connectedInputs = new HashSet<IPhysicalDataInput>();
             List<PhysicalDataOutput> outputs = new List<PhysicalDataOutput>();
 
-            foreach(PlugSocket jack in jacksConnectedToBranch) {
-                PhysicalDataOutput output = jack.GetComponent<PhysicalDataOutput>();
+            foreach(PlugReceptacle receptacle in receptaclesConnectedToBranch) {
+                PhysicalDataOutput output = receptacle.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);
                 }
                 else {
-                    PhysicalDataInput input = jack.GetComponent<PhysicalDataInput>();
+                    PhysicalDataInput input = receptacle.GetComponent<PhysicalDataInput>();
                     if(input != null) {
                         connectedInputs.UnionWith(input.GetConnectedInputs());
                     }
@@ -468,20 +468,20 @@ namespace ComposeVR {
 
             }
 
-            foreach(PlugSocket jack in jacksConnectedToJunction) {
-                PhysicalDataOutput output = jack.GetComponent<PhysicalDataOutput>();
+            foreach(PlugReceptacle receptacle in receptaclesConnectedToJunction) {
+                PhysicalDataOutput output = receptacle.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);
                 }
                 else {
-                    PhysicalDataInput input = jack.GetComponent<PhysicalDataInput>();
+                    PhysicalDataInput input = receptacle.GetComponent<PhysicalDataInput>();
                     if(input != null) {
                         connectedInputs.UnionWith(input.GetConnectedInputs());
                     }
                 }
             }
 
-            return new JacksConnectedByHandle(connectedInputs, outputs);
+            return new ConnectedDataEndpoints(connectedInputs, outputs);
         }
     }
 }

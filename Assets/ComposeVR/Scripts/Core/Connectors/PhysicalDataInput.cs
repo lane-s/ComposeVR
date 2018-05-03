@@ -11,13 +11,13 @@ namespace ComposeVR {
         private HashSet<IPhysicalDataInput> connectedInputs;
 
         private void Awake() {
-            GetComponent<PlugSocket>().PlugConnected += OnPlugConnected;
-            GetComponent<PlugSocket>().PlugDisconnected += OnPlugDisconnected;
+            GetComponent<PlugReceptacle>().PlugConnected += OnPlugConnected;
+            GetComponent<PlugReceptacle>().PlugDisconnected += OnPlugDisconnected;
         }
 
         private void OnPlugConnected(object sender, PhysicalConnectionEventArgs e) {
-            HashSet<PlugSocket> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(true, e.PlugNodeInCord);
-            foreach(PlugSocket j in connectedOutputJacks) {
+            HashSet<PlugReceptacle> connectedOutputJacks = e.ConnectedCord.GetConnectedReceptacles(true, e.PlugNodeInCord);
+            foreach(PlugReceptacle j in connectedOutputJacks) {
                 if (j.GetComponent<PhysicalDataOutput>()) {
                     j.GetComponent<PhysicalDataOutput>().ConnectInputs(connectedInputs);
                 }
@@ -25,8 +25,8 @@ namespace ComposeVR {
         }
 
         private void OnPlugDisconnected(object sender, PhysicalConnectionEventArgs e) {
-            HashSet<PlugSocket> connectedOutputJacks = e.ConnectedCord.GetConnectedJacks(true, e.PlugNodeInCord);
-            foreach(PlugSocket j in connectedOutputJacks) {
+            HashSet<PlugReceptacle> connectedOutputJacks = e.ConnectedCord.GetConnectedReceptacles(true, e.PlugNodeInCord);
+            foreach(PlugReceptacle j in connectedOutputJacks) {
                 if (j.GetComponent<PhysicalDataOutput>()) {
                     j.GetComponent<PhysicalDataOutput>().DisconnectInputs(connectedInputs);
                 }

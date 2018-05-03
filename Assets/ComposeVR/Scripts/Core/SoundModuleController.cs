@@ -119,6 +119,7 @@ namespace ComposeVR {
                 if(playingNotes[data.Note] != 0) {
                     return;
                 }
+
             }
 
             string noteAddress = "/" + GetID() + "/note/" + noteStatus;

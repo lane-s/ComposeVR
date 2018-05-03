@@ -75,7 +75,7 @@ namespace ComposeVR {
                 }
 
                 phase += increment;
-                byte sample = (byte)(HapticGain * Math.Sin(phase) * 255);
+                byte sample = (byte)(HapticGain * Math.Sin(phase) * 255.0);
                 buffer[bufferIndex] = sample;
                 bufferIndex += 1;
             }

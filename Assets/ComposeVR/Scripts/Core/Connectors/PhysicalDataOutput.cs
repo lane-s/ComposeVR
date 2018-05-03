@@ -7,21 +7,20 @@ namespace ComposeVR {
     /// <summary>
     /// This component is required for any game object that needs to send data to other, physically connected game objects
     /// </summary>
-    [RequireComponent(typeof(PlugSocket))]
     public class PhysicalDataOutput : MonoBehaviour {
 
         private HashSet<IPhysicalDataInput> connectedInputs;
 
         void Awake() {
             connectedInputs = new HashSet<IPhysicalDataInput>();
-            GetComponent<PlugSocket>().PlugConnected += OnPlugConnected;
-            GetComponent<PlugSocket>().PlugDisconnected += OnPlugDisconnected;
+            GetComponent<PlugReceptacle>().PlugConnected += OnPlugConnected;
+            GetComponent<PlugReceptacle>().PlugDisconnected += OnPlugDisconnected;
         }
 
         private void OnPlugConnected(object sender, PhysicalConnectionEventArgs e) {
 
-            HashSet<PlugSocket> connectedInputJacks = e.ConnectedCord.GetConnectedJacks(false, e.PlugNodeInCord);
-            foreach(PlugSocket j in connectedInputJacks) {
+            HashSet<PlugReceptacle> connectedInputJacks = e.ConnectedCord.GetConnectedReceptacles(false, e.PlugNodeInCord);
+            foreach(PlugReceptacle j in connectedInputJacks) {
                 connectedInputs.UnionWith(j.GetComponent<PhysicalDataInput>().GetConnectedInputs());
             }
         }

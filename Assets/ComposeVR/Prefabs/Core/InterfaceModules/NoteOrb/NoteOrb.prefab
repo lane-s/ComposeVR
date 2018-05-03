@@ -70,6 +70,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4560826446569750}
   - component: {fileID: 114431067947384684}
+  - component: {fileID: 114514206908605002}
   - component: {fileID: 114126930578133432}
   m_Layer: 0
   m_Name: OutputJack
@@ -205,8 +206,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1568931365242232}
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0.023}
-  m_LocalScale: {x: 0.15069397, y: 0.10584459, z: 0.13291909}
+  m_LocalPosition: {x: 0, y: 0, z: 0.0164}
+  m_LocalScale: {x: 0.11040421, y: 0.10584459, z: 0.12501085}
   m_Children: []
   m_Father: {fileID: 4560826446569750}
   m_RootOrder: 2
@@ -244,7 +245,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1648545843110850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.142584, y: 0.66, z: 4.13543}
+  m_LocalPosition: {x: 1.5068625, y: 0.747, z: -6.248198}
   m_LocalScale: {x: 0.4187693, y: 0.418769, z: 0.4187693}
   m_Children:
   - {fileID: 4560826446569750}
@@ -260,8 +261,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1448882613622002}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.104635485, y: 0.10463523, z: 0.10463533}
+  m_LocalPosition: {x: 0.010000023, y: 0, z: 0}
+  m_LocalScale: {x: 0.087026976, y: 0.08702677, z: 0.08702684}
   m_Children: []
   m_Father: {fileID: 4451077043534832}
   m_RootOrder: 2
@@ -305,8 +306,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1514976906051388}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.13895734, y: 0.13895723, z: 0.13895726}
+  m_LocalPosition: {x: 0.01, y: 0, z: 0}
+  m_LocalScale: {x: 0.115573, y: 0.115572914, z: 0.11557294}
   m_Children: []
   m_Father: {fileID: 4451077043534832}
   m_RootOrder: 1
@@ -573,9 +574,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlugStart: {fileID: 4118163631068634}
-  PlugConnectionPoint: {fileID: 4063007530075230}
+  MaxControllerSeparation: 0.14
+  PositionSnapSpeed: 0.2
+  RotationSnapSpeed: 900
   PlugDetector: {fileID: 114911279688374600}
+  PlugConnectionPoint: {fileID: 4063007530075230}
+  AutoPlugDistance: 0.05
+  LockedIntoSocketDistance: 0.02
+  MinInitialSocketDistance: 0.05
 --- !u!114 &114472644314344026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -587,8 +593,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f67e26a6e5f3c4088a808301632e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoteColors: {fileID: 11400000, guid: bdb18bd807d3f4040871e30e3468e171, type: 2}
-  NoteArrangements: {fileID: 11400000, guid: 9e8eda8a3a3cd8541a26fe39fd2b7074, type: 2}
   HitEmissionGain: 0.32
   TouchHapticsStrength: 1.5
   TouchHapticsDuration: 0.2
@@ -607,6 +611,17 @@ MonoBehaviour:
   TargetScale: {x: 0.1046355, y: 0.1046355, z: 0.1046355}
   Smooth: 8
   CloseEnoughScale: 0.001
+--- !u!114 &114514206908605002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1501624035133886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5982102e1cf606d40a08172f3c6c75c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114663173534973348
 MonoBehaviour:
   m_ObjectHideFlags: 1

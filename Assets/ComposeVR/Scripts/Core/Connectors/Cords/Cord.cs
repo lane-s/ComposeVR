@@ -433,14 +433,14 @@ namespace ComposeVR {
             plug.ConnectedCord = this;
 
             if (plug.IsPluggedIn()) {
-                if (plug.DestinationJack.GetComponent<PhysicalDataInput>() != null) {
+                if (plug.DestinationReceptacle.GetComponent<PhysicalDataInput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = -1;
                     }
                     else {
                         Flow = 1;
                     }
-                }else if (plug.DestinationJack.GetComponent<PhysicalDataOutput>() != null) {
+                }else if (plug.DestinationReceptacle.GetComponent<PhysicalDataOutput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = 1;
                     }
@@ -467,8 +467,8 @@ namespace ComposeVR {
         /// <param name="reverseFlow"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<PlugSocket> GetConnectedJacks(bool reverseFlow, Transform searchStartNode) {
-            HashSet<PlugSocket> results = new HashSet<PlugSocket>();
+        public HashSet<PlugReceptacle> GetConnectedReceptacles(bool reverseFlow, Transform searchStartNode) {
+            HashSet<PlugReceptacle> results = new HashSet<PlugReceptacle>();
 
             float workingFlow = Flow; 
             if (reverseFlow) {
@@ -477,53 +477,53 @@ namespace ComposeVR {
 
             if (workingFlow > 0 && !B.Equals(searchStartNode)) {
                 BranchHandle handleB = B.GetComponent<BranchHandle>();
-                results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleB));
+                results.UnionWith(GetReceptaclesConnectedToHandle(reverseFlow, handleB));
 
                 Plug plugB = B.GetComponentInActor<Plug>();
-                PlugSocket connectedJack = GetJackConnectedToPlug(plugB);
+                PlugReceptacle connectedReceptacle = GetConnectedReceptacle(plugB);
 
-                if(connectedJack != null) {
-                    results.Add(connectedJack);
+                if(connectedReceptacle != null) {
+                    results.Add(connectedReceptacle);
                 }
             }
             else if(workingFlow < 0 && !A.Equals(searchStartNode)){
                 BranchHandle handleA = A.GetComponent<BranchHandle>();
-                results.UnionWith(GetJacksConnectedToHandle(reverseFlow, handleA));
+                results.UnionWith(GetReceptaclesConnectedToHandle(reverseFlow, handleA));
 
                 Plug plugA = A.GetComponentInActor<Plug>();
-                PlugSocket connectedJack = GetJackConnectedToPlug(plugA);
+                PlugReceptacle connectedReceptacle = GetConnectedReceptacle(plugA);
 
-                if(connectedJack != null) {
-                    results.Add(connectedJack);
+                if(connectedReceptacle != null) {
+                    results.Add(connectedReceptacle);
                 }
             }
 
             return results;
         }
 
-        private HashSet<PlugSocket> GetJacksConnectedToHandle(bool reverseFlow, BranchHandle handle) {
-            HashSet<PlugSocket> results = new HashSet<PlugSocket>();
+        private HashSet<PlugReceptacle> GetReceptaclesConnectedToHandle(bool reverseFlow, BranchHandle handle) {
+            HashSet<PlugReceptacle> results = new HashSet<PlugReceptacle>();
             if(handle != null) {
                 CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
                 Transform other = downstreamJunctionNode.Cord.GetOppositeEnd(downstreamJunctionNode.transform);
 
-                results.UnionWith(GetJacksConnectedToNode(reverseFlow, downstreamJunctionNode));
+                results.UnionWith(GetReceptaclesConnectedToNode(reverseFlow, downstreamJunctionNode));
 
                 CordNode branchNode = handle.BranchNode;
-                results.UnionWith(GetJacksConnectedToNode(reverseFlow, branchNode));
+                results.UnionWith(GetReceptaclesConnectedToNode(reverseFlow, branchNode));
             }
 
             return results;
         }
 
-        private HashSet<PlugSocket> GetJacksConnectedToNode(bool reverseFlow, CordNode node) {
-            return node.Cord.GetConnectedJacks(reverseFlow, node.transform);
+        private HashSet<PlugReceptacle> GetReceptaclesConnectedToNode(bool reverseFlow, CordNode node) {
+            return node.Cord.GetConnectedReceptacles(reverseFlow, node.transform);
         }
 
-        private PlugSocket GetJackConnectedToPlug(Plug plug) {
+        private PlugReceptacle GetConnectedReceptacle(Plug plug) {
             if(plug != null) {
                 if (plug.IsPluggedIn()) {
-                    return plug.DestinationJack;
+                    return plug.DestinationReceptacle;
                 }
             }
             return null;

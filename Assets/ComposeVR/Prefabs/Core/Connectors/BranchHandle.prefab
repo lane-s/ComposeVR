@@ -145,7 +145,7 @@ MonoBehaviour:
   CordPrefab: {fileID: 4796985893594418, guid: 7f762a0c541fada428a5c118dee6f05d, type: 2}
   ShowDistanceSquared: 0.0375
   SnapSpeed: 1
-  ClosestBranchPointToEnd: 10
+  ClosestBranchPointToEnd: 3
 --- !u!114 &114710451627392906
 MonoBehaviour:
   m_ObjectHideFlags: 1
