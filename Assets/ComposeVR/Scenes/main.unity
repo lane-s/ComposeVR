@@ -10622,7 +10622,8 @@ MonoBehaviour:
   _useExplicitConnection: 1
   _explicitConnection: {fileID: 392492853}
   _drawDefaultInspector: 1
-  _myOSCConnections: []
+  _myOSCConnections:
+  - {fileID: 392492853}
 --- !u!4 &778660830
 Transform:
   m_ObjectHideFlags: 0
@@ -13135,7 +13136,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LastNoteSelected: 60
   NoteColors: {fileID: 11400000, guid: bdb18bd807d3f4040871e30e3468e171, type: 2}
-  NoteArrangements: {fileID: 11400000, guid: 9e8eda8a3a3cd8541a26fe39fd2b7074, type: 2}
 --- !u!1 &934981563
 GameObject:
   m_ObjectHideFlags: 0

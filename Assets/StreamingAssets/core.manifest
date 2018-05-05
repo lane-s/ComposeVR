@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 815730417
+CRC: 3436890374
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8c1ef6cd619016cb654b0986da57fa7e
+    Hash: feed5f944305008d7b2b0a98af2d94ab
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e2fee56d6c21eff944c02a3e34fea722
+    Hash: a944a416665353227c329c8c0caa80bd
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -28,8 +28,6 @@ ClassTypes:
 - Class: 54
   Script: {instanceID: 0}
 - Class: 65
-  Script: {instanceID: 0}
-- Class: 114
   Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
@@ -54,9 +52,9 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: bca7dadcc5b3e56428a2a22c9189166a, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 5982102e1cf606d40a08172f3c6c75c4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0b6d484ef48b12545899bed761193670, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 135
@@ -65,7 +63,6 @@ Assets:
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Chromatic.asset
 - Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteOrb.prefab
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Zieverink.asset
-- Assets/ComposeVR/ScriptableObjects/DefaultCoreArrangements.asset
 - Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteCore.prefab
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Scriabin.asset
 Dependencies: []

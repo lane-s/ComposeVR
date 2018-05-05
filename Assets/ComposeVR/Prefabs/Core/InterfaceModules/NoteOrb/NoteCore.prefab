@@ -94,10 +94,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87123092e0f24f1418ed74d994a8db6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeEnoughDistance: 0.01
+  closeEnoughDistance: 0.015
   carryTimeBetweenSnaps: 0
   HasReachedTarget: 0
-  UseLocalPosition: 0
+  UseLocalPosition: 1
 --- !u!114 &114857360120579854
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TargetScale: {x: 0.1046355, y: 0.1046355, z: 0.1046355}
-  Smooth: 8
+  Smooth: 11.8
   CloseEnoughScale: 0.001
 --- !u!114 &114918036035187314
 MonoBehaviour:

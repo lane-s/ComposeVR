@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRTK;
 
@@ -80,8 +81,16 @@ namespace ComposeVR {
             
         private bool onCooldown = false;
         private const float cooldownTime = 0.3f;
+
         private float baseShellEmissionGain;
         private Color baseShellColor;
+
+        const float FULL_ORB_CORE_RADIUS = 0.1147263f;
+        private Vector3 fullCoreScale;
+        private Vector3 initialCoreScale;
+
+        private Transform coreContainer;
+        private Transform coreContainerLowerBound;
 
         void Awake() {
             output = GetComponentInChildren<PhysicalDataOutput>();
@@ -96,7 +105,13 @@ namespace ComposeVR {
 
             foreignCores = new Dictionary<NoteOrb, List<NoteCore>>();
 
-            NoteCore initialCore = transform.Find("Core").GetComponent<NoteCore>();
+            coreContainer = transform.Find("Cores");
+            coreContainerLowerBound = coreContainer.Find("LowerBound");
+
+            NoteCore initialCore = coreContainer.Find("InitialCore").GetComponent<NoteCore>();
+            initialCoreScale = initialCore.transform.localScale;
+            fullCoreScale = new Vector3(FULL_ORB_CORE_RADIUS, FULL_ORB_CORE_RADIUS, FULL_ORB_CORE_RADIUS);
+
             noteCores = new List<NoteCore>();
             noteCores.Add(initialCore);
 
@@ -142,6 +157,7 @@ namespace ComposeVR {
             }
 
             //Destroy the orb if there are no selected notes/cores remaining
+            
             if(noteCores.Count == 0) {
                 if(SelfDestruct != null) {
                     SelfDestruct(this, defaultSelfDestructArgs);
@@ -480,7 +496,7 @@ namespace ComposeVR {
             foreignCores.Add(foreignOrb, coresCopy);
 
             for(int i = 0; i < foreignOrbCores.Count; i++) {
-                foreignOrbCores[i].transform.SetParent(transform);
+                foreignOrbCores[i].transform.SetParent(coreContainer);
                 noteCores.Add(foreignOrbCores[i]);
                 selectedNotes.Add(foreignOrbCores[i].Note);
             }
@@ -499,11 +515,24 @@ namespace ComposeVR {
                 return;
             }
 
-            NoteCoreArrangement arrangement = ComposeVRManager.Instance.NoteArrangements.GetArrangement(noteCores.Count);
-            for(int i = 0; i < noteCores.Count; i++) {
-                noteCores[i].SetPosition(arrangement.corePositions[i]);
-                noteCores[i].SetScale(arrangement.coreScale);
+            if(noteCores.Count == 1) {
+                noteCores[0].SetPosition(new Vector3(coreContainerLowerBound.localPosition.x, 0, coreContainerLowerBound.localPosition.z));
+                noteCores[0].SetScale(initialCoreScale);
+                return;
             }
+
+            Vector3 coreScale = fullCoreScale / noteCores.Count;
+
+            List<NoteCore> noteOrder = noteCores.OrderBy(core => core.Note).ToList();
+
+            for(int i = 0; i < noteCores.Count; i++) {
+                noteOrder[i].SetPosition(GetCorePosition(i, coreScale));
+                noteOrder[i].SetScale(coreScale);
+            }
+        }
+
+        private Vector3 GetCorePosition(int coreIndex, Vector3 coreScale) {
+            return coreContainerLowerBound.localPosition + new Vector3(0, coreScale.y / 2 + coreIndex * coreScale.y, 0);
         }
 
         private void OnForeignOrbSelfDestruct(object sender, EventArgs args) {

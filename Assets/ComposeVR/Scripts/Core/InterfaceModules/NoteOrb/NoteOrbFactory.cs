@@ -36,7 +36,7 @@ namespace ComposeVR {
             NoteOrb copy = DefaultNoteOrb(sourceOrb.transform.position, sourceOrb.transform.rotation);
             copy.transform.localScale = sourceOrb.transform.localScale;
 
-            Object.Destroy(copy.transform.Find("Core").gameObject);
+            Object.Destroy(copy.transform.Find("Cores").Find("InitialCore").gameObject);
             copy.NoteCores.Clear();
             copy.SelectedNotes.Clear();
 

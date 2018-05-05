@@ -6,7 +6,6 @@ namespace ComposeVR {
     public class ComposeVRManager : SingletonObject<ComposeVRManager> {
         public int LastNoteSelected = 60;
         public NoteColorScheme NoteColors;
-        public NoteCoreArrangementScheme NoteArrangements;
 
         private DeviceBrowserObject browserObject;
         private NoteSelector noteSelector;
