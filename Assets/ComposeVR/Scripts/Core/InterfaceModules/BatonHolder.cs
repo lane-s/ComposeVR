@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace ComposeVR {
     public class BatonHolder : MonoBehaviour {
-
         public Baton baton;
     }
 }

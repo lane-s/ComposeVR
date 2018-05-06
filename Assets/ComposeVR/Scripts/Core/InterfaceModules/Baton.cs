@@ -35,7 +35,8 @@ namespace ComposeVR {
             if (vel < minVelocity)
                 return 0;
 
-            return (int)Mathf.Clamp(vel.Remap(minVelocity, maxVelocity, 1, 127), 0, 127);
+            Debug.Log(vel);
+            return (int)Mathf.Clamp(vel.Remap(minVelocity, maxVelocity, 20, 127), 20, 127);
         }
 
         IEnumerator cooldown() {

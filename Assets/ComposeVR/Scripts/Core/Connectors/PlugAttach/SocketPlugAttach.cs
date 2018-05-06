@@ -34,7 +34,6 @@ namespace ComposeVR {
 
             snapToSocketRoutine = SnapToSocket();
             StartCoroutine(snapToSocketRoutine);
-            Debug.Log("Plug locked");
         }
 
         protected override void UnlockPlug() {

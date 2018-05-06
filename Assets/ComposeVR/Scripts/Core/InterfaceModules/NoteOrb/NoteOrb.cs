@@ -318,12 +318,12 @@ namespace ComposeVR {
 
                     VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
                     if (!collidingControllers.Contains(controllerReference)) {
-                        if (owner.GetComponent<VRTK_ControllerEvents>().triggerPressed) {
-                            OrbOnFromControllerEnter(baton.GetVelocity(), controllerReference);
+                        if (owner.GetComponent<ControllerNoteTrigger>().TriggerIsPressed()) {
+                            OrbOnFromControllerEnter(owner.GetComponent<ControllerNoteTrigger>().GetNoteVelocity(), controllerReference);
                         }
 
-                        owner.GetComponent<VRTK_ControllerEvents>().TriggerPressed += OnControllerTriggerPressed;
-                        owner.GetComponent<VRTK_ControllerEvents>().TriggerReleased += OnControllerTriggerReleased;
+                        owner.GetComponent<ControllerNoteTrigger>().NoteTriggered += OnControllerTriggerPressed;
+                        owner.GetComponent<ControllerNoteTrigger>().NoteReleased += OnControllerTriggerReleased;
 
                         collidingControllers.Add(controllerReference);
                     }
@@ -343,8 +343,8 @@ namespace ComposeVR {
                     if (collidingControllers.Contains(controllerReference)) {
                         collidingControllers.Remove(controllerReference);
 
-                        actor.GetComponent<VRTK_ControllerEvents>().TriggerPressed -= OnControllerTriggerPressed; 
-                        actor.GetComponent<VRTK_ControllerEvents>().TriggerReleased -= OnControllerTriggerReleased; 
+                        actor.GetComponent<ControllerNoteTrigger>().NoteTriggered -= OnControllerTriggerPressed; 
+                        actor.GetComponent<ControllerNoteTrigger>().NoteReleased -= OnControllerTriggerReleased; 
 
                         OrbOffFromControllerExit(controllerReference);
                         if(selectedNotes.Count > 0) {
@@ -414,13 +414,18 @@ namespace ComposeVR {
             output.SendData(data);
         }
 
-        private void OnControllerTriggerPressed(object sender, ControllerInteractionEventArgs e) {
-            int velocity = e.controllerReference.scriptAlias.GetComponent<MIDINoteVelocityDetector>().GetNoteVelocity();
-            OrbOnFromControllerEnter(velocity, e.controllerReference);
+        private void OnControllerTriggerPressed(object sender, NoteTriggerEventArgs e) {
+            ControllerNoteTrigger noteTrigger = sender as ControllerNoteTrigger;
+            VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(noteTrigger.gameObject);
+
+            OrbOnFromControllerEnter(e.Velocity, controllerReference);
         }
 
-        private void OnControllerTriggerReleased(object sender, ControllerInteractionEventArgs e) {
-            OrbOffFromControllerExit(e.controllerReference);
+        private void OnControllerTriggerReleased(object sender, EventArgs e) {
+            ControllerNoteTrigger noteTrigger = sender as ControllerNoteTrigger;
+            VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(noteTrigger.gameObject);
+
+            OrbOffFromControllerExit(controllerReference);
         }
 
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
