@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlugMagnetSphere : MonoBehaviour {
+public class PointerDetector : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

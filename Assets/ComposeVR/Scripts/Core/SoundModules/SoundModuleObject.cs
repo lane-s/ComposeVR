@@ -36,6 +36,7 @@ namespace ComposeVR {
             if (!isPlaced) {
                 InitializeFaderSystem();
                 GetComponentInChildren<CordDispenser>().enabled = true;
+                GetComponentInChildren<PointerBlocker>().Blocking = false;
                 Module.Initialize();
                 isPlaced = true;
             } 

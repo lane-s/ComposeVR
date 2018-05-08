@@ -18,7 +18,6 @@ namespace ComposeVR {
         private ISoundModule Module;
 
         public void Initialize() {
-            Debug.Log("moduel init");
             //Register with the router
             Register();
 

@@ -448,13 +448,13 @@ namespace ComposeVR {
         ConnectedDataEndpoints GetDataEndpointsConnectedByHandle() {
             bool branchFlowsIntoJunction = branchNode.Cord.EndNode.Equals(transform) ? branchNode.Cord.Flow > 0 : branchNode.Cord.Flow < 0;
 
-            HashSet<PlugReceptacle> receptaclesConnectedToBranch = branchNode.Cord.GetConnectedReceptacles(branchFlowsIntoJunction, transform);
-            HashSet<PlugReceptacle> receptaclesConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedReceptacles(!branchFlowsIntoJunction, transform);
+            HashSet<PhysicalDataEndpoint> receptaclesConnectedToBranch = branchNode.Cord.GetConnectedReceptacles(branchFlowsIntoJunction, transform);
+            HashSet<PhysicalDataEndpoint> receptaclesConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedReceptacles(!branchFlowsIntoJunction, transform);
 
             HashSet<IPhysicalDataInput> connectedInputs = new HashSet<IPhysicalDataInput>();
             List<PhysicalDataOutput> outputs = new List<PhysicalDataOutput>();
 
-            foreach(PlugReceptacle receptacle in receptaclesConnectedToBranch) {
+            foreach(PhysicalDataEndpoint receptacle in receptaclesConnectedToBranch) {
                 PhysicalDataOutput output = receptacle.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);
@@ -468,7 +468,7 @@ namespace ComposeVR {
 
             }
 
-            foreach(PlugReceptacle receptacle in receptaclesConnectedToJunction) {
+            foreach(PhysicalDataEndpoint receptacle in receptaclesConnectedToJunction) {
                 PhysicalDataOutput output = receptacle.GetComponent<PhysicalDataOutput>();
                 if(output != null) {
                     outputs.Add(output);

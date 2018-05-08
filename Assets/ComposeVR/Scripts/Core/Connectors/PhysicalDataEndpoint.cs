@@ -28,7 +28,7 @@ namespace ComposeVR {
     /// 
     /// They detect nearby Plugs and pass them on to a sibling PlugAttach component if one is present
     /// </summary>
-    public class PlugReceptacle : MonoBehaviour {
+    public class PhysicalDataEndpoint : MonoBehaviour {
 
         public EventHandler<PhysicalConnectionEventArgs> PlugConnected;
         public EventHandler<PhysicalConnectionEventArgs> PlugDisconnected;

@@ -5,7 +5,7 @@ using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
-    public sealed class SocketPlugAttach : PlugAttach {
+    public sealed class SocketPlugReceptacle : PlugReceptacle {
 
         [Tooltip("The positon and rotation of the plug when it is plugged all the way into this socket")]
         public Transform PlugConnectionPoint;

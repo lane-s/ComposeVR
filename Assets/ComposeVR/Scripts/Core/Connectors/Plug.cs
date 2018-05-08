@@ -9,7 +9,7 @@ namespace ComposeVR {
     [RequireComponent(typeof(CordFollower))]
     public sealed class Plug : MonoBehaviour {
 
-        public PlugReceptacle DestinationReceptacle;
+        public PhysicalDataEndpoint DestinationReceptacle;
 
         public float SnapToHandSpeed = 20.0f;
 
@@ -160,7 +160,7 @@ namespace ComposeVR {
             }
         }
 
-        public void ConnectToReceptacle(PlugReceptacle receptacle) {
+        public void ConnectToReceptacle(PhysicalDataEndpoint receptacle) {
             DestinationReceptacle = receptacle;
 
             float flow = 1;

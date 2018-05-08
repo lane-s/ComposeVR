@@ -13,14 +13,14 @@ namespace ComposeVR {
 
         void Awake() {
             connectedInputs = new HashSet<IPhysicalDataInput>();
-            GetComponent<PlugReceptacle>().PlugConnected += OnPlugConnected;
-            GetComponent<PlugReceptacle>().PlugDisconnected += OnPlugDisconnected;
+            GetComponent<PhysicalDataEndpoint>().PlugConnected += OnPlugConnected;
+            GetComponent<PhysicalDataEndpoint>().PlugDisconnected += OnPlugDisconnected;
         }
 
         private void OnPlugConnected(object sender, PhysicalConnectionEventArgs e) {
 
-            HashSet<PlugReceptacle> connectedInputJacks = e.ConnectedCord.GetConnectedReceptacles(false, e.PlugNodeInCord);
-            foreach(PlugReceptacle j in connectedInputJacks) {
+            HashSet<PhysicalDataEndpoint> connectedInputJacks = e.ConnectedCord.GetConnectedReceptacles(false, e.PlugNodeInCord);
+            foreach(PhysicalDataEndpoint j in connectedInputJacks) {
                 connectedInputs.UnionWith(j.GetComponent<PhysicalDataInput>().GetConnectedInputs());
             }
         }

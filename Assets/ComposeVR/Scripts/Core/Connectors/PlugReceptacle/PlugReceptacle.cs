@@ -7,8 +7,8 @@ namespace ComposeVR {
     /// <summary>
     /// Subclasses of PlugAttach should define some mechanism for snapping a Plug to a PlugReceptacle 
     /// </summary>
-    [RequireComponent(typeof(PlugReceptacle))]
-    public abstract class PlugAttach : MonoBehaviour {
+    [RequireComponent(typeof(PhysicalDataEndpoint))]
+    public abstract class PlugReceptacle : MonoBehaviour {
         private Plug _lockedPlug;
         public Plug LockedPlug {
             get {
@@ -38,12 +38,12 @@ namespace ComposeVR {
         public SimpleTrigger PlugDetector;
 
         protected VRTK_InteractGrab lockedPlugGrabber;
-        protected PlugReceptacle plugReceptacle;
+        protected PhysicalDataEndpoint plugReceptacle;
 
         private List<Plug> nearbyPlugs;
 
         protected virtual void Awake() {
-            plugReceptacle = GetComponent<PlugReceptacle>();
+            plugReceptacle = GetComponent<PhysicalDataEndpoint>();
             nearbyPlugs = new List<Plug>();
                 
             if (PlugDetector) {
