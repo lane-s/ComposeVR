@@ -9,7 +9,7 @@ namespace ComposeVR {
         private static GameObject OrbPrefab {
             get {
                if(_orbPrefab == null) {
-                    _orbPrefab = AssetLoader.GetCoreAssetBundle().LoadAsset<GameObject>("NoteOrb");
+                    _orbPrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteOrb");
                 }
 
                 return _orbPrefab;
@@ -20,7 +20,7 @@ namespace ComposeVR {
         private static GameObject CorePrefab {
             get {
                if(_corePrefab == null) {
-                    _corePrefab = AssetLoader.GetCoreAssetBundle().LoadAsset<GameObject>("NoteCore");
+                    _corePrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteCore");
                 }
 
                 return _corePrefab;

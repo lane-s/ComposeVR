@@ -9,7 +9,7 @@ public class SoundModuleMenu : MonoBehaviour {
     public event EventHandler<EventArgs> MenuClosed;
 
     private void Awake() {
-        Display(false);
+        Display(true);
     }
 
     public void OnChangeInstrumentButtonClicked() {
@@ -29,10 +29,6 @@ public class SoundModuleMenu : MonoBehaviour {
         }
     }
 
-    public void OnCloseButtonClicked() {
-        Display(false);
-    }
-
     public void OnMenuClosed() {
         if (MenuClosed != null) {
             MenuClosed(this, new EventArgs());
@@ -41,7 +37,5 @@ public class SoundModuleMenu : MonoBehaviour {
 
     public void Display(bool display) {
         OnMenuClosed();
-
-        transform.GetChild(0).gameObject.SetActive(display);
     }
 }

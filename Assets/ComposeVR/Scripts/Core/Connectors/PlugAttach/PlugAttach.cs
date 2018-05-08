@@ -92,7 +92,6 @@ namespace ComposeVR {
 
                 //If the plug attachLock was held by the PlugAttach, release it
                 if (p.Equals(LockedPlug) && !p.IsPluggedIn()) {
-                    Debug.Log("Plug unlocked from trigger exit");
                     UnlockPlug();
                 }
             }

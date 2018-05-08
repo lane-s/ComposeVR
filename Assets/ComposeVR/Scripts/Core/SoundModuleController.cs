@@ -15,7 +15,7 @@ namespace ComposeVR {
         }
 
         public SoundModuleConfiguration Config;
-        private IModule Module;
+        private ISoundModule Module;
 
         public void Initialize() {
             Debug.Log("moduel init");
@@ -32,9 +32,7 @@ namespace ComposeVR {
 
         private void RequestMenu() {
             Debug.Log("Sound module menu requested");
-            Module.PositionModuleMenu();
             SoundModuleMenu menu = Module.GetModuleMenu();
-            menu.Display(true);
             menu.MenuClosed += OnMenuClosed;
             menu.ChangeInstrumentButtonClicked += OnChangeInstrumentButtonClicked;
             menu.LoadPresetButtonClicked += OnLoadPresetButtonClicked;
@@ -58,7 +56,7 @@ namespace ComposeVR {
             RequestBrowser("Instrument", "", 0, true, true);
         }
 
-        public void SetController(IModule controller) {
+        public void SetController(ISoundModule controller) {
             this.Module = controller;
         }
 

@@ -10,7 +10,7 @@ namespace ComposeVR {
     /// Sound Modules contain samples or virtual instruments
     /// </summary>
     [RequireComponent(typeof(VRTK_InteractableObject))]
-    public sealed class SoundModuleObject : MonoBehaviour, IModule {
+    public sealed class SoundModuleObject : MonoBehaviour, ISoundModule {
 
         public Transform FaderSystemPrefab;
         public SoundModuleController Module;
@@ -97,7 +97,7 @@ namespace ComposeVR {
             gainDisplay.text = gainText;
         }
 
-        void IModule.PositionBrowser() {
+        void ISoundModule.PositionBrowser() {
             DeviceBrowserObject browser = ComposeVRManager.Instance.DeviceBrowserObject;
 
             //Position browser above module
@@ -108,35 +108,25 @@ namespace ComposeVR {
             browser.transform.rotation = Quaternion.Euler(browser.transform.rotation.eulerAngles.x, lookAtPlayer.eulerAngles.y, browser.transform.rotation.eulerAngles.z);
         }
 
-        void IModule.PositionModuleMenu() {
-            SoundModuleMenu menu = ComposeVRManager.Instance.SoundModuleMenu;
-
-            menu.transform.position = transform.position + Vector3.up * Module.Config.moduleMenuYOffset;
-
-            Quaternion lookAtPlayer = Quaternion.LookRotation(menu.transform.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
-            menu.transform.rotation = Quaternion.Euler(menu.transform.rotation.eulerAngles.x, lookAtPlayer.eulerAngles.y, menu.transform.rotation.eulerAngles.z);
-        }
-
-        DeviceBrowserController IModule.GetBrowserController() {
+        DeviceBrowserController ISoundModule.GetBrowserController() {
             return ComposeVRManager.Instance.DeviceBrowserObject.Controller;
         }
 
-        ComposeVROSCEventDispatcher IModule.GetOSCEventDispatcher() {
+        ComposeVROSCEventDispatcher ISoundModule.GetOSCEventDispatcher() {
             return ComposeVRManager.Instance.OSCEventDispatcher;
         }
 
-        PhysicalDataInput IModule.GetInputJack() {
+        PhysicalDataInput ISoundModule.GetInputJack() {
             return input;
         }
 
-        SoundModuleMenu IModule.GetModuleMenu() {
+        SoundModuleMenu ISoundModule.GetModuleMenu() {
             return ComposeVRManager.Instance.SoundModuleMenu;
         }
     }
 
-    public interface IModule {
+    public interface ISoundModule {
         void PositionBrowser();
-        void PositionModuleMenu();
         DeviceBrowserController GetBrowserController();
         ComposeVROSCEventDispatcher GetOSCEventDispatcher();
         PhysicalDataInput GetInputJack();

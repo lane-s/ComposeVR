@@ -7,8 +7,9 @@ namespace ComposeVR {
 
     public static class AssetLoader {
         private static AssetBundle coreAssetBundle;
+        private static Dictionary<string, Object> coreAssets;
 
-        public static AssetBundle GetCoreAssetBundle() {
+        public static AssetBundle LoadCoreAssetBundle() {
             if(coreAssetBundle != null) {
                 return coreAssetBundle;
             }
@@ -18,8 +19,9 @@ namespace ComposeVR {
                 Debug.LogError("Can't load core assets");
             }
 
+
             return coreAssetBundle;
         }
-    
+
     }
 }

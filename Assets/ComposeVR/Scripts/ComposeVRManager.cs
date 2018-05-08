@@ -63,7 +63,7 @@ namespace ComposeVR {
 
         // Use this for initialization
         void Awake() {
-            AssetLoader.GetCoreAssetBundle();
+            AssetLoader.LoadCoreAssetBundle();
         }
 
         public string GetNewHandlerID() {

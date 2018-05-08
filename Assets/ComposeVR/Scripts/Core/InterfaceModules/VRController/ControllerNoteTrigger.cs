@@ -104,7 +104,7 @@ namespace ComposeVR {
         }
 
         private int GetNoteVelocityFromTriggerPos(float triggerPos) {
-            return (int)triggerPos.Remap(IgnoreTriggerThreshold, 1.0f, 35, 120);
+            return (int)triggerPos.Remap(IgnoreTriggerThreshold, 1.0f, 45, 120);
         }
 
         public int GetNoteVelocity() {
