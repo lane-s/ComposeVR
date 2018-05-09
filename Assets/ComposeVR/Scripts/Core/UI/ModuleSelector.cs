@@ -31,11 +31,13 @@ namespace ComposeVR {
             OnModuleDeselected();
 
             selectedModule = selected;
+            selectedModule.Selected = true;
             SoundModuleMenu.OnModuleSelected(selectedModule);
         }
 
         private void OnModuleDeselected() {
             if(selectedModule != null) {
+                selectedModule.Selected = false;
                 SoundModuleMenu.OnModuleDeselected();
                 selectedModule = null;
             }
