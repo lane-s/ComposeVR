@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114143391533786518}
   - component: {fileID: 135858767354311850}
   - component: {fileID: 114620639719833418}
+  - component: {fileID: 114421103069163854}
   m_Layer: 13
   m_Name: Plug
   m_TagString: Untagged
@@ -222,17 +223,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff02081943a6fdf47a7057e1e7e35172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DestinationJack: {fileID: 0}
-  AutoPlugDistance: 0.15
-  MaxHandSeparationBeforeUnsnap: 0.14
-  MaxJackDistanceBeforeUnsnap: 0.2
-  SmallestAllowedInitialDistanceFromJack: 0.17
+  DestinationEndpoint: {fileID: 0}
   SnapToHandSpeed: 1.5
-  SnapCooldownTime: 0.15
-  JackSnapSpeed: 0.2
-  RotationSnapSpeed: 600
   PlugTransform: {fileID: 4837514403879456}
   CordAttachPoint: {fileID: 4780208642896398}
+--- !u!114 &114421103069163854
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417998939927070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87123092e0f24f1418ed74d994a8db6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  closeEnoughDistance: 0.01
+  carryTimeBetweenSnaps: 0
+  HasReachedTarget: 0
+  UseLocalPosition: 0
 --- !u!114 &114487102969827112
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -247,6 +256,7 @@ MonoBehaviour:
   closeEnoughDistance: 0.01
   carryTimeBetweenSnaps: 0
   HasReachedTarget: 0
+  UseLocalPosition: 0
 --- !u!114 &114549354904918792
 MonoBehaviour:
   m_ObjectHideFlags: 1

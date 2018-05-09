@@ -200,6 +200,7 @@ namespace ComposeVR {
                     StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 
+                    Debug.Log("Forcing secondary plug lock");
                     GetComponent<SocketPlugReceptacle>().ForcePlugLockAndConnect(secondaryPlug);
 
                     CreateCord();
@@ -225,29 +226,30 @@ namespace ComposeVR {
         }
 
         private IEnumerator ExtendPlug(Plug p, Vector3 target) {
+            Debug.Log("Extending plug: " + p.name);
             p.gameObject.SetActive(true);
             p.transform.position = PlugStart.position;
             p.transform.rotation = PlugStart.rotation;
             p.PlugTransform.position = PlugStart.position;
             p.PlugTransform.rotation = PlugStart.rotation;
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
+            p.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 
-            while (!p.PlugTransform.GetComponent<SnapToTargetPosition>().HasReachedTarget) {
-                p.ResetPlugTransform();
+            while (!p.GetComponent<SnapToTargetPosition>().HasReachedTarget) {
                 yield return new WaitForEndOfFrame();
             }
+            Debug.Log("Finished extending: " + p.name);
         }
 
         private IEnumerator RetractPlug(Plug p) {
 
-            p.PlugTransform.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
+            p.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
 
-            while (!p.PlugTransform.GetComponent<SnapToTargetPosition>().HasReachedTarget) {
+            while (!p.GetComponent<SnapToTargetPosition>().HasReachedTarget) {
                 yield return new WaitForEndOfFrame();
             }
 
