@@ -448,8 +448,8 @@ namespace ComposeVR {
         ConnectedDataEndpoints GetDataEndpointsConnectedByHandle() {
             bool branchFlowsIntoJunction = branchNode.Cord.EndNode.Equals(transform) ? branchNode.Cord.Flow > 0 : branchNode.Cord.Flow < 0;
 
-            HashSet<PhysicalDataEndpoint> receptaclesConnectedToBranch = branchNode.Cord.GetConnectedReceptacles(branchFlowsIntoJunction, transform);
-            HashSet<PhysicalDataEndpoint> receptaclesConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedReceptacles(!branchFlowsIntoJunction, transform);
+            HashSet<PhysicalDataEndpoint> receptaclesConnectedToBranch = branchNode.Cord.GetConnectedEndpoints(branchFlowsIntoJunction, transform);
+            HashSet<PhysicalDataEndpoint> receptaclesConnectedToJunction = GetDownstreamJunctionNode(!branchFlowsIntoJunction).Cord.GetConnectedEndpoints(!branchFlowsIntoJunction, transform);
 
             HashSet<IPhysicalDataInput> connectedInputs = new HashSet<IPhysicalDataInput>();
             List<PhysicalDataOutput> outputs = new List<PhysicalDataOutput>();

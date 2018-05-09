@@ -19,7 +19,7 @@ namespace ComposeVR {
 
         private void OnPlugConnected(object sender, PhysicalConnectionEventArgs e) {
 
-            HashSet<PhysicalDataEndpoint> connectedInputJacks = e.ConnectedCord.GetConnectedReceptacles(false, e.PlugNodeInCord);
+            HashSet<PhysicalDataEndpoint> connectedInputJacks = e.ConnectedCord.GetConnectedEndpoints(false, e.PlugNodeInCord);
             foreach(PhysicalDataEndpoint j in connectedInputJacks) {
                 connectedInputs.UnionWith(j.GetComponent<PhysicalDataInput>().GetConnectedInputs());
             }

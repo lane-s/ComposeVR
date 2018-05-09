@@ -12,7 +12,7 @@ namespace ComposeVR {
         public SimpleTrigger ControllerDetectorPrefab;
 
         public Transform PlugStart;
-        public Transform SecondaryPlugTarget;
+        public Transform PlugConnectionPoint;
 
         public SimpleTrigger BlockerDetector;
         public Transform ControllerDetectorVolume;
@@ -130,12 +130,12 @@ namespace ComposeVR {
         /// </summary>
         private void CreateCord() {
             primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation);
+            primaryPlug.name = "Primary";
+
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation);
+            secondaryPlug.name = "Secondary";
 
             secondaryPlug.transform.SetParent(PlugStart);
-            secondaryPlug.ShrinkCollider();
-
-            secondaryPlug.DestinationReceptacle = GetComponent<PhysicalDataEndpoint>();
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
@@ -196,10 +196,11 @@ namespace ComposeVR {
 
             while (state == State.WaitingForGrab) {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
-                    StartCoroutine(ExtendPlug(secondaryPlug, SecondaryPlugTarget.position));
-                    secondaryPlug.DestinationReceptacle = GetComponent<PhysicalDataEndpoint>();
 
+                    StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
+
+                    GetComponent<SocketPlugReceptacle>().ForcePlugLockAndConnect(secondaryPlug);
 
                     CreateCord();
                     state = State.Blocked;
@@ -235,9 +236,9 @@ namespace ComposeVR {
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 
             while (!p.PlugTransform.GetComponent<SnapToTargetPosition>().HasReachedTarget) {
+                p.ResetPlugTransform();
                 yield return new WaitForEndOfFrame();
             }
-
         }
 
         private IEnumerator RetractPlug(Plug p) {

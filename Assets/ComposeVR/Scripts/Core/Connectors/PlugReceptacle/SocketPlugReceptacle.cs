@@ -24,16 +24,21 @@ namespace ComposeVR {
         private SnapToTargetRotation rotationSnap;
         private IEnumerator snapToSocketRoutine;
 
+        private const float PLUG_SNAP_OFFSET = 0.025f;
+
         protected override void OnPlugLocked() {
-            if (GetComponent<CordDispenser>()) {
-                GetComponent<CordDispenser>().Block();
-            }
 
             positionSnap = LockedPlug.PlugTransform.GetComponent<SnapToTargetPosition>();
             rotationSnap = LockedPlug.PlugTransform.GetComponent<SnapToTargetRotation>();
 
-            snapToSocketRoutine = SnapToSocket();
-            StartCoroutine(snapToSocketRoutine);
+            if(lockedPlugGrabber != null) {
+                snapToSocketRoutine = SnapToSocket();
+                StartCoroutine(snapToSocketRoutine);
+            }
+
+            if (GetComponent<CordDispenser>()) {
+                GetComponent<CordDispenser>().Block();
+            }
         }
 
         protected override void UnlockPlug() {
@@ -54,27 +59,40 @@ namespace ComposeVR {
             }
         }
 
-        protected override void OnMaxControllerSeparationExceeded() {
-            if (PlugIsLockedIntoSocket()) {
+        /// <summary>
+        /// When the grabber gets too far away from the locked plug, force it to release the plug if the plug is already plugged in, or else unlock the plug.
+        /// </summary>
+        protected override void OnMaxGrabberSeparationExceeded() {
+            if (PlugIsLockedIntoSocket() && lockedPlugGrabber != null) {
                 lockedPlugGrabber.ForceRelease();
             }
             else {
-                base.OnMaxControllerSeparationExceeded();
+                base.OnMaxGrabberSeparationExceeded();
             }
         }
 
         private bool PlugIsLockedIntoSocket() {
-            return Vector3.Distance(LockedPlug.PlugTransform.position, PlugConnectionPoint.position) < LockedIntoSocketDistance;
+            return LockedPlug.DestinationEndpoint != null || Vector3.Distance(LockedPlug.PlugTransform.position, PlugConnectionPoint.position) < LockedIntoSocketDistance;
         }
 
+        /// <summary>
+        /// If a locked plug is grabbed, that means it was already connected to the socket and is now being unplugged
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         protected override void OnLockedPlugGrabbed(object sender, InteractableObjectEventArgs args) {
             base.OnLockedPlugGrabbed(sender, args);
-            LockedPlug.DisconnectFromReceptacle();
+            LockedPlug.DisconnectFromDataEndpoint();
 
             snapToSocketRoutine = SnapToSocket();
             StartCoroutine(snapToSocketRoutine);
         }
 
+        /// <summary>
+        /// If a locked plug is released, we either automatically plug it in or unlock it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         protected override void OnLockedPlugUngrabbed(object sender, InteractableObjectEventArgs args) {
             if (InAutoPlugRange()) {
                 StartCoroutine(AutoPlugIntoTarget());
@@ -120,7 +138,7 @@ namespace ComposeVR {
             Vector3 controllerPos = lockedPlugGrabber.transform.position;
             Vector3 controllerToConnectionPoint = PlugConnectionPoint.position - controllerPos;
 
-            return controllerPosOnSocketAxis = controllerPos + controllerToConnectionPoint - Vector3.Dot(controllerToConnectionPoint, PlugConnectionPoint.forward) * PlugConnectionPoint.forward;
+            return controllerPosOnSocketAxis = controllerPos + controllerToConnectionPoint - Vector3.Dot(controllerToConnectionPoint, PlugConnectionPoint.forward) * PlugConnectionPoint.forward + PLUG_SNAP_OFFSET * PlugConnectionPoint.forward;
         }
 
         /// <summary>
@@ -134,7 +152,7 @@ namespace ComposeVR {
             float distance = (plugToSnapPoint - projectOnJackAxis).magnitude;
 
             if(distance < 0.005f) {
-                //The distance to the jack axis is small, so we don't need to snap the plug in front of the jack
+                //The distance to the socket axis is small, so we don't need to snap the plug in front of the socket
                 return true;
             }
 
@@ -153,7 +171,7 @@ namespace ComposeVR {
         }
 
         /// <summary>
-        /// Positions the plug along the jack axis until the unsnap conditions are met or the plug is let go by the user
+        /// Positions the plug along the socket axis until the unsnap conditions are met or the plug is let go by the user
         /// </summary>
         /// <returns></returns>
         private IEnumerator SnapToSocket() {
@@ -184,11 +202,11 @@ namespace ComposeVR {
         }
 
         /// <summary>
-        /// Moves the plug to the jack's connection point and connects the plug to the jack
+        /// Moves the plug to the socket's connection point and connects the plug to the socket
         /// </summary>
         /// <returns></returns>
         private IEnumerator AutoPlugIntoTarget() {
-            LockedPlug.DestinationReceptacle = plugReceptacle;
+            LockedPlug.DestinationEndpoint = plugReceptacle;
             StopSnapping();
 
             positionSnap.SnapToTarget(PlugConnectionPoint.position, 1f);
@@ -197,9 +215,32 @@ namespace ComposeVR {
                 yield return new WaitForEndOfFrame();
             }
 
-            LockedPlug.ConnectToReceptacle(plugReceptacle);
+            LockedPlug.ConnectToDataEndpoint(plugReceptacle);
             LockedPlug.transform.SetParent(PlugConnectionPoint);
             yield return null;
+        }
+
+        /// <summary>
+        /// Disregard whether the plug is grabbed or not- lock it and connect it to the socket
+        /// </summary
+        /// <param name="p"></param>
+        public void ForcePlugLockAndConnect(Plug p) {
+            if (p.AttachLock(this)) {
+
+                if(p.GetComponent<VRTK_InteractableObject>().IsGrabbed()){
+                    lockedPlugGrabber = p.GetComponent<VRTK_InteractableObject>().GetGrabbingObject().GetComponentInActor<VRTK_InteractGrab>();
+                }
+                else {
+                    lockedPlugGrabber = null;
+                }
+
+                LockedPlug = p;
+                LockedPlug.GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnLockedPlugUngrabbed;
+                LockedPlug.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnLockedPlugGrabbed;
+                
+                LockedPlug.ConnectToDataEndpoint(plugReceptacle);
+                LockedPlug.transform.SetParent(PlugConnectionPoint);
+            }
         }
     }
 }

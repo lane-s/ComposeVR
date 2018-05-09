@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ComposeVR {
+    public class BrowserEventArgs : EventArgs {
+        public string SelectedResult;
+        public bool SelectionConfirmed;
+    }
 
     [Serializable]
     public class DeviceBrowserController : RemoteEventHandler {
 
-        public event EventHandler<EventArgs> BrowserClosed;
+        public event EventHandler<BrowserEventArgs> BrowserClosed;
+        public event EventHandler<BrowserEventArgs> BrowserSelectionChanged;
 
         private IDeviceBrowser deviceBrowser;
 
@@ -18,11 +23,13 @@ namespace ComposeVR {
             public List<BrowserColumnController> FilterColumns;
             public string TargetDeviceType;
             public string CurrentDeviceType;
+            public string SelectedResult;
 
             public bool displayTagColumn;
         }
 
         private DeviceBrowserState State = new DeviceBrowserState();
+        private BrowserEventArgs browserEventArgs;
 
         public void SetDeviceBrowser(IDeviceBrowser b) {
             deviceBrowser = b;
@@ -32,6 +39,9 @@ namespace ComposeVR {
             RegisterRemoteID("browser");
             InitializeColumns();
             SetVisible(false);
+
+            browserEventArgs = new BrowserEventArgs();
+            State.SelectedResult = "";
         }
 
         private void InitializeColumns() {
@@ -51,7 +61,8 @@ namespace ComposeVR {
 
         public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn) {
             if(BrowserClosed != null) {
-                BrowserClosed(this, new EventArgs());
+                browserEventArgs.SelectedResult = State.SelectedResult;
+                BrowserClosed(this, browserEventArgs);
             }
 
             RemoteEventEmitter.Instance.CloseBrowser();
@@ -64,9 +75,11 @@ namespace ComposeVR {
             SetVisible(true);
         }
 
-        public void CloseBrowser() {
+        public void CloseBrowser(bool selectionConfirmed) {
             if(BrowserClosed != null) {
-                BrowserClosed(this, new EventArgs());
+                browserEventArgs.SelectedResult = State.SelectedResult;
+                browserEventArgs.SelectionConfirmed = selectionConfirmed;
+                BrowserClosed(this, browserEventArgs);
             }
 
             SetVisible(false);
@@ -109,6 +122,13 @@ namespace ComposeVR {
         private void OnItemSelected(object sender, ItemSelectedEventArgs e) {
             if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS) {
                 RemoteEventEmitter.Instance.SelectResult(e.SelectionIndex);
+                State.SelectedResult = e.SelectionName;
+
+                browserEventArgs.SelectedResult = e.SelectionName;
+                browserEventArgs.SelectionConfirmed = false;
+                if(BrowserSelectionChanged != null) {
+                    BrowserSelectionChanged(this, browserEventArgs);
+                }
             }
             else if(e.ColumnType == BrowserColumnController.ColumnType.FILTER) {
                 RemoteEventEmitter.Instance.SelectFilterItem(e.ColumnName, e.SelectionIndex);
@@ -128,12 +148,12 @@ namespace ComposeVR {
         }
 
         public void OnConfirmButtonClicked() {
-            CloseBrowser();
+            CloseBrowser(true);
             RemoteEventEmitter.Instance.CommitSelection(true);
         }
 
         public void OnCancelButtonClicked() {
-            CloseBrowser();
+            CloseBrowser(false);
             RemoteEventEmitter.Instance.CommitSelection(false);
         }
 

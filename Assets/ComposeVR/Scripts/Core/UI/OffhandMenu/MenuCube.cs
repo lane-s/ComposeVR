@@ -15,9 +15,12 @@ namespace ComposeVR {
         private bool rotating;
         private Quaternion targetRotation;
         private const float epsilonAngle = 1f;
+            
+        public bool PlayMode = false;
 
         private void Awake() {
             MenuControllerEvents.TouchpadAxisChanged += OnTouchpadAxisChanged;
+            MenuControllerEvents.StartMenuPressed += OnModeChange;
         }
 
         // Update is called once per frame
@@ -42,6 +45,21 @@ namespace ComposeVR {
             }else if(e.touchpadAxis.x < -AxisChangeBeforeRotate) {
                 targetRotation = transform.localRotation * Quaternion.AngleAxis(-SelectionStep * 90f, Vector3.up); 
                 rotating = true;
+            }
+        }
+
+        void OnModeChange(object sender, ControllerInteractionEventArgs e) {
+            PlayMode = !PlayMode;
+
+            if (PlayMode) {
+                for(int i = 0; i < transform.childCount; i++) {
+                    transform.GetChild(i).GetComponent<IDisplayable>().Hide();
+                }
+            }
+            else {
+                for(int i = 0; i < transform.childCount; i++) {
+                    transform.GetChild(i).GetComponent<IDisplayable>().Display();
+                }
             }
         }
     }

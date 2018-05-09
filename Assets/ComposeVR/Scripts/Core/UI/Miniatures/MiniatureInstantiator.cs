@@ -1,11 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
 
+    public class MiniatureEventArgs : EventArgs {
+        public Miniature Miniature;
+        public MiniatureEventArgs(Miniature miniature) {
+            Miniature = miniature;
+        }
+    } 
+
     public class MiniatureInstantiator : MonoBehaviour {
+        public event EventHandler<MiniatureEventArgs> MiniatureReleased;
+         
         [Tooltip("The miniature object to instantiate")]
         public Miniature Prefab;
 
@@ -25,7 +35,10 @@ namespace ComposeVR {
         private const float SNAP_SPEED = 20f;
         private const float SNAP_ROT_SPEED = 20f;
 
+        private MiniatureEventArgs miniatureEventArgs;
+
         void Awake () {
+            miniatureEventArgs = new MiniatureEventArgs(null);
             NewMiniature(); 
         }
 
@@ -53,6 +66,10 @@ namespace ComposeVR {
 
             currentMiniInteractable.InteractableObjectUngrabbed -= OnMiniatureUnGrabbed;
             currentMiniature.Release();
+            if(MiniatureReleased != null) {
+                miniatureEventArgs.Miniature = currentMiniature;
+                MiniatureReleased(this, miniatureEventArgs);
+            }
             NewMiniature();
         }
 

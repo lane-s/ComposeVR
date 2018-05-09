@@ -11,6 +11,23 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1586048614035974}
   m_IsPrefabParent: 1
+--- !u!1 &1030283178923762
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4104098263994672}
+  - component: {fileID: 65642587816634178}
+  - component: {fileID: 114307143692265994}
+  m_Layer: 14
+  m_Name: PlugUnlockTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1068867633409106
 GameObject:
   m_ObjectHideFlags: 1
@@ -179,7 +196,7 @@ GameObject:
   - component: {fileID: 65002953568418738}
   - component: {fileID: 114562055169207344}
   m_Layer: 14
-  m_Name: PlugDetector
+  m_Name: PlugLockTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,11 +233,25 @@ Transform:
   - {fileID: 4672822431426868}
   - {fileID: 4215379520491632}
   - {fileID: 4258723983952294}
-  - {fileID: 4492346707402516}
   - {fileID: 4123837867095080}
   - {fileID: 4501799704937400}
+  - {fileID: 4492346707402516}
+  - {fileID: 4104098263994672}
   m_Father: {fileID: 4727844773649192}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4104098263994672
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1030283178923762}
+  m_LocalRotation: {x: 1.4210853e-14, y: -0.7071068, z: 1.4210853e-14, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0, z: 0.0297}
+  m_LocalScale: {x: 0.07810141, y: 0.11900365, z: 0.094673805}
+  m_Children: []
+  m_Father: {fileID: 4051622371851572}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4123837867095080
 Transform:
@@ -233,7 +264,7 @@ Transform:
   m_LocalScale: {x: 0.14321412, y: 0.08316204, z: 0.08815861}
   m_Children: []
   m_Father: {fileID: 4051622371851572}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4215379520491632
 Transform:
@@ -280,12 +311,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1965577337930542}
-  m_LocalRotation: {x: 1.4210853e-14, y: -0.7071068, z: 1.4210853e-14, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0.046999883}
-  m_LocalScale: {x: 0.350472, y: 0.2893701, z: 0.25185955}
+  m_LocalRotation: {x: -2.281185e-15, y: -0.7071068, z: 2.5826502e-14, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: -0, z: 0.0119}
+  m_LocalScale: {x: 0.017220544, y: 0.02191999, z: 0.020918448}
   m_Children: []
   m_Father: {fileID: 4051622371851572}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4501799704937400
 Transform:
@@ -298,7 +329,7 @@ Transform:
   m_LocalScale: {x: 0.95988464, y: 0.959885, z: 0.9598848}
   m_Children: []
   m_Father: {fileID: 4051622371851572}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 1.473, z: -179.99998}
 --- !u!4 &4672822431426868
 Transform:
@@ -348,7 +379,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1586048614035974}
   m_LocalRotation: {x: -0, y: 0.012851693, z: -0, w: 0.99991745}
-  m_LocalPosition: {x: -5.024992, y: 0.92, z: 5.8280416}
+  m_LocalPosition: {x: 3.761505, y: 0.7782, z: -1.7050407}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4727844773649192}
@@ -525,6 +556,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &65642587816634178
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1030283178923762}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95209729858042968
 Animator:
   serializedVersion: 3
@@ -593,14 +636,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxControllerSeparation: 0.14
+  MaxControllerSeparation: 0.08
   PositionSnapSpeed: 0.2
   RotationSnapSpeed: 900
-  PlugDetector: {fileID: 114562055169207344}
+  PlugLockTrigger: {fileID: 114562055169207344}
+  PlugUnlockTrigger: {fileID: 114307143692265994}
   PlugConnectionPoint: {fileID: 4258723983952294}
-  AutoPlugDistance: 0.16
+  AutoPlugDistance: 0.05
   LockedIntoSocketDistance: 0.02
-  MinInitialSocketDistance: 0.12
+  MinInitialSocketDistance: 0.05
+--- !u!114 &114307143692265994
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1030283178923762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc748bd3d640b424299809d973084cd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114328406338188268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -631,7 +686,7 @@ MonoBehaviour:
   ControllerDetectorPrefab: {fileID: 114463231382499086, guid: e13a495b9bb01e140b223f86439e9e0a,
     type: 2}
   PlugStart: {fileID: 4215379520491632}
-  SecondaryPlugTarget: {fileID: 4258723983952294}
+  PlugConnectionPoint: {fileID: 4258723983952294}
   BlockerDetector: {fileID: 114347008308406370}
   ControllerDetectorVolume: {fileID: 4672822431426868}
   ExtendDistance: 0.3
@@ -663,7 +718,7 @@ MonoBehaviour:
   touchHighlightColor: {r: 0, g: 0, b: 0, a: 0}
   allowedTouchControllers: 0
   ignoredColliders:
-  - {fileID: 65002953568418738}
+  - {fileID: 65642587816634178}
   - {fileID: 65428521993588612}
   isGrabbable: 1
   holdButtonToGrab: 1
@@ -713,6 +768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57186c926fcf4d4ea4b014535c67b04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Blocking: 1
 --- !u!114 &114562055169207344
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -748,10 +804,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FaderSystemPrefab: {fileID: 4009859980419266, guid: a74e5b3cf63dd9644b4ded90b0cdce8c,
     type: 2}
-  Module:
+  Controller:
     Config:
-      browserYOffset: 1
-      moduleMenuYOffset: 0.2
+      browserYOffset: 1.1
 --- !u!114 &114862776286696654
 MonoBehaviour:
   m_ObjectHideFlags: 1

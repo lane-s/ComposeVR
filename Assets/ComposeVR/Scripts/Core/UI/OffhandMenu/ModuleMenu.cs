@@ -4,12 +4,9 @@ using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
-    public class ModuleMenu : MonoBehaviour {
-        public VRTK_ControllerEvents offHandController;
-        bool playMode = false;
+    public class ModuleMenu : MonoBehaviour, IDisplayable{
 
         private void Awake() {
-            offHandController.StartMenuPressed += OnModeChange;
         }
 
         private void Start() {
@@ -17,11 +14,12 @@ namespace ComposeVR {
         }
 
         public void Display() {
-            if (playMode) {
+            if (transform.parent.GetComponent<MenuCube>().PlayMode) {
                 return;
             }
 
             gameObject.SetActive(true);
+
             NoteOrb noteMini = GetComponentInChildren<NoteOrb>();
             if(noteMini != null) {
                 noteMini.SetRootNote(ComposeVRManager.Instance.LastNoteSelected);
@@ -32,15 +30,5 @@ namespace ComposeVR {
             gameObject.SetActive(false);
         }
 
-        void OnModeChange(object sender, ControllerInteractionEventArgs e) {
-            playMode = !playMode;
-
-            if (playMode) {
-                Hide();
-            }
-            else {
-                Display();
-            }
-        }
     }
 }

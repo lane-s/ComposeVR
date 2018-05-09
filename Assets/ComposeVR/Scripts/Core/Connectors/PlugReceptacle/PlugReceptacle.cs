@@ -26,7 +26,7 @@ namespace ComposeVR {
         }
 
         [Tooltip("How far away can the controller grabbing the Plug be before it is unlocked")]
-        public float MaxControllerSeparation = 0.14f;
+        public float MaxGrabberSeparation = 0.08f;
 
         [Tooltip("The speed at which the Plug will snap when locked by this attach mechanism")]
         public float PositionSnapSpeed = 0.2f;
@@ -35,23 +35,27 @@ namespace ComposeVR {
         public float RotationSnapSpeed = 900f;
 
         [Tooltip("A Plug entering this volume will be snapped to the PlugAttach")]
-        public SimpleTrigger PlugDetector;
+        public SimpleTrigger PlugLockTrigger;
+
+        [Tooltip("A Plug leaving this volume will be unsnapped from the PlugAttach")]
+        public SimpleTrigger PlugUnlockTrigger;
 
         protected VRTK_InteractGrab lockedPlugGrabber;
         protected PhysicalDataEndpoint plugReceptacle;
 
-        private List<Plug> nearbyPlugs;
+        protected List<Plug> nearbyPlugs;
 
         protected virtual void Awake() {
             plugReceptacle = GetComponent<PhysicalDataEndpoint>();
             nearbyPlugs = new List<Plug>();
                 
-            if (PlugDetector) {
-                PlugDetector.TriggerEnter += OnPlugDetectorTriggerEntered;
-                PlugDetector.TriggerExit += OnPlugDetectorTriggerExit;
+            if (PlugLockTrigger != null && PlugUnlockTrigger != null) {
+                PlugLockTrigger.TriggerEnter += OnPlugLockTriggerEnter;
+                PlugLockTrigger.TriggerExit += OnPlugLockTriggerExit;
+                PlugUnlockTrigger.TriggerExit += OnPlugUnlockTriggerExit;
             }
             else {
-                Debug.LogError("PlugAttach requires a reference to a SimpleTrigger in the PlugDetector field in the inspector");
+                Debug.LogError("PlugAttach requires a reference to a SimpleTrigger in the PlugTrigger fields in the inspector");
             }
         }
 
@@ -61,12 +65,16 @@ namespace ComposeVR {
                 for(int i = 0; i < nearbyPlugs.Count; i++) {
                     TryLockPlug(nearbyPlugs[i]);
                 }
-            }else if(Vector3.Distance(LockedPlug.transform.position, LockedPlug.PlugTransform.position) > MaxControllerSeparation) {
-                OnMaxControllerSeparationExceeded();
+            }else if(Vector3.Distance(LockedPlug.transform.position, LockedPlug.PlugTransform.position) > MaxGrabberSeparation) {
+                OnMaxGrabberSeparationExceeded();
             }
         }
 
-        protected virtual void OnMaxControllerSeparationExceeded() {
+        protected virtual void OnMaxGrabberSeparationExceeded() {
+            UnlockPlug();
+        }
+
+        public void OnLockedPlugWillBeDestroyed() {
             UnlockPlug();
         }
 
@@ -78,18 +86,23 @@ namespace ComposeVR {
             UnlockPlug();
         }
 
-        private void OnPlugDetectorTriggerEntered(object sender, SimpleTriggerEventArgs args) {
+        private void OnPlugLockTriggerEnter(object sender, SimpleTriggerEventArgs args) {
             Plug p = args.other.gameObject.GetComponentInActor<Plug>();
-            if(p != null) {
+            if(p != null && !nearbyPlugs.Contains(p)) {
                 nearbyPlugs.Add(p);
             }
         }
 
-        private void OnPlugDetectorTriggerExit(object sender, SimpleTriggerEventArgs args) {
+        private void OnPlugLockTriggerExit(object sender, SimpleTriggerEventArgs args) {
+            Plug p = args.other.gameObject.GetComponentInActor<Plug>();
+            if(p != null && nearbyPlugs.Contains(p)) {
+                nearbyPlugs.Remove(p);
+            }
+        }
+
+        private void OnPlugUnlockTriggerExit(object sender, SimpleTriggerEventArgs args) {
             Plug p = args.other.gameObject.GetComponentInActor<Plug>();
             if(p != null) {
-                nearbyPlugs.Remove(p);
-
                 //If the plug attachLock was held by the PlugAttach, release it
                 if (p.Equals(LockedPlug) && !p.IsPluggedIn()) {
                     UnlockPlug();
@@ -97,7 +110,7 @@ namespace ComposeVR {
             }
         }
 
-        private void TryLockPlug(Plug p) {
+        protected virtual void TryLockPlug(Plug p) {
             if (p.GetComponent<VRTK_InteractableObject>().IsGrabbed()) {
                 float flow = p.ConnectedCord.Flow;
                 if (p.CordAttachPoint.Equals(p.ConnectedCord.StartNode)) {
@@ -108,14 +121,15 @@ namespace ComposeVR {
 
                 if (validReceptacleType) {
                     if (p.AttachLock(this)) {
+                        lockedPlugGrabber = p.GetComponent<VRTK_InteractableObject>().GetGrabbingObject().GetComponentInActor<VRTK_InteractGrab>();
                         LockedPlug = p;
                         LockedPlug.GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnLockedPlugUngrabbed;
                         LockedPlug.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnLockedPlugGrabbed;
-                        lockedPlugGrabber = LockedPlug.GetComponent<VRTK_InteractableObject>().GetGrabbingObject().GetComponentInActor<VRTK_InteractGrab>();
                     }
                 }
             }
         }
+
 
         protected virtual void UnlockPlug() {
             if (nearbyPlugs.Contains(LockedPlug)) {

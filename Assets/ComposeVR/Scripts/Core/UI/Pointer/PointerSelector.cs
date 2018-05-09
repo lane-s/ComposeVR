@@ -48,7 +48,6 @@ namespace ComposeVR {
             pointer.pointerRenderer.cursorVisibility = VRTK_BasePointerRenderer.VisibilityStates.AlwaysOn;
 
             SelectableModule module = e.raycastHit.collider.transform.GetComponentInActor<SelectableModule>();
-            Debug.Log(e.raycastHit.collider.name);
             OnModuleHoverBegin(module);
         }
 

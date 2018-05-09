@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace ComposeVR {
-    public class SelectableModule : MonoBehaviour {
+    public interface IDisplayable {
+        void Display();
+        void Hide();
     }
 }

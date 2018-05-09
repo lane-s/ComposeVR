@@ -32,15 +32,17 @@ namespace ComposeVR {
     }
 
     public class ItemSelectedEventArgs : EventArgs {
-        public ItemSelectedEventArgs(string columnName, BrowserColumnController.ColumnType columnType, int selectionIndex) {
+        public ItemSelectedEventArgs(string columnName, BrowserColumnController.ColumnType columnType, int selectionIndex, string selectionName) {
             this.columnName = columnName;
             this.columnType = columnType;
             this.selectionIndex = selectionIndex;
+            this.selectionName = selectionName;
         }
 
         private string columnName;
         private BrowserColumnController.ColumnType columnType;
         private int selectionIndex;
+        private string selectionName;
 
         public string ColumnName {
             get { return columnName;  }
@@ -52,6 +54,10 @@ namespace ComposeVR {
 
         public int SelectionIndex {
             get { return selectionIndex; }
+        }
+
+        public string SelectionName {
+            get { return selectionName; }
         }
     }
 
@@ -162,7 +168,7 @@ namespace ComposeVR {
             browserColumn.SelectItem(itemIndex);
 
             if(ItemSelected != null) {
-                var args = new ItemSelectedEventArgs(Config.Name, Config.Type, itemIndex);
+                var args = new ItemSelectedEventArgs(Config.Name, Config.Type, itemIndex, State.SelectedItemName);
                 ItemSelected(this, args);
             }
         }

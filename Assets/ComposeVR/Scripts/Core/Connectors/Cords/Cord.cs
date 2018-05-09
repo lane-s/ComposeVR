@@ -433,14 +433,14 @@ namespace ComposeVR {
             plug.ConnectedCord = this;
 
             if (plug.IsPluggedIn()) {
-                if (plug.DestinationReceptacle.GetComponent<PhysicalDataInput>() != null) {
+                if (plug.DestinationEndpoint.GetComponent<PhysicalDataInput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = -1;
                     }
                     else {
                         Flow = 1;
                     }
-                }else if (plug.DestinationReceptacle.GetComponent<PhysicalDataOutput>() != null) {
+                }else if (plug.DestinationEndpoint.GetComponent<PhysicalDataOutput>() != null) {
                     if (plug.CordAttachPoint.Equals(A)) {
                         Flow = 1;
                     }
@@ -452,7 +452,7 @@ namespace ComposeVR {
         }
         #endregion Cord Connections
 
-        #region Finding Connected Jacks
+        #region Finding Connected Endpoints
 
         /// <summary>
         /// This method searches the network of cords connected to this cord in the direction determined by reverseFlow.
@@ -467,7 +467,7 @@ namespace ComposeVR {
         /// <param name="reverseFlow"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<PhysicalDataEndpoint> GetConnectedReceptacles(bool reverseFlow, Transform searchStartNode) {
+        public HashSet<PhysicalDataEndpoint> GetConnectedEndpoints(bool reverseFlow, Transform searchStartNode) {
             HashSet<PhysicalDataEndpoint> results = new HashSet<PhysicalDataEndpoint>();
 
             float workingFlow = Flow; 
@@ -477,10 +477,10 @@ namespace ComposeVR {
 
             if (workingFlow > 0 && !B.Equals(searchStartNode)) {
                 BranchHandle handleB = B.GetComponent<BranchHandle>();
-                results.UnionWith(GetReceptaclesConnectedToHandle(reverseFlow, handleB));
+                results.UnionWith(GetEndpointsConnectedToHandle(reverseFlow, handleB));
 
                 Plug plugB = B.GetComponentInActor<Plug>();
-                PhysicalDataEndpoint connectedReceptacle = GetConnectedReceptacle(plugB);
+                PhysicalDataEndpoint connectedReceptacle = GetConnectedEndpoint(plugB);
 
                 if(connectedReceptacle != null) {
                     results.Add(connectedReceptacle);
@@ -488,10 +488,10 @@ namespace ComposeVR {
             }
             else if(workingFlow < 0 && !A.Equals(searchStartNode)){
                 BranchHandle handleA = A.GetComponent<BranchHandle>();
-                results.UnionWith(GetReceptaclesConnectedToHandle(reverseFlow, handleA));
+                results.UnionWith(GetEndpointsConnectedToHandle(reverseFlow, handleA));
 
                 Plug plugA = A.GetComponentInActor<Plug>();
-                PhysicalDataEndpoint connectedReceptacle = GetConnectedReceptacle(plugA);
+                PhysicalDataEndpoint connectedReceptacle = GetConnectedEndpoint(plugA);
 
                 if(connectedReceptacle != null) {
                     results.Add(connectedReceptacle);
@@ -501,29 +501,29 @@ namespace ComposeVR {
             return results;
         }
 
-        private HashSet<PhysicalDataEndpoint> GetReceptaclesConnectedToHandle(bool reverseFlow, BranchHandle handle) {
+        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToHandle(bool reverseFlow, BranchHandle handle) {
             HashSet<PhysicalDataEndpoint> results = new HashSet<PhysicalDataEndpoint>();
             if(handle != null) {
                 CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
                 Transform other = downstreamJunctionNode.Cord.GetOppositeEnd(downstreamJunctionNode.transform);
 
-                results.UnionWith(GetReceptaclesConnectedToNode(reverseFlow, downstreamJunctionNode));
+                results.UnionWith(GetEndpointsConnectedToNode(reverseFlow, downstreamJunctionNode));
 
                 CordNode branchNode = handle.BranchNode;
-                results.UnionWith(GetReceptaclesConnectedToNode(reverseFlow, branchNode));
+                results.UnionWith(GetEndpointsConnectedToNode(reverseFlow, branchNode));
             }
 
             return results;
         }
 
-        private HashSet<PhysicalDataEndpoint> GetReceptaclesConnectedToNode(bool reverseFlow, CordNode node) {
-            return node.Cord.GetConnectedReceptacles(reverseFlow, node.transform);
+        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToNode(bool reverseFlow, CordNode node) {
+            return node.Cord.GetConnectedEndpoints(reverseFlow, node.transform);
         }
 
-        private PhysicalDataEndpoint GetConnectedReceptacle(Plug plug) {
+        private PhysicalDataEndpoint GetConnectedEndpoint(Plug plug) {
             if(plug != null) {
                 if (plug.IsPluggedIn()) {
-                    return plug.DestinationReceptacle;
+                    return plug.DestinationEndpoint;
                 }
             }
             return null;

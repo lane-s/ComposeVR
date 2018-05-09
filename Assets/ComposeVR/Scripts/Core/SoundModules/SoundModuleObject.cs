@@ -13,7 +13,7 @@ namespace ComposeVR {
     public sealed class SoundModuleObject : MonoBehaviour, ISoundModule {
 
         public Transform FaderSystemPrefab;
-        public SoundModuleController Module;
+        public SoundModuleController Controller;
         private PhysicalDataInput input;
 
         private const float FADER_MIN = -252f;
@@ -27,7 +27,7 @@ namespace ComposeVR {
         void Awake() {
             input = GetComponentInChildren<PhysicalDataInput>();
 
-            Module.SetController(this);
+            Controller.SetController(this);
 
             GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnUngrabbed;
         }
@@ -35,17 +35,21 @@ namespace ComposeVR {
         void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
             if (!isPlaced) {
                 InitializeFaderSystem();
-                GetComponentInChildren<CordDispenser>().enabled = true;
-                GetComponentInChildren<PointerBlocker>().Blocking = false;
-                Module.Initialize();
+                Controller.Initialize();
                 isPlaced = true;
+                StartCoroutine(DelayedCordDispenserEnable());
             } 
         }
-        
+
+        private IEnumerator DelayedCordDispenserEnable() {
+            yield return new WaitForSeconds(1);
+            GetComponentInChildren<CordDispenser>().enabled = true;
+        }
+
         void Update() {
             if (Input.GetKeyDown(KeyCode.F)) {
-                Debug.Log("Notes playing on module " + Module.GetID());
-                int[] playingNotes = Module.GetPlayingNotes();
+                Debug.Log("Notes playing on module " + Controller.GetID());
+                int[] playingNotes = Controller.GetPlayingNotes();
                 for(int i = 0; i < playingNotes.Length; i++) {
                     if(playingNotes[i] > 0) {
                         Debug.Log(i + " is playing on " + playingNotes[i] + " orbs");
@@ -80,7 +84,7 @@ namespace ComposeVR {
             float newGain = FaderPercentageToGain(e.normalizedValue);
             SetGainDisplayText(newGain);
 
-            string address = "/" + Module.GetID() + "/trackParam/volume";
+            string address = "/" + Controller.GetID() + "/trackParam/volume";
             OscMessage volumeChange = new OscMessage(address, e.normalizedValue);
 
             ComposeVRManager.Instance.OSCEventDispatcher.SendOSCPacket(address, volumeChange);
@@ -102,11 +106,15 @@ namespace ComposeVR {
             DeviceBrowserObject browser = ComposeVRManager.Instance.DeviceBrowserObject;
 
             //Position browser above module
-            browser.transform.position = transform.position + Vector3.up * Module.Config.browserYOffset;
+            browser.transform.position = transform.position + Vector3.up * Controller.Config.browserYOffset;
 
             //Rotate browser towards user's headset
             Quaternion lookAtPlayer = Quaternion.LookRotation(browser.transform.position - GameObject.FindGameObjectWithTag("Headset").transform.position);
             browser.transform.rotation = Quaternion.Euler(browser.transform.rotation.eulerAngles.x, lookAtPlayer.eulerAngles.y, browser.transform.rotation.eulerAngles.z);
+        }
+
+        void ISoundModule.AllowPointerSelection(bool allow) {
+            GetComponentInChildren<PointerBlocker>().Blocking = !allow;
         }
 
         DeviceBrowserController ISoundModule.GetBrowserController() {
@@ -128,6 +136,7 @@ namespace ComposeVR {
 
     public interface ISoundModule {
         void PositionBrowser();
+        void AllowPointerSelection(bool allow);
         DeviceBrowserController GetBrowserController();
         ComposeVROSCEventDispatcher GetOSCEventDispatcher();
         PhysicalDataInput GetInputJack();

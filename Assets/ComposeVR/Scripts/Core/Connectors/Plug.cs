@@ -9,7 +9,7 @@ namespace ComposeVR {
     [RequireComponent(typeof(CordFollower))]
     public sealed class Plug : MonoBehaviour {
 
-        public PhysicalDataEndpoint DestinationReceptacle;
+        public PhysicalDataEndpoint DestinationEndpoint;
 
         public float SnapToHandSpeed = 20.0f;
 
@@ -20,7 +20,7 @@ namespace ComposeVR {
         public bool AttachLocked {
             get { return _attachLocked; }
         } 
-        private object attachLocker;
+        private PlugReceptacle attachLocker;
 
         private Cord connectedCord;
 
@@ -63,7 +63,7 @@ namespace ComposeVR {
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool AttachLock(object locker) {
+        public bool AttachLock(PlugReceptacle locker) {
             if (!_attachLocked && snappingEnabled) {
                 //Only allow the lock if the plug model is in its original position
                 if(PlugTransform.parent.Equals(transform) && PlugTransform.localPosition.sqrMagnitude <= 0.005f) {
@@ -76,7 +76,7 @@ namespace ComposeVR {
             return false;
         }
 
-        public bool AttachUnlock(object unlocker) {
+        public bool AttachUnlock(PlugReceptacle unlocker) {
             if(_attachLocked && attachLocker.Equals(unlocker)) {
                 _attachLocked = false;
                 attachLocker = null;
@@ -93,7 +93,7 @@ namespace ComposeVR {
         }
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
-            if (DestinationReceptacle == null) {
+            if (DestinationEndpoint == null) {
                 PlugTransform.SetParent(null);
                 StartCoroutine(SnapToController());
             }
@@ -144,9 +144,9 @@ namespace ComposeVR {
             return null;
         }
 
-        public void DisconnectFromReceptacle() {
-            DestinationReceptacle.Disconnect(connectedCord, CordAttachPoint);
-            DestinationReceptacle = null;
+        public void DisconnectFromDataEndpoint() {
+            DestinationEndpoint.Disconnect(connectedCord, CordAttachPoint);
+            DestinationEndpoint = null;
 
             transform.SetParent(null);
             PlugTransform.GetComponent<CapsuleCollider>().center = plugColliderCenter;
@@ -160,15 +160,15 @@ namespace ComposeVR {
             }
         }
 
-        public void ConnectToReceptacle(PhysicalDataEndpoint receptacle) {
-            DestinationReceptacle = receptacle;
+        public void ConnectToDataEndpoint(PhysicalDataEndpoint receptacle) {
+            DestinationEndpoint = receptacle;
 
             float flow = 1;
             if (CordAttachPoint.Equals(connectedCord.StartNode)) {
                 flow = -flow;
             }
 
-            if (DestinationReceptacle.GetComponent<PhysicalDataInput>()) {
+            if (DestinationEndpoint.GetComponent<PhysicalDataInput>()) {
                 connectedCord.Flow = flow;
             }
             else {
@@ -177,7 +177,7 @@ namespace ComposeVR {
 
             connectedCord.Flowing = true;
 
-            DestinationReceptacle.Connect(connectedCord, CordAttachPoint);
+            DestinationEndpoint.Connect(connectedCord, CordAttachPoint);
             ShrinkCollider();
         }
 
@@ -189,7 +189,7 @@ namespace ComposeVR {
         /// <summary>
         /// Reposition and reorient the root Plug object where it's physical representation is located. Reparent the model to the root object.
         /// </summary>
-        private void ResetPlugTransform() {
+        public void ResetPlugTransform() {
             PlugTransform.SetParent(null);
             transform.position = PlugTransform.position;
             transform.rotation = PlugTransform.rotation;
@@ -234,8 +234,11 @@ namespace ComposeVR {
             positionSnap.closeEnoughDistance = originalCloseEnough;
 
             ResetPlugTransform();
+
+            yield return new WaitForEndOfFrame();
             snappingEnabled = true;
         }
+
 
         public void EnableSnapping() {
             snappingEnabled = true;
@@ -246,11 +249,14 @@ namespace ComposeVR {
         }
 
         public bool IsPluggedIn() {
-            return DestinationReceptacle != null;
+            return DestinationEndpoint != null;
         }
 
         public void DestroyPlug() {
             ResetPlugTransform();
+            if(attachLocker != null) {
+                attachLocker.OnLockedPlugWillBeDestroyed();
+            }
             Destroy(gameObject);
         }
     }

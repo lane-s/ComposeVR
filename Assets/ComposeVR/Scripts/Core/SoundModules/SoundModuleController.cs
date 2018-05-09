@@ -5,19 +5,36 @@ using UnityEngine;
 using OSCsharp.Data;
 
 namespace ComposeVR {
+    public class SoundModuleEventArgs : EventArgs {
+        public string ModuleName;
+    }
+
     [Serializable]
     public class SoundModuleController : RemoteEventHandler, IPhysicalDataInput {
+
+        public event EventHandler<SoundModuleEventArgs> ModuleNameChanged;
 
         [Serializable]
         public class SoundModuleConfiguration {
             public float browserYOffset;
-            public float moduleMenuYOffset;
+        }
+
+        [Serializable]
+        public class SoundModuleState {
+            public string ModuleName = "New Module";
+            public bool ModuleLoaded;
+            public bool Browsing;
         }
 
         public SoundModuleConfiguration Config;
         private ISoundModule Module;
 
+        private SoundModuleState State = new SoundModuleState();
+        private SoundModuleEventArgs soundModuleEventArgs;
+
         public void Initialize() {
+            soundModuleEventArgs = new SoundModuleEventArgs();
+
             //Register with the router
             Register();
 
@@ -29,29 +46,12 @@ namespace ComposeVR {
             playingNotes = new int[127];
         } 
 
-        private void RequestMenu() {
-            Debug.Log("Sound module menu requested");
-            SoundModuleMenu menu = Module.GetModuleMenu();
-            menu.MenuClosed += OnMenuClosed;
-            menu.ChangeInstrumentButtonClicked += OnChangeInstrumentButtonClicked;
-            menu.LoadPresetButtonClicked += OnLoadPresetButtonClicked;
-        }
-
-        private void OnMenuClosed(object sender, EventArgs e) {
-            SoundModuleMenu menu = Module.GetModuleMenu();
-            menu.MenuClosed -= OnMenuClosed;
-            menu.ChangeInstrumentButtonClicked -= OnChangeInstrumentButtonClicked;
-            menu.LoadPresetButtonClicked -= OnLoadPresetButtonClicked;
-        }
-
-        private void OnChangeInstrumentButtonClicked(object sender, EventArgs e) {
+        public void OnChangeInstrumentButtonClicked() {
             Debug.Log("Change instruments");
-            Module.GetModuleMenu().Display(false);
             RequestBrowser("Instrument", "Devices", 0, true, false);
         }
 
-        private void OnLoadPresetButtonClicked(object sender, EventArgs e) {
-            Module.GetModuleMenu().Display(false);
+        public void OnLoadPresetButtonClicked() {
             RequestBrowser("Instrument", "", 0, true, true);
         }
 
@@ -75,13 +75,31 @@ namespace ComposeVR {
 
             browser.OpenBrowser(GetID(), deviceType, contentType, deviceIndex, replaceDevice, displayTagColumn);
             browser.BrowserClosed += OnBrowserClosed;
+            browser.BrowserSelectionChanged += OnBrowserSelectionChanged;
+            Module.AllowPointerSelection(false);
+            State.Browsing = true;
         }
 
-        private void OnBrowserClosed(object sender, EventArgs e) {
+        private void OnBrowserClosed(object sender, BrowserEventArgs e) {
             DeviceBrowserController browser = Module.GetBrowserController();
             browser.BrowserClosed -= OnBrowserClosed;
+            browser.BrowserSelectionChanged -= OnBrowserSelectionChanged;
+            Module.AllowPointerSelection(true);
+            State.Browsing = false;
+        }
 
-            RequestMenu();
+        private void OnBrowserSelectionChanged(object sender, BrowserEventArgs e) {
+            State.ModuleName = e.SelectedResult;
+            soundModuleEventArgs.ModuleName = State.ModuleName;
+
+            if (!State.ModuleLoaded) {
+                State.ModuleLoaded = true;
+                //TODO: Make module glow brighter indicate some sound has been loaded
+            }
+
+            if(ModuleNameChanged != null) {
+                ModuleNameChanged(this, soundModuleEventArgs);
+            }
         }
 
         void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data) {
@@ -92,8 +110,6 @@ namespace ComposeVR {
             }
         }
 
-        private OscTimeTag now;
-        private OscBundle bundle;
         private string OSCNoteAddress;
         private int[] playingNotes;
 
@@ -132,5 +148,12 @@ namespace ComposeVR {
             return playingNotes;
         }
 
+        public bool IsBrowsing() {
+            return State.Browsing;
+        }
+
+        public string GetName() {
+            return State.ModuleName;
+        }
     }
 }
