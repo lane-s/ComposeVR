@@ -4,6 +4,7 @@ using UnityEngine;
 using VRTK;
 
 namespace ComposeVR {
+    [RequireComponent(typeof(SnapToTargetRotation))]
     public class MenuCube : MonoBehaviour {
 
         public VRTK_ControllerEvents MenuControllerEvents;
@@ -12,39 +13,27 @@ namespace ComposeVR {
 
         public float AxisChangeBeforeRotate = 0.1f;
 
-        private bool rotating;
-        private Quaternion targetRotation;
-        private const float epsilonAngle = 1f;
+        private SnapToTargetRotation rotationSnap;
             
         public bool PlayMode = false;
 
         private void Awake() {
             MenuControllerEvents.TouchpadAxisChanged += OnTouchpadAxisChanged;
             MenuControllerEvents.StartMenuPressed += OnModeChange;
-        }
-
-        // Update is called once per frame
-        void Update () {
-            if (rotating) {
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * RotationSpeed);
-                if(Quaternion.Angle(transform.localRotation, targetRotation) < epsilonAngle) {
-                    transform.localRotation = targetRotation;
-                    rotating = false;
-                }
-            }	
+            rotationSnap = GetComponent<SnapToTargetRotation>();
         }
 
         private void OnTouchpadAxisChanged(object sender, ControllerInteractionEventArgs e) {
-            if (rotating) {
+            if (!rotationSnap.HasReachedTarget) {
                 return;
             }
 
             if(e.touchpadAxis.x > AxisChangeBeforeRotate) {
-                rotating = true;
-                targetRotation = transform.localRotation * Quaternion.AngleAxis(SelectionStep * 90f, Vector3.up);
+                Quaternion targetRotation = transform.localRotation * Quaternion.AngleAxis(SelectionStep * 90f, Vector3.up);
+                rotationSnap.SnapToTarget(targetRotation, RotationSpeed, InterpolationType.Linear);
             }else if(e.touchpadAxis.x < -AxisChangeBeforeRotate) {
-                targetRotation = transform.localRotation * Quaternion.AngleAxis(-SelectionStep * 90f, Vector3.up); 
-                rotating = true;
+                Quaternion targetRotation = transform.localRotation * Quaternion.AngleAxis(-SelectionStep * 90f, Vector3.up); 
+                rotationSnap.SnapToTarget(targetRotation, RotationSpeed, InterpolationType.Linear);
             }
         }
 

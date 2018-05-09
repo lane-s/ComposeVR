@@ -3,132 +3,129 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace ComposeVR {
 
-    public enum InterpolationType {Linear, Exponential};
+public enum InterpolationType {Linear, Exponential};
 
-    public class SnapToTargetPosition : MonoBehaviour {
+public class SnapToTargetPosition : MonoBehaviour {
 
-        public event EventHandler<EventArgs> TargetReached;
-        public event EventHandler<EventArgs> MoveCancelled;
+    public event EventHandler<EventArgs> TargetReached;
+    public event EventHandler<EventArgs> MoveCancelled;
 
-        public float closeEnoughDistance = 0.01f;
+    public float closeEnoughDistance = 0.01f;
 
-        [Tooltip("Useful when the snap position is constantly changing. If there was some time left over after the previous snap finished, the next snap will start from this time")]
-        public bool carryTimeBetweenSnaps = false;
+    [Tooltip("Useful when the snap position is constantly changing. If there was some time left over after the previous snap finished, the next snap will start from this time")]
+    public bool carryTimeBetweenSnaps = false;
 
-        public bool HasReachedTarget = false;
-        public bool UseLocalPosition = false;
-        
-        private Vector3 targetPosition;
-        private float speed;
-        private InterpolationType interpolationType;
+    public bool HasReachedTarget = false;
+    public bool UseLocalPosition = false;
+    
+    private Vector3 targetPosition;
+    private float speed;
+    private InterpolationType interpolationType;
 
-        private float t;
-        private float startTime;
-        private float finishTime;
+    private float t;
+    private float startTime;
+    private float finishTime;
 
-        private float totalDistanceToTarget;
-        private float totalMoveTime;
-        
-        private Vector3 startPosition;
+    private float totalDistanceToTarget;
+    private float totalMoveTime;
+    
+    private Vector3 startPosition;
 
-        private bool fireEvent = false;
-        private Rigidbody rb;
+    private bool fireEvent = false;
+    private Rigidbody rb;
 
-        void Awake() {
-            targetPosition = transform.position;
-            t = Mathf.Infinity;
-            rb = GetComponent<Rigidbody>();
-            interpolationType = InterpolationType.Exponential;
+    void Awake() {
+        targetPosition = transform.position;
+        t = Mathf.Infinity;
+        rb = GetComponent<Rigidbody>();
+        interpolationType = InterpolationType.Exponential;
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if(rb == null) {
+            MoveToTarget();
+        }
+    }
+
+    private void FixedUpdate() {
+        if (rb != null) {
+            MoveToTarget();
+        }
+    }
+
+    private void MoveToTarget() {
+        if(t <= 1) {
+            Move();
         }
 
-        // Update is called once per frame
-        void Update() {
-            if(rb == null) {
-                MoveToTarget();
+        if(t >= 1 && !HasReachedTarget) {
+            finishTime = Time.time;
+            HasReachedTarget = true;
+            if(TargetReached != null) {
+                TargetReached(this, new EventArgs());
             }
         }
+    }
 
-        private void FixedUpdate() {
-            if (rb != null) {
-                MoveToTarget();
-            }
+    private void Move() {
+        float elapsedTime = Time.time - startTime;
+
+        t = elapsedTime / totalMoveTime;
+
+        if(interpolationType == InterpolationType.Exponential) {
+            t = Mathf.Pow(t, 0.5f);
         }
 
-        private void MoveToTarget() {
-            if(t <= 1) {
-                Move();
-            }
+        if (rb != null && !UseLocalPosition) {
+            rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, t));
+        }else if (UseLocalPosition) {
+            transform.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
+        }else {
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+        }
+    }
 
-            if(t >= 1 && !HasReachedTarget) {
-                finishTime = Time.time;
-                HasReachedTarget = true;
-                if(TargetReached != null) {
-                    TargetReached(this, new EventArgs());
-                }
-            }
+    public void SnapToTarget(Vector3 targetPosition, float speed, InterpolationType interpolationType) {
+        this.targetPosition = targetPosition;
+        this.speed = speed;
+        this.interpolationType = interpolationType;
+
+        if (UseLocalPosition) {
+            startPosition = transform.localPosition;
+        }
+        else {
+            startPosition = transform.position;
         }
 
-        private void Move() {
-            float elapsedTime = Time.time - startTime;
+        totalDistanceToTarget = Vector3.Distance(startPosition, targetPosition);
 
-            t = elapsedTime / totalMoveTime;
-
-            if(interpolationType == InterpolationType.Exponential) {
-                t = Mathf.Pow(t, 0.5f);
-            }
-
-            if (rb != null && !UseLocalPosition) {
-                rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, t));
-            }else if (UseLocalPosition) {
-                transform.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
-            }else {
-                transform.position = Vector3.Lerp(startPosition, targetPosition, t);
-            }
+        if(totalDistanceToTarget < closeEnoughDistance) {
+            t = 1;
+            HasReachedTarget = true;
+            Move();
+            return;
+        }else if (t <= 1) {
+            Move();
         }
 
-        public void SnapToTarget(Vector3 targetPosition, float speed, InterpolationType interpolationType) {
-            this.targetPosition = targetPosition;
-            this.speed = speed;
-            this.interpolationType = interpolationType;
+        t = 0;
 
-            if (UseLocalPosition) {
-                startPosition = transform.localPosition;
-            }
-            else {
-                startPosition = transform.position;
-            }
+        float lastStartTime = startTime;
 
-            totalDistanceToTarget = Vector3.Distance(startPosition, targetPosition);
+        startTime = Time.time;
 
-            if(totalDistanceToTarget < closeEnoughDistance) {
-                t = 1;
-                HasReachedTarget = true;
-                Move();
-                return;
-            }else if (t <= 1) {
-                Move();
-            }
+        totalMoveTime = totalDistanceToTarget / this.speed;
+        HasReachedTarget = false;
+    }
 
-            t = 0;
+    public void SnapToTarget(Vector3 targetPosition, float speed) {
+        SnapToTarget(targetPosition, speed, this.interpolationType);
+    }
 
-            float lastStartTime = startTime;
-
-            startTime = Time.time;
-
-            totalMoveTime = totalDistanceToTarget / this.speed;
-            HasReachedTarget = false;
-        }
-
-        public void SnapToTarget(Vector3 targetPosition, float speed) {
-            SnapToTarget(targetPosition, speed, this.interpolationType);
-        }
-
-        public void SnapToTarget(Vector3 targetPosition) {
-            SnapToTarget(targetPosition, this.speed, this.interpolationType);
-        }
-
+    public void SnapToTarget(Vector3 targetPosition) {
+        SnapToTarget(targetPosition, this.speed, this.interpolationType);
     }
 
 }
