@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
     [RequireComponent(typeof(SnapToTargetPosition))]
     [RequireComponent(typeof(Scalable))]
-    public class NoteCore : MonoBehaviour {
+    public class NoteCore : MonoBehaviour
+    {
         public int Note;
 
         private Color _color;
-        public Color Color {
-            get {
+        public Color Color
+        {
+            get
+            {
                 return _color;
             }
-            set {
+            set
+            {
                 _color = value;
                 GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _color);
             }
@@ -23,7 +28,8 @@ namespace ComposeVR {
         private Scalable scalable;
         private const float CORE_SNAP_SPEED = 0.65f;
 
-        private void Awake() {
+        private void Awake()
+        {
             positionSnap = GetComponent<SnapToTargetPosition>();
             positionSnap.UseLocalPosition = true;
 
@@ -31,12 +37,14 @@ namespace ComposeVR {
             scalable.TargetScale = transform.localScale;
         }
 
-        public void SetPosition(Vector3 pos) {
+        public void SetPosition(Vector3 pos)
+        {
             positionSnap.SnapToTarget(pos, CORE_SNAP_SPEED, InterpolationType.Exponential);
         }
 
-        public void SetScale(Vector3 scale) {
-            scalable.TargetScale = scale; 
+        public void SetScale(Vector3 scale)
+        {
+            scalable.TargetScale = scale;
         }
     }
 }

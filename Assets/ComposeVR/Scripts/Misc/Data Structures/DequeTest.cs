@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
-    public class DequeTest : MonoBehaviour {
+namespace ComposeVR
+{
+    public class DequeTest : MonoBehaviour
+    {
 
         private const int N = 5;
         Deque<int> testDeque;
 
         // Use this for initialization
-        void Awake () {
+        void Awake()
+        {
             testDeque = new Deque<int>(N);
 
             //Test push, pop, and get when initial size is not exceeded

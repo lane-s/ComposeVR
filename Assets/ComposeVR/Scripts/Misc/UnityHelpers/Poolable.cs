@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
-    public class Poolable : MonoBehaviour {
+    public class Poolable : MonoBehaviour
+    {
         public event EventHandler<EventArgs> Initialized;
-        public bool InPool {
+        public bool InPool
+        {
             get { return inPool; }
         }
 
@@ -16,20 +19,24 @@ namespace ComposeVR {
         private ObjectPool pool;
         private EventArgs defaultArgs;
 
-        private void Awake() {
+        private void Awake()
+        {
             defaultArgs = new EventArgs();
         }
 
-        public void Initialize(ObjectPool pool) {
+        public void Initialize(ObjectPool pool)
+        {
             inPool = false;
             this.pool = pool;
             gameObject.SetActive(true);
-            if(Initialized != null) {
+            if (Initialized != null)
+            {
                 Initialized(this, defaultArgs);
             }
         }
 
-        public void ReturnToPool() {
+        public void ReturnToPool()
+        {
             inPool = true;
             gameObject.transform.SetParent(null);
             gameObject.SetActive(false);

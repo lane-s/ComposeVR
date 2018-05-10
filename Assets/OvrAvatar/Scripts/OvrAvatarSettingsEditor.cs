@@ -4,11 +4,12 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(OvrAvatarSettings))]
-public class OvrAvatarSettingsEditor : Editor {
-    GUIContent appIDLabel = new GUIContent("Oculus Rift App Id [?]", 
+public class OvrAvatarSettingsEditor : Editor
+{
+    GUIContent appIDLabel = new GUIContent("Oculus Rift App Id [?]",
       "This AppID will be used for OvrAvatar registration.");
 
-    GUIContent gearAppIDLabel = new GUIContent("Gear VR App Id [?]", 
+    GUIContent gearAppIDLabel = new GUIContent("Gear VR App Id [?]",
       "This AppID will be used for OvrAvatar registration when building to the Android target.");
 
     [UnityEditor.MenuItem("Oculus Avatars/Edit Configuration")]
@@ -18,7 +19,8 @@ public class OvrAvatarSettingsEditor : Editor {
         UnityEditor.Selection.activeObject = settings;
     }
 
-    private static string MakeTextBox(GUIContent label, string variable) {
+    private static string MakeTextBox(GUIContent label, string variable)
+    {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(label);
         GUI.changed = false;

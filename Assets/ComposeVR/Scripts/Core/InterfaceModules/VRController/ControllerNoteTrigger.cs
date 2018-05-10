@@ -5,20 +5,24 @@ using VRTK;
 using MathNet.Numerics;
 using System;
 
-namespace ComposeVR {
-    public class NoteTriggerEventArgs : EventArgs {
+namespace ComposeVR
+{
+    public class NoteTriggerEventArgs : EventArgs
+    {
         public int Velocity;
-        public NoteTriggerEventArgs(int noteVelocity) {
+        public NoteTriggerEventArgs(int noteVelocity)
+        {
             Velocity = noteVelocity;
         }
     }
 
     [RequireComponent(typeof(VRTK_ControllerEvents))]
-    public class ControllerNoteTrigger : MonoBehaviour {
+    public class ControllerNoteTrigger : MonoBehaviour
+    {
 
         public event EventHandler<NoteTriggerEventArgs> NoteTriggered;
         public event EventHandler<EventArgs> NoteReleased;
-        
+
         public OVRInput.RawAxis1D VelocityAxis;
         public int FramesToAverage = 5;
         [Tooltip("How many frames of controller data should be recorded to determine the average trigger change over time")]
@@ -40,24 +44,29 @@ namespace ComposeVR {
         private float localMaxTriggerPos = Mathf.NegativeInfinity;
         private float lastLocalIncreaseTime;
 
-        private void Awake() {
+        private void Awake()
+        {
             lastXTriggerPos = new Queue<float>();
             defaultArgs = new EventArgs();
             noteTriggerArgs = new NoteTriggerEventArgs(60);
             lastLocalIncreaseTime = Mathf.Infinity;
         }
 
-        private void Update() {
+        private void Update()
+        {
             float triggerPos = OVRInput.Get(VelocityAxis);
             AddPoint(triggerPos);
 
             float averageTriggerPos = GetAverageTriggerPosOverLastXFrames();
 
-            if (averageTriggerPos < IgnoreTriggerThreshold) {
+            if (averageTriggerPos < IgnoreTriggerThreshold)
+            {
                 bool triggerWasHeld = triggerHeld;
                 triggerHeld = false;
-                if (triggerWasHeld) {
-                    if (NoteReleased != null) {
+                if (triggerWasHeld)
+                {
+                    if (NoteReleased != null)
+                    {
                         NoteReleased(this, defaultArgs);
                     }
                     //Debug.Log("Note off");
@@ -65,15 +74,19 @@ namespace ComposeVR {
                     localMaxTriggerPos = Mathf.NegativeInfinity;
                 }
             }
-            else if (!triggerHeld) {
-                if(averageTriggerPos > localMaxTriggerPos + 0.05f) {
+            else if (!triggerHeld)
+            {
+                if (averageTriggerPos > localMaxTriggerPos + 0.05f)
+                {
                     localMaxTriggerPos = averageTriggerPos;
                     lastLocalIncreaseTime = Time.time;
                 }
 
-                if(Time.time - lastLocalIncreaseTime > SteadyTimeBeforeNoteOn) {
+                if (Time.time - lastLocalIncreaseTime > SteadyTimeBeforeNoteOn)
+                {
                     noteTriggerArgs.Velocity = GetNoteVelocityFromTriggerPos(localMaxTriggerPos);
-                    if (NoteTriggered != null) {
+                    if (NoteTriggered != null)
+                    {
                         NoteTriggered(this, noteTriggerArgs);
                     }
                     onTime = Time.time;
@@ -83,36 +96,43 @@ namespace ComposeVR {
             }
         }
 
-        private void AddPoint(float triggerPos) {
+        private void AddPoint(float triggerPos)
+        {
             lastXTriggerPos.Enqueue(triggerPos);
 
-            if(lastXTriggerPos.Count > FramesToAverage) {
+            if (lastXTriggerPos.Count > FramesToAverage)
+            {
                 lastXTriggerPos.Dequeue();
             }
         }
 
-        private float GetAverageTriggerPosOverLastXFrames() {
+        private float GetAverageTriggerPosOverLastXFrames()
+        {
             float[] triggerPosArr = lastXTriggerPos.ToArray();
 
             float sumPos = 0;
 
-            for(int i = 0; i < triggerPosArr.Length; i++) {
+            for (int i = 0; i < triggerPosArr.Length; i++)
+            {
                 sumPos += triggerPosArr[i];
             }
 
             return sumPos / triggerPosArr.Length;
         }
 
-        private int GetNoteVelocityFromTriggerPos(float triggerPos) {
+        private int GetNoteVelocityFromTriggerPos(float triggerPos)
+        {
             return (int)triggerPos.Remap(IgnoreTriggerThreshold, 1.0f, 45, 120);
         }
 
-        public int GetNoteVelocity() {
+        public int GetNoteVelocity()
+        {
             float avgTrigger = GetAverageTriggerPosOverLastXFrames();
             return (int)avgTrigger.Remap(IgnoreTriggerThreshold, 1.0f, 50, 127);
         }
 
-        public bool TriggerIsPressed() {
+        public bool TriggerIsPressed()
+        {
             return GetAverageTriggerPosOverLastXFrames() > IgnoreTriggerThreshold;
         }
     }

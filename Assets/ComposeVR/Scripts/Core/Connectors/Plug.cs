@@ -4,10 +4,12 @@ using UnityEngine;
 using VRTK;
 using System;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
     [RequireComponent(typeof(VRTK_InteractableObject))]
     [RequireComponent(typeof(CordFollower))]
-    public sealed class Plug : MonoBehaviour {
+    public sealed class Plug : MonoBehaviour
+    {
 
         public PhysicalDataEndpoint DestinationEndpoint;
 
@@ -17,9 +19,10 @@ namespace ComposeVR {
         public Transform CordAttachPoint;
 
         private bool _attachLocked = false;
-        public bool AttachLocked {
+        public bool AttachLocked
+        {
             get { return _attachLocked; }
-        } 
+        }
         private PlugReceptacle attachLocker;
 
         private Cord connectedCord;
@@ -36,15 +39,18 @@ namespace ComposeVR {
 
         private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.02f;
 
-        public Cord ConnectedCord {
+        public Cord ConnectedCord
+        {
             get { return connectedCord; }
-            set {
+            set
+            {
                 connectedCord = value;
                 GetComponent<CordFollower>().SetCord(connectedCord);
             }
         }
 
-        void Awake() {
+        void Awake()
+        {
             interactable = GetComponent<VRTK_InteractableObject>();
 
             interactable.InteractableObjectGrabbed += OnGrabbed;
@@ -63,10 +69,13 @@ namespace ComposeVR {
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool AttachLock(PlugReceptacle locker) {
-            if (!_attachLocked && snappingEnabled) {
+        public bool AttachLock(PlugReceptacle locker)
+        {
+            if (!_attachLocked && snappingEnabled)
+            {
                 //Only allow the lock if the plug model is in its original position
-                if(PlugTransform.parent.Equals(transform) && PlugTransform.localPosition.sqrMagnitude <= 0.005f) {
+                if (PlugTransform.parent.Equals(transform) && PlugTransform.localPosition.sqrMagnitude <= 0.005f)
+                {
                     _attachLocked = true;
                     attachLocker = locker;
                     return true;
@@ -76,14 +85,18 @@ namespace ComposeVR {
             return false;
         }
 
-        public bool AttachUnlock(PlugReceptacle unlocker) {
-            if(_attachLocked && attachLocker.Equals(unlocker)) {
+        public bool AttachUnlock(PlugReceptacle unlocker)
+        {
+            if (_attachLocked && attachLocker.Equals(unlocker))
+            {
                 _attachLocked = false;
                 attachLocker = null;
-                if (interactable.IsGrabbed()) {
+                if (interactable.IsGrabbed())
+                {
                     StartCoroutine(SnapToController());
                 }
-                else {
+                else
+                {
                     StartCoroutine(SnapModelToOrigin());
                 }
                 return true;
@@ -92,8 +105,10 @@ namespace ComposeVR {
             return false;
         }
 
-        private void OnGrabbed(object sender, InteractableObjectEventArgs e) {
-            if (DestinationEndpoint == null) {
+        private void OnGrabbed(object sender, InteractableObjectEventArgs e)
+        {
+            if (DestinationEndpoint == null)
+            {
                 PlugTransform.SetParent(null);
                 StartCoroutine(SnapToController());
             }
@@ -101,10 +116,12 @@ namespace ComposeVR {
             connectedCord.AllowBranching(false);
         }
 
-        private void OnUngrabbed(object sender, InteractableObjectEventArgs e) {
+        private void OnUngrabbed(object sender, InteractableObjectEventArgs e)
+        {
             ResetPlugTransform();
 
-            if (connectedCord != null) {
+            if (connectedCord != null)
+            {
                 connectedCord.AllowBranching(true);
             }
 
@@ -116,27 +133,36 @@ namespace ComposeVR {
         ///     1. Both ends of the cord are plugs and neither plug is plugged in
         ///     2. One end of the cord is an unplugged plug and the other is a BranchHandle.
         /// </summary>
-        private IEnumerator TryCollapse() {
+        private IEnumerator TryCollapse()
+        {
             yield return null;
-            if (!IsPluggedIn() && connectedCord != null) {
+            if (!IsPluggedIn() && connectedCord != null)
+            {
 
                 Transform oppositeNode = GetOppositeCordNode();
                 Plug p = oppositeNode.GetComponentInActor<Plug>();
 
-                if(p != null && !p.IsPluggedIn()) {
+                if (p != null && !p.IsPluggedIn())
+                {
                     connectedCord.Collapse();
-                }else if (oppositeNode.GetComponent<BranchHandle>()) {
+                }
+                else if (oppositeNode.GetComponent<BranchHandle>())
+                {
                     connectedCord.Collapse();
                 }
             }
         }
 
-        private Transform GetOppositeCordNode() {
-            if (connectedCord != null) {
-                if (connectedCord.StartNode.Equals(CordAttachPoint)) {
+        private Transform GetOppositeCordNode()
+        {
+            if (connectedCord != null)
+            {
+                if (connectedCord.StartNode.Equals(CordAttachPoint))
+                {
                     return connectedCord.EndNode;
                 }
-                else {
+                else
+                {
                     return connectedCord.StartNode;
                 }
             }
@@ -144,7 +170,8 @@ namespace ComposeVR {
             return null;
         }
 
-        public void DisconnectFromDataEndpoint() {
+        public void DisconnectFromDataEndpoint()
+        {
             DestinationEndpoint.Disconnect(connectedCord, CordAttachPoint);
             DestinationEndpoint = null;
 
@@ -155,23 +182,28 @@ namespace ComposeVR {
             Transform oppositeNode = GetOppositeCordNode();
             Plug p = oppositeNode.GetComponentInActor<Plug>();
 
-            if(p != null && !p.IsPluggedIn()) {
+            if (p != null && !p.IsPluggedIn())
+            {
                 connectedCord.Flow = 0;
             }
         }
 
-        public void ConnectToDataEndpoint(PhysicalDataEndpoint receptacle) {
+        public void ConnectToDataEndpoint(PhysicalDataEndpoint receptacle)
+        {
             DestinationEndpoint = receptacle;
 
             float flow = 1;
-            if (CordAttachPoint.Equals(connectedCord.StartNode)) {
+            if (CordAttachPoint.Equals(connectedCord.StartNode))
+            {
                 flow = -flow;
             }
 
-            if (DestinationEndpoint.GetComponent<PhysicalDataInput>()) {
+            if (DestinationEndpoint.GetComponent<PhysicalDataInput>())
+            {
                 connectedCord.Flow = flow;
             }
-            else {
+            else
+            {
                 connectedCord.Flow = -flow;
             }
 
@@ -181,7 +213,8 @@ namespace ComposeVR {
             ShrinkCollider();
         }
 
-        public void ShrinkCollider() {
+        public void ShrinkCollider()
+        {
             PlugTransform.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
             PlugTransform.GetComponent<CapsuleCollider>().height = PLUGGED_IN_COLLIDER_HEIGHT;
         }
@@ -189,7 +222,8 @@ namespace ComposeVR {
         /// <summary>
         /// Reposition and reorient the root Plug object where it's physical representation is located. Reparent the model to the root object.
         /// </summary>
-        public void ResetPlugTransform() {
+        public void ResetPlugTransform()
+        {
             PlugTransform.SetParent(null);
             transform.position = PlugTransform.position;
             transform.rotation = PlugTransform.rotation;
@@ -197,7 +231,8 @@ namespace ComposeVR {
             PlugTransform.localPosition = Vector3.zero;
         }
 
-        private IEnumerator SnapToController() {
+        private IEnumerator SnapToController()
+        {
             snappingEnabled = false;
             yield return null;
 
@@ -211,7 +246,8 @@ namespace ComposeVR {
         /// Quickly moves the plug back to the controller and sets it back to its initial state
         /// </summary>
         /// <returns></returns>
-        private IEnumerator SnapModelToOrigin() {
+        private IEnumerator SnapModelToOrigin()
+        {
             snappingEnabled = false;
 
             positionSnap.SnapToTarget(transform.position, SnapToHandSpeed);
@@ -220,11 +256,13 @@ namespace ComposeVR {
 
             rotationSnap.SnapToTarget(transform.rotation, 1200f);
 
-            while (true) {
+            while (true)
+            {
                 float targetDistance = Vector3.Distance(transform.position, PlugTransform.position);
                 float snapSpeed = Mathf.Clamp(SnapToHandSpeed * targetDistance, SnapToHandSpeed, SnapToHandSpeed + 5f);
-                positionSnap.SnapToTarget(transform.position+GetComponent<Rigidbody>().velocity, snapSpeed);
-                if (positionSnap.HasReachedTarget) {
+                positionSnap.SnapToTarget(transform.position + GetComponent<Rigidbody>().velocity, snapSpeed);
+                if (positionSnap.HasReachedTarget)
+                {
                     break;
                 }
 
@@ -240,21 +278,26 @@ namespace ComposeVR {
         }
 
 
-        public void EnableSnapping() {
+        public void EnableSnapping()
+        {
             snappingEnabled = true;
         }
 
-        public void DisableSnapping() {
+        public void DisableSnapping()
+        {
             snappingEnabled = false;
         }
 
-        public bool IsPluggedIn() {
+        public bool IsPluggedIn()
+        {
             return DestinationEndpoint != null;
         }
 
-        public void DestroyPlug() {
+        public void DestroyPlug()
+        {
             ResetPlugTransform();
-            if(attachLocker != null) {
+            if (attachLocker != null)
+            {
                 attachLocker.OnLockedPlugWillBeDestroyed();
             }
             Destroy(gameObject);

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
     [RequireComponent(typeof(MeshFilter))]
-    public class TilitBrushLineRenderer : MonoBehaviour {
+    public class TilitBrushLineRenderer : MonoBehaviour
+    {
 
         public float stripWidth;
         public float stripHeight;
@@ -14,13 +16,16 @@ namespace ComposeVR {
         private List<Vector3> vertices;
 
         // Use this for initialization
-        void Awake() {
+        void Awake()
+        {
             mesh = GetComponent<MeshFilter>().mesh;
             GenerateStrips();
         }
 
-        void GenerateStrips() {
-            if(numStrips > 0) {
+        void GenerateStrips()
+        {
+            if (numStrips > 0)
+            {
                 vertices = new List<Vector3>();
                 List<Vector2> UVs = new List<Vector2>();
 
@@ -41,7 +46,8 @@ namespace ComposeVR {
                 List<int> triangles = new List<int>();
 
                 //Generate remaining vertices, define triangles and normals
-                for(int i = 0; i < numStrips; i++) {
+                for (int i = 0; i < numStrips; i++)
+                {
 
                     bottomVert += Vector3.right * stripWidth;
                     topVert += Vector3.right * stripWidth;
@@ -80,8 +86,8 @@ namespace ComposeVR {
                 mesh.RecalculateNormals();
                 mesh.RecalculateTangents();
 
-                
-               
+
+
                 GetComponent<MeshFilter>().mesh = mesh;
 
                 Debug.Log("Mesh generated");
@@ -89,7 +95,8 @@ namespace ComposeVR {
         }
 
         // Update is called once per frame
-        void Update() {
+        void Update()
+        {
 
         }
     }

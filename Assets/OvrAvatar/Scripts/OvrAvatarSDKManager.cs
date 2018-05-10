@@ -8,7 +8,8 @@ using System.Runtime.InteropServices;
 public delegate void specificationCallback(IntPtr specification);
 public delegate void assetLoadedCallback(OvrAvatarAsset asset);
 
-public class OvrAvatarSDKManager : MonoBehaviour {
+public class OvrAvatarSDKManager : MonoBehaviour
+{
     private static OvrAvatarSDKManager _instance;
     private Dictionary<UInt64, HashSet<specificationCallback>> specificationCallbacks;
     private Dictionary<UInt64, HashSet<assetLoadedCallback>> assetLoadedCallbacks;
@@ -63,8 +64,9 @@ public class OvrAvatarSDKManager : MonoBehaviour {
         CAPI.ovrAvatar_Shutdown();
     }
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update()
+    {
         IntPtr message = CAPI.ovrAvatarMessage_Pop();
         if (message == IntPtr.Zero)
         {
@@ -138,7 +140,7 @@ public class OvrAvatarSDKManager : MonoBehaviour {
                 throw new NotImplementedException("Unhandled ovrAvatarMessageType: " + messageType);
         }
         CAPI.ovrAvatarMessage_Free(message);
-	}
+    }
 
     public void RequestAvatarSpecification(UInt64 userId, specificationCallback callback)
     {
@@ -170,7 +172,8 @@ public class OvrAvatarSDKManager : MonoBehaviour {
         }
     }
 
-    public OvrAvatarAsset GetAsset(UInt64 assetId) {
+    public OvrAvatarAsset GetAsset(UInt64 assetId)
+    {
         OvrAvatarAsset asset;
         if (assetCache.TryGetValue(assetId, out asset))
         {

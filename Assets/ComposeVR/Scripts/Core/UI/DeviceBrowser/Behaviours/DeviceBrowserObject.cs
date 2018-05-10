@@ -4,23 +4,29 @@ using System;
 using UnityEngine;
 using ComposeVR;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
-    public sealed class DeviceBrowserObject : MonoBehaviour, IDeviceBrowser {
+    public sealed class DeviceBrowserObject : MonoBehaviour, IDeviceBrowser
+    {
 
         public DeviceBrowserController Controller;
 
         private BrowserColumnObject resultsColumn;
         private List<BrowserColumnObject> filterColumns;
 
-        void Awake() {
+        void Awake()
+        {
             Controller.SetDeviceBrowser(this);
             Controller.Initialize();
         }
 
-        BrowserColumnController IDeviceBrowser.GetResultColumn() {
-            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
-                if (c.Controller.Config.Type == BrowserColumnController.ColumnType.RESULTS) {
+        BrowserColumnController IDeviceBrowser.GetResultColumn()
+        {
+            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>())
+            {
+                if (c.Controller.Config.Type == BrowserColumnController.ColumnType.RESULTS)
+                {
                     return c.Controller;
                 }
             }
@@ -28,11 +34,14 @@ namespace ComposeVR {
             return null;
         }
 
-        List<BrowserColumnController> IDeviceBrowser.GetFilterColumns() {
+        List<BrowserColumnController> IDeviceBrowser.GetFilterColumns()
+        {
             var filterColumns = new List<BrowserColumnController>();
 
-            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>()) {
-                if (c.Controller.Config.Type == BrowserColumnController.ColumnType.FILTER) {
+            foreach (BrowserColumnObject c in GetComponentsInChildren<BrowserColumnObject>())
+            {
+                if (c.Controller.Config.Type == BrowserColumnController.ColumnType.FILTER)
+                {
                     filterColumns.Add(c.Controller);
                 }
             }
@@ -40,20 +49,24 @@ namespace ComposeVR {
             return filterColumns;
         }
 
-        void IDeviceBrowser.Hide(){
+        void IDeviceBrowser.Hide()
+        {
             transform.position = Vector3.down * 1000;
         }
 
-        public void OnConfirmButtonClicked() {
+        public void OnConfirmButtonClicked()
+        {
             Controller.OnConfirmButtonClicked();
         }
 
-        public void OnCancelButtonClicked() {
+        public void OnCancelButtonClicked()
+        {
             Controller.OnCancelButtonClicked();
         }
     }
 
-    public interface IDeviceBrowser {
+    public interface IDeviceBrowser
+    {
         BrowserColumnController GetResultColumn();
         List<BrowserColumnController> GetFilterColumns();
         void Hide();

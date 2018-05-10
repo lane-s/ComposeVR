@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class SnapToTargetRotation : MonoBehaviour {
+public class SnapToTargetRotation : MonoBehaviour
+{
 
     public bool HasReachedTarget = false;
     public bool UseLocalRotation = false;
@@ -21,7 +22,8 @@ public class SnapToTargetRotation : MonoBehaviour {
 
 
     // Use this for initialization
-    void Awake() {
+    void Awake()
+    {
         rb = GetComponent<Rigidbody>();
         targetRotation = transform.rotation;
         t = Mathf.Infinity;
@@ -29,71 +31,89 @@ public class SnapToTargetRotation : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
-        if(rb == null) {
+    void Update()
+    {
+        if (rb == null)
+        {
             RotateToTarget();
         }
     }
 
-    private void FixedUpdate() {
-        if(rb != null) {
+    private void FixedUpdate()
+    {
+        if (rb != null)
+        {
             RotateToTarget();
         }
     }
 
-    private void RotateToTarget() {
-        if (t <= 1) {
+    private void RotateToTarget()
+    {
+        if (t <= 1)
+        {
             Rotate();
         }
-        else{
+        else
+        {
             HasReachedTarget = true;
         }
     }
 
-    private void Rotate() {
+    private void Rotate()
+    {
         float elapsedTime = Time.time - startTime;
         t = elapsedTime / totalMoveTime;
 
-        if(interpolationType == InterpolationType.Exponential) {
+        if (interpolationType == InterpolationType.Exponential)
+        {
             t = Mathf.Pow(t, 0.5f);
         }
 
         Quaternion currentRotation = Quaternion.Slerp(startRotation, targetRotation, t);
 
-        if (rb != null) {
+        if (rb != null)
+        {
             rb.MoveRotation(currentRotation);
         }
-        else {
-            if (UseLocalRotation) {
+        else
+        {
+            if (UseLocalRotation)
+            {
                 transform.localRotation = currentRotation;
             }
-            else {
-               transform.rotation = currentRotation; 
+            else
+            {
+                transform.rotation = currentRotation;
             }
         }
     }
 
-    public void SnapToTarget(Quaternion target, float rotationSpeed, InterpolationType interpolationType) {
+    public void SnapToTarget(Quaternion target, float rotationSpeed, InterpolationType interpolationType)
+    {
         targetRotation = target;
         speed = rotationSpeed;
         this.interpolationType = interpolationType;
 
-        if (UseLocalRotation) {
+        if (UseLocalRotation)
+        {
             startRotation = transform.localRotation;
         }
-        else {
+        else
+        {
             startRotation = transform.rotation;
         }
 
         totalAngularDistance = Quaternion.Angle(startRotation, targetRotation);
 
-        if(totalAngularDistance < 0.005f) {
+        if (totalAngularDistance < 0.005f)
+        {
             t = 1;
             HasReachedTarget = true;
             return;
         }
 
-        if(t <= 1) {
+        if (t <= 1)
+        {
             RotateToTarget();
         }
 
@@ -103,11 +123,13 @@ public class SnapToTargetRotation : MonoBehaviour {
         HasReachedTarget = false;
     }
 
-    public void SnapToTarget(Quaternion target, float rotationSpeed) {
+    public void SnapToTarget(Quaternion target, float rotationSpeed)
+    {
         SnapToTarget(target, rotationSpeed, this.interpolationType);
     }
 
-    public void SnapToTarget(Quaternion target) {
+    public void SnapToTarget(Quaternion target)
+    {
         SnapToTarget(target, this.speed, this.interpolationType);
     }
 }

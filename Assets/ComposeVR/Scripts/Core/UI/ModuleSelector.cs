@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
-    public class ModuleSelector : MonoBehaviour {
+namespace ComposeVR
+{
+    public class ModuleSelector : MonoBehaviour
+    {
 
         public MiniatureInstantiator SoundModuleInstantiator;
         public SoundModuleMenu SoundModuleMenu;
@@ -12,22 +14,27 @@ namespace ComposeVR {
         private SelectableModule selectedModule;
 
         // Use this for initialization
-        void Awake () {
+        void Awake()
+        {
             SoundModuleInstantiator.MiniatureReleased += OnSoundModuleCreated;
             PointerSelector.ModuleSelected += OnPointerSelection;
         }
-        
-        private void OnSoundModuleCreated(object sender, MiniatureEventArgs e) {
-            if (e.Miniature.GetComponent<SelectableModule>()) {
+
+        private void OnSoundModuleCreated(object sender, MiniatureEventArgs e)
+        {
+            if (e.Miniature.GetComponent<SelectableModule>())
+            {
                 OnModuleSelected(e.Miniature.GetComponent<SelectableModule>());
             }
         }
 
-        private void OnPointerSelection(object sender, ModuleSelectionEventArgs e) {
+        private void OnPointerSelection(object sender, ModuleSelectionEventArgs e)
+        {
             OnModuleSelected(e.SelectedModule);
         }
 
-        private void OnModuleSelected(SelectableModule selected) {
+        private void OnModuleSelected(SelectableModule selected)
+        {
             OnModuleDeselected();
 
             selectedModule = selected;
@@ -35,8 +42,10 @@ namespace ComposeVR {
             SoundModuleMenu.OnModuleSelected(selectedModule);
         }
 
-        private void OnModuleDeselected() {
-            if(selectedModule != null) {
+        private void OnModuleDeselected()
+        {
+            if (selectedModule != null)
+            {
                 selectedModule.Selected = false;
                 SoundModuleMenu.OnModuleDeselected();
                 selectedModule = null;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PointerBlocker : MonoBehaviour {
+public class PointerBlocker : MonoBehaviour
+{
     public bool Blocking = true;
 }

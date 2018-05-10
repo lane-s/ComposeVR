@@ -7,9 +7,11 @@ using UnityEngine;
 /// Implements a deque using a circular buffer
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class Deque<T> {
+public class Deque<T>
+{
 
-    public int Count {
+    public int Count
+    {
         set { numElements = value; }
         get { return numElements; }
     }
@@ -20,15 +22,18 @@ public class Deque<T> {
     private int front;
     private int back;
 
-    public Deque(int size) {
+    public Deque(int size)
+    {
         buffer = new T[Math.Max(size, 1)];
         front = -1;
         back = 0;
         numElements = 0;
     }
 
-    public void PushFront(T item) {
-        if(numElements == buffer.Length) {
+    public void PushFront(T item)
+    {
+        if (numElements == buffer.Length)
+        {
             ResizeBuffer();
         }
         front = (front + 1) % buffer.Length;
@@ -37,13 +42,16 @@ public class Deque<T> {
         numElements += 1;
     }
 
-    public void PushBack(T item) {
-        if(numElements == buffer.Length){
+    public void PushBack(T item)
+    {
+        if (numElements == buffer.Length)
+        {
             ResizeBuffer();
         }
 
         back -= 1;
-        if(back < 0) {
+        if (back < 0)
+        {
             back = buffer.Length - 1;
         }
         buffer[back] = item;
@@ -51,24 +59,30 @@ public class Deque<T> {
         numElements += 1;
     }
 
-    private void ResizeBuffer() {
+    private void ResizeBuffer()
+    {
         T[] oldBuff = buffer;
         buffer = new T[oldBuff.Length * 2];
 
-        for(int i = 0; i <= front; i++) {
+        for (int i = 0; i <= front; i++)
+        {
             buffer[front] = oldBuff[i];
         }
 
-        if(front < back) {
+        if (front < back)
+        {
             int toEnd = oldBuff.Length - back;
-            for(int i = 0; i < toEnd; i++) {
+            for (int i = 0; i < toEnd; i++)
+            {
                 buffer[buffer.Length - 1 - i] = oldBuff[oldBuff.Length - i - 1];
             }
         }
     }
 
-    public T PopFront() {
-        if(numElements == 0) {
+    public T PopFront()
+    {
+        if (numElements == 0)
+        {
             return default(T);
         }
 
@@ -77,7 +91,8 @@ public class Deque<T> {
         buffer[front] = default(T);
 
         front -= 1;
-        if(front < 0) {
+        if (front < 0)
+        {
             front = buffer.Length - 1;
         }
 
@@ -85,8 +100,10 @@ public class Deque<T> {
         return frontElem;
     }
 
-    public T PopBack() {
-        if(numElements == 0) {
+    public T PopBack()
+    {
+        if (numElements == 0)
+        {
             return default(T);
         }
 
@@ -99,36 +116,45 @@ public class Deque<T> {
         return backElem;
     }
 
-    public T PeekFront() {
-        if(numElements == 0) {
+    public T PeekFront()
+    {
+        if (numElements == 0)
+        {
             return default(T);
         }
         return buffer[front];
     }
 
-    public T PeekBack() {
-        if(numElements == 0) {
+    public T PeekBack()
+    {
+        if (numElements == 0)
+        {
             return default(T);
         }
         return buffer[back];
     }
 
-    public T Get(int i) {
-        if(i < 0 || i >= numElements) {
+    public T Get(int i)
+    {
+        if (i < 0 || i >= numElements)
+        {
             return default(T);
         }
 
         int idx = front - i;
-        if(idx < 0) {
+        if (idx < 0)
+        {
             idx = buffer.Length + idx;
         }
 
         return buffer[idx];
     }
 
-    public void Clear() {
+    public void Clear()
+    {
         int N = numElements;
-        for(int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++)
+        {
             PopBack();
         }
     }

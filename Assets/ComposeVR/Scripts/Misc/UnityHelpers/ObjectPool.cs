@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
-    public class ObjectPool : MonoBehaviour {
+    public class ObjectPool : MonoBehaviour
+    {
         public Poolable prefab;
 
         [Tooltip("The number of objects in the pool")]
@@ -15,20 +17,25 @@ namespace ComposeVR {
 
         private Stack<Poolable> pool;
 
-        void Awake() {
+        void Awake()
+        {
             getPool();
         }
 
-        private Stack<Poolable> getPool() {
-            if(pool == null) {
+        private Stack<Poolable> getPool()
+        {
+            if (pool == null)
+            {
                 pool = new Stack<Poolable>(startSize);
                 ExpandPool(startSize);
             }
             return pool;
         }
 
-        public Poolable GetObject() {
-            if(getPool().Count == 0) {
+        public Poolable GetObject()
+        {
+            if (getPool().Count == 0)
+            {
                 ExpandPool(expandAmount);
             }
 
@@ -37,24 +44,29 @@ namespace ComposeVR {
             return obj;
         }
 
-        public Poolable GetObject(Vector3 position, Quaternion rotation) {
+        public Poolable GetObject(Vector3 position, Quaternion rotation)
+        {
             Poolable obj = GetObject();
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             return obj;
         }
 
-        public void ReturnObject(Poolable obj) {
+        public void ReturnObject(Poolable obj)
+        {
             pool.Push(obj);
         }
 
-        private void ExpandPool(int amount) {
-            for(int i = 0; i < amount; i++) {
+        private void ExpandPool(int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
                 pool.Push(NewObject());
             }
         }
 
-        private Poolable NewObject() {
+        private Poolable NewObject()
+        {
             Poolable newObj = Instantiate(prefab) as Poolable;
             newObj.gameObject.SetActive(false);
             return newObj;

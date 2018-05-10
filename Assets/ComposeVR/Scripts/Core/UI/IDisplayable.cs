@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace ComposeVR {
-    public interface IDisplayable {
+namespace ComposeVR
+{
+    public interface IDisplayable
+    {
         void Display();
         void Hide();
     }

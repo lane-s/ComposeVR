@@ -1,16 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ComposeVR {
-    public class CordFollowerEventArgs : EventArgs{
+namespace ComposeVR
+{
+    public class CordFollowerEventArgs : EventArgs
+    {
         public Vector3 NextMoveVector;
-        
-        public CordFollowerEventArgs(Vector3 nextMoveVector) {
+
+        public CordFollowerEventArgs(Vector3 nextMoveVector)
+        {
             this.NextMoveVector = nextMoveVector;
         }
     }
 
-    public class CordFollower : MonoBehaviour {
+    public class CordFollower : MonoBehaviour
+    {
         public event EventHandler<CordFollowerEventArgs> NextPointReached;
         public float Speed;
 
@@ -20,9 +24,11 @@ namespace ComposeVR {
 
         private const float SNAP_TO_TARGET_SPEED = 12f;
 
-        private void Update() {
+        private void Update()
+        {
 
-            if (currentPointIndex != targetPointIndex && cord != null) {
+            if (currentPointIndex != targetPointIndex && cord != null)
+            {
                 int nextPointIndex = NextPointIndex();
 
                 Vector3 toNextPoint = (cord.GetPathPointAtIndex(nextPointIndex) - cord.GetPathPointAtIndex(currentPointIndex)).normalized;
@@ -31,19 +37,23 @@ namespace ComposeVR {
 
                 Vector3 nextDiff = cord.GetPathPointAtIndex(nextPointIndex) - nextPos;
 
-                if (!nextPos.Equals(cord.GetPathPointAtIndex(nextPointIndex))) {
+                if (!nextPos.Equals(cord.GetPathPointAtIndex(nextPointIndex)))
+                {
 
-                    while (Vector3.Dot(toNextPoint, nextDiff) < 0) {
+                    while (Vector3.Dot(toNextPoint, nextDiff) < 0)
+                    {
                         Vector3 nextMove = Vector3.zero;
 
                         currentPointIndex = nextPointIndex;
                         nextPointIndex = NextPointIndex();
 
-                        if (currentPointIndex == targetPointIndex) {
+                        if (currentPointIndex == targetPointIndex)
+                        {
                             nextPos = cord.GetPathPointAtIndex(targetPointIndex);
                             break;
                         }
-                        else {
+                        else
+                        {
                             nextMove = (cord.GetPathPointAtIndex(nextPointIndex) - cord.GetPathPointAtIndex(currentPointIndex)).normalized;
                             nextPos = cord.GetPathPointAtIndex(currentPointIndex) + nextMove * nextDiff.magnitude;
                         }
@@ -56,38 +66,48 @@ namespace ComposeVR {
 
                 transform.position = nextPos;
             }
-            else {
+            else
+            {
                 transform.position = Vector3.Lerp(transform.position, cord.GetPathPointAtIndex(targetPointIndex), Time.deltaTime * SNAP_TO_TARGET_SPEED);
             }
         }
 
-        private int NextPointIndex() {
-            if(currentPointIndex < targetPointIndex) {
+        private int NextPointIndex()
+        {
+            if (currentPointIndex < targetPointIndex)
+            {
                 return currentPointIndex + 1;
             }
-            else if(currentPointIndex > targetPointIndex) {
+            else if (currentPointIndex > targetPointIndex)
+            {
                 return currentPointIndex - 1;
             }
-            else {
+            else
+            {
                 return currentPointIndex;
             }
         }
 
-        private void OnNextPointReached(Vector3 nextMove) {
-            if(NextPointReached != null) {
+        private void OnNextPointReached(Vector3 nextMove)
+        {
+            if (NextPointReached != null)
+            {
                 NextPointReached(this, new CordFollowerEventArgs(nextMove));
             }
         }
 
-        public void SetCord(Cord c) {
+        public void SetCord(Cord c)
+        {
             cord = c;
         }
 
-        public void SetTargetPoint(int targetPointIndex) {
+        public void SetTargetPoint(int targetPointIndex)
+        {
             this.targetPointIndex = targetPointIndex;
         }
 
-        public void TeleportToPoint(int pointIndex) {
+        public void TeleportToPoint(int pointIndex)
+        {
             currentPointIndex = pointIndex;
             transform.position = cord.GetPathPointAtIndex(pointIndex);
         }

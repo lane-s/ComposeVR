@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 using Oculus.Avatar;
 
-public class OvrAvatarLocalDriver : OvrAvatarDriver {
+public class OvrAvatarLocalDriver : OvrAvatarDriver
+{
 
     private const float mobileBaseHeadHeight = 1.7f;
 

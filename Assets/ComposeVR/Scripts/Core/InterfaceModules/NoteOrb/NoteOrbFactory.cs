@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-namespace ComposeVR {
-    public static class NoteOrbFactory {
+namespace ComposeVR
+{
+    public static class NoteOrbFactory
+    {
         private static GameObject _orbPrefab;
-        private static GameObject OrbPrefab {
-            get {
-               if(_orbPrefab == null) {
+        private static GameObject OrbPrefab
+        {
+            get
+            {
+                if (_orbPrefab == null)
+                {
                     _orbPrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteOrb");
                 }
 
@@ -17,9 +22,12 @@ namespace ComposeVR {
         }
 
         private static GameObject _corePrefab;
-        private static GameObject CorePrefab {
-            get {
-               if(_corePrefab == null) {
+        private static GameObject CorePrefab
+        {
+            get
+            {
+                if (_corePrefab == null)
+                {
                     _corePrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteCore");
                 }
 
@@ -27,11 +35,13 @@ namespace ComposeVR {
             }
         }
 
-        public static NoteOrb DefaultNoteOrb(Vector3 position, Quaternion rotation) {
+        public static NoteOrb DefaultNoteOrb(Vector3 position, Quaternion rotation)
+        {
             return Object.Instantiate(OrbPrefab, position, rotation).GetComponent<NoteOrb>();
         }
 
-        public static NoteOrb DuplicateNoteOrb(NoteOrb sourceOrb) {
+        public static NoteOrb DuplicateNoteOrb(NoteOrb sourceOrb)
+        {
             //Create new orb with identical position, rotation, and scale
             NoteOrb copy = DefaultNoteOrb(sourceOrb.transform.position, sourceOrb.transform.rotation);
             copy.transform.localScale = sourceOrb.transform.localScale;
@@ -42,7 +52,8 @@ namespace ComposeVR {
 
             //Copy note cores
             List<NoteCore> sourceCores = sourceOrb.NoteCores;
-            for(int i = 0; i < sourceCores.Count; i++) {
+            for (int i = 0; i < sourceCores.Count; i++)
+            {
                 NoteCore coreCopy = DuplicateNoteCore(sourceCores[i]);
 
                 coreCopy.transform.SetParent(copy.transform);
@@ -58,7 +69,8 @@ namespace ComposeVR {
             return copy;
         }
 
-        private static NoteCore DuplicateNoteCore(NoteCore sourceCore) {
+        private static NoteCore DuplicateNoteCore(NoteCore sourceCore)
+        {
             NoteCore copy = Object.Instantiate(CorePrefab, sourceCore.transform.position, sourceCore.transform.rotation).GetComponent<NoteCore>();
             copy.Color = sourceCore.Color;
             copy.Note = sourceCore.Note;

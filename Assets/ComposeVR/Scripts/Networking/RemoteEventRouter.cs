@@ -5,20 +5,25 @@ using System.Text;
 using UnityEngine;
 using ComposeVR.Protocol;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
     /// <summary>
     /// Singleton responsible for delivering events coming in to the system to the intended handler
     /// </summary>
     [Serializable]
-    public class RemoteEventRouter {
+    public class RemoteEventRouter
+    {
 
         private static RemoteEventRouter instance;
         private RemoteEventRouter() { }
 
-        public static RemoteEventRouter Instance {
-            get {
-                if(instance == null) {
+        public static RemoteEventRouter Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
                     instance = new RemoteEventRouter();
                 }
                 return instance;
@@ -28,17 +33,21 @@ namespace ComposeVR {
 
         private Dictionary<string, RemoteEventHandler> handlerDictionary;
 
-        private Dictionary<string, RemoteEventHandler> getHandlerDictionary() {
-            if (handlerDictionary == null) {
+        private Dictionary<string, RemoteEventHandler> getHandlerDictionary()
+        {
+            if (handlerDictionary == null)
+            {
                 handlerDictionary = new Dictionary<string, RemoteEventHandler>();
             }
             return handlerDictionary;
         }
 
-        public void RouteEvent(Protocol.Event e) {
+        public void RouteEvent(Protocol.Event e)
+        {
             string receiverID = "";
 
-            switch (e.EventCase) {
+            switch (e.EventCase)
+            {
                 case Protocol.Event.EventOneofCase.ModuleEvent:
                     receiverID = e.ModuleEvent.HandlerId;
                     break;
@@ -50,17 +59,20 @@ namespace ComposeVR {
                     break;
             }
 
-            if (getHandlerDictionary().ContainsKey(receiverID)) {
+            if (getHandlerDictionary().ContainsKey(receiverID))
+            {
                 RemoteEventHandler receiver = getHandlerDictionary()[receiverID];
                 receiver.HandleEvent(e);
             }
         }
 
-        public void AddReceiver(string receiverID, RemoteEventHandler receiver) {
+        public void AddReceiver(string receiverID, RemoteEventHandler receiver)
+        {
             getHandlerDictionary().Add(receiverID, receiver);
         }
 
-        public void RemoveReceiver(string receiverID) {
+        public void RemoveReceiver(string receiverID)
+        {
             getHandlerDictionary().Remove(receiverID);
         }
 

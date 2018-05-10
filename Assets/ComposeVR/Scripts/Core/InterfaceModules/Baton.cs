@@ -4,10 +4,12 @@ using UnityEngine;
 using VRTK;
 using ComposeVR;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
     [RequireComponent(typeof(MIDINoteHaptics))]
-    public class Baton : MonoBehaviour {
+    public class Baton : MonoBehaviour
+    {
 
         public float minVelocity = 1f;
         public float maxVelocity = 25.0f;
@@ -24,13 +26,15 @@ namespace ComposeVR {
         private const float cooldownTime = 0.05f;
         private int hapticNote;
 
-        void Update() {
+        void Update()
+        {
             VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(controller.gameObject);
             controllerVelocity = VRTK_DeviceFinder.GetControllerVelocity(controllerReference);
             angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(controllerReference);
         }
 
-        public int GetVelocity() {
+        public int GetVelocity()
+        {
             float vel = controllerVelocity.magnitude + angularVelocity.magnitude;
             if (vel < minVelocity)
                 return 0;
@@ -39,27 +43,33 @@ namespace ComposeVR {
             return (int)Mathf.Clamp(vel.Remap(minVelocity, maxVelocity, 20, 127), 20, 127);
         }
 
-        IEnumerator cooldown() {
+        IEnumerator cooldown()
+        {
             onCooldown = true;
             yield return new WaitForSeconds(cooldownTime);
             onCooldown = false;
         }
 
-        public void StartCooldown() {
+        public void StartCooldown()
+        {
             StartCoroutine(cooldown());
         }
 
-        public bool IsOnCooldown() {
+        public bool IsOnCooldown()
+        {
             return onCooldown;
         }
 
-        public void StartHapticFeedback(int hapticNote) {
+        public void StartHapticFeedback(int hapticNote)
+        {
             this.hapticNote = hapticNote;
-            GetComponent<MIDINoteHaptics>().StartHapticFeedback(hapticNote); 
+            GetComponent<MIDINoteHaptics>().StartHapticFeedback(hapticNote);
         }
 
-        public void StopHapticFeedback(int hapticNote) {
-            if(this.hapticNote == hapticNote) {
+        public void StopHapticFeedback(int hapticNote)
+        {
+            if (this.hapticNote == hapticNote)
+            {
                 GetComponent<MIDINoteHaptics>().StopHapticFeedback();
             }
         }

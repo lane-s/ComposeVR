@@ -4,71 +4,71 @@ Shader "AlbedoOutline"
 {
 	Properties
 	{
-		_ASEOutlineColor( "Outline Color", Color ) = (1,0.9968559,0.5441177,0)
-		_ASEOutlineWidth( "Outline Width", Float ) = 0.07
+		_ASEOutlineColor("Outline Color", Color) = (1,0.9968559,0.5441177,0)
+		_ASEOutlineWidth("Outline Width", Float) = 0.07
 		_AlbedoTexture("AlbedoTexture", 2D) = "white" {}
 		_AlbedoColor("AlbedoColor", Color) = (0.1838235,0.9662271,1,0)
 		_Smoothness("Smoothness", Float) = 0
-		[HideInInspector] _texcoord( "", 2D ) = "white" {}
-		[HideInInspector] __dirty( "", Int ) = 1
+		[HideInInspector] _texcoord("", 2D) = "white" {}
+		[HideInInspector] __dirty("", Int) = 1
 	}
 
-	SubShader
-	{
-		Tags{ }
-		Cull Front
-		CGPROGRAM
-		#pragma target 3.0
-		#pragma surface outlineSurf Outline nofog  keepalpha noshadow noambient novertexlights nolightmap nodynlightmap nodirlightmap nometa noforwardadd vertex:outlineVertexDataFunc 
-		
-		
-		
-		struct Input {
-			fixed filler;
-		};
-		uniform fixed4 _ASEOutlineColor;
-		uniform fixed _ASEOutlineWidth;
-		void outlineVertexDataFunc( inout appdata_full v, out Input o )
+		SubShader
 		{
-			UNITY_INITIALIZE_OUTPUT( Input, o );
-			v.vertex.xyz *= ( 1 + _ASEOutlineWidth);
+			Tags{ }
+			Cull Front
+			CGPROGRAM
+			#pragma target 3.0
+			#pragma surface outlineSurf Outline nofog  keepalpha noshadow noambient novertexlights nolightmap nodynlightmap nodirlightmap nometa noforwardadd vertex:outlineVertexDataFunc 
+
+
+
+			struct Input {
+				fixed filler;
+			};
+			uniform fixed4 _ASEOutlineColor;
+			uniform fixed _ASEOutlineWidth;
+			void outlineVertexDataFunc(inout appdata_full v, out Input o)
+			{
+				UNITY_INITIALIZE_OUTPUT(Input, o);
+				v.vertex.xyz *= (1 + _ASEOutlineWidth);
+			}
+			inline fixed4 LightingOutline(SurfaceOutput s, half3 lightDir, half atten) { return fixed4(0,0,0, s.Alpha); }
+			void outlineSurf(Input i, inout SurfaceOutput o)
+			{
+				o.Emission = _ASEOutlineColor.rgb;
+				o.Alpha = 1;
+			}
+			ENDCG
+
+
+			Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" }
+			Cull Back
+			CGPROGRAM
+			#pragma target 3.0
+			#pragma surface surf Standard keepalpha addshadow fullforwardshadows exclude_path:deferred 
+			struct Input
+			{
+				float2 uv_texcoord;
+			};
+
+			uniform float4 _AlbedoColor;
+			uniform sampler2D _AlbedoTexture;
+			uniform float4 _AlbedoTexture_ST;
+			uniform float _Smoothness;
+
+			void surf(Input i , inout SurfaceOutputStandard o)
+			{
+				float2 uv_AlbedoTexture = i.uv_texcoord * _AlbedoTexture_ST.xy + _AlbedoTexture_ST.zw;
+				o.Albedo = (_AlbedoColor * tex2D(_AlbedoTexture, uv_AlbedoTexture)).rgb;
+				o.Smoothness = _Smoothness;
+				o.Alpha = 1;
+			}
+
+			ENDCG
 		}
-		inline fixed4 LightingOutline( SurfaceOutput s, half3 lightDir, half atten ) { return fixed4 ( 0,0,0, s.Alpha); }
-		void outlineSurf( Input i, inout SurfaceOutput o )
-		{
-			o.Emission = _ASEOutlineColor.rgb;
-			o.Alpha = 1;
-		}
-		ENDCG
-		
-
-		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" }
-		Cull Back
-		CGPROGRAM
-		#pragma target 3.0
-		#pragma surface surf Standard keepalpha addshadow fullforwardshadows exclude_path:deferred 
-		struct Input
-		{
-			float2 uv_texcoord;
-		};
-
-		uniform float4 _AlbedoColor;
-		uniform sampler2D _AlbedoTexture;
-		uniform float4 _AlbedoTexture_ST;
-		uniform float _Smoothness;
-
-		void surf( Input i , inout SurfaceOutputStandard o )
-		{
-			float2 uv_AlbedoTexture = i.uv_texcoord * _AlbedoTexture_ST.xy + _AlbedoTexture_ST.zw;
-			o.Albedo = ( _AlbedoColor * tex2D( _AlbedoTexture, uv_AlbedoTexture ) ).rgb;
-			o.Smoothness = _Smoothness;
-			o.Alpha = 1;
-		}
-
-		ENDCG
-	}
-	Fallback "Diffuse"
-	CustomEditor "ASEMaterialInspector"
+			Fallback "Diffuse"
+				CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
 Version=15301

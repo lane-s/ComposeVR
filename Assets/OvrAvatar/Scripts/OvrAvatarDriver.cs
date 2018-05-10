@@ -2,7 +2,8 @@
 using System.Collections;
 using System;
 
-public abstract class OvrAvatarDriver : MonoBehaviour {
+public abstract class OvrAvatarDriver : MonoBehaviour
+{
 
     public struct ControllerPose
     {

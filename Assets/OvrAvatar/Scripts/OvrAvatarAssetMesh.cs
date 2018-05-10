@@ -3,12 +3,14 @@ using Oculus.Avatar;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-public class OvrAvatarAssetMesh : OvrAvatarAsset {
+public class OvrAvatarAssetMesh : OvrAvatarAsset
+{
     public Mesh mesh;
     private ovrAvatarSkinnedMeshPose skinnedBindPose;
     public string[] jointNames;
 
-    public OvrAvatarAssetMesh(UInt64 _assetId, IntPtr asset) {
+    public OvrAvatarAssetMesh(UInt64 _assetId, IntPtr asset)
+    {
         assetID = _assetId;
         ovrAvatarMeshAssetData meshAssetData = CAPI.ovrAvatarAsset_GetMeshData(asset);
 
@@ -59,11 +61,11 @@ public class OvrAvatarAssetMesh : OvrAvatarAsset {
         IntPtr indexBufferPtr = meshAssetData.indexBuffer;
         Marshal.Copy(indexBufferPtr, indices, 0, (int)indexCount);
         Int32[] triangles = new Int32[indexCount];
-        for (ulong i = 0; i < indexCount; i+=3)
+        for (ulong i = 0; i < indexCount; i += 3)
         {
-            triangles[i+2] = (Int32)indices[i];
-            triangles[i+1] = (Int32)indices[i+1];
-            triangles[i] = (Int32)indices[i+2];
+            triangles[i + 2] = (Int32)indices[i];
+            triangles[i + 1] = (Int32)indices[i + 1];
+            triangles[i] = (Int32)indices[i + 2];
         }
         mesh.triangles = triangles;
 

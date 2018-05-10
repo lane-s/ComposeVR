@@ -2,23 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
-    public class TestInputModule : MonoBehaviour, IPhysicalDataInput {
+    public class TestInputModule : MonoBehaviour, IPhysicalDataInput
+    {
 
         public PhysicalDataInput input;
         private Color originalColor;
 
         // Use this for initialization
-        void Awake() {
+        void Awake()
+        {
             input.AddInput(this);
             originalColor = GetComponent<MeshRenderer>().material.color;
         }
 
-        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data) {
+        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data)
+        {
             TestData d = data as TestData;
 
-            if (d != null) {
+            if (d != null)
+            {
                 float dialVal = d.controlData.normalizedValue / 100f;
 
                 float H, S, V;

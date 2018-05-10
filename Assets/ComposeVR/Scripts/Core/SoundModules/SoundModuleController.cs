@@ -4,23 +4,28 @@ using System;
 using UnityEngine;
 using OSCsharp.Data;
 
-namespace ComposeVR {
-    public class SoundModuleEventArgs : EventArgs {
+namespace ComposeVR
+{
+    public class SoundModuleEventArgs : EventArgs
+    {
         public string ModuleName;
     }
 
     [Serializable]
-    public class SoundModuleController : RemoteEventHandler, IPhysicalDataInput {
+    public class SoundModuleController : RemoteEventHandler, IPhysicalDataInput
+    {
 
         public event EventHandler<SoundModuleEventArgs> ModuleNameChanged;
 
         [Serializable]
-        public class SoundModuleConfiguration {
+        public class SoundModuleConfiguration
+        {
             public float browserYOffset;
         }
 
         [Serializable]
-        public class SoundModuleState {
+        public class SoundModuleState
+        {
             public string ModuleName = "New Module";
             public bool ModuleLoaded;
             public bool Browsing;
@@ -32,7 +37,8 @@ namespace ComposeVR {
         private SoundModuleState State = new SoundModuleState();
         private SoundModuleEventArgs soundModuleEventArgs;
 
-        public void Initialize() {
+        public void Initialize()
+        {
             soundModuleEventArgs = new SoundModuleEventArgs();
 
             //Register with the router
@@ -44,18 +50,21 @@ namespace ComposeVR {
             Module.GetInputJack().AddInput(this);
 
             playingNotes = new int[127];
-        } 
+        }
 
-        public void OnChangeInstrumentButtonClicked() {
+        public void OnChangeInstrumentButtonClicked()
+        {
             Debug.Log("Change instruments");
             RequestBrowser("Instrument", "Devices", 0, true, false);
         }
 
-        public void OnLoadPresetButtonClicked() {
+        public void OnLoadPresetButtonClicked()
+        {
             RequestBrowser("Instrument", "", 0, true, true);
         }
 
-        public void SetController(ISoundModule controller) {
+        public void SetController(ISoundModule controller)
+        {
             this.Module = controller;
         }
 
@@ -63,12 +72,14 @@ namespace ComposeVR {
         /// Event triggered after the DAW has successfully created a new sound module
         /// </summary>
         /// 
-        public void OnSoundModuleCreated(Protocol.Event e) {
+        public void OnSoundModuleCreated(Protocol.Event e)
+        {
             Debug.Log("Track created with id " + GetID());
             RequestBrowser("Instrument", "Devices", 0, false, false);
         }
 
-        private void RequestBrowser(string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn) {
+        private void RequestBrowser(string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn)
+        {
             Module.PositionBrowser();
 
             DeviceBrowserController browser = Module.GetBrowserController();
@@ -80,7 +91,8 @@ namespace ComposeVR {
             State.Browsing = true;
         }
 
-        private void OnBrowserClosed(object sender, BrowserEventArgs e) {
+        private void OnBrowserClosed(object sender, BrowserEventArgs e)
+        {
             DeviceBrowserController browser = Module.GetBrowserController();
             browser.BrowserClosed -= OnBrowserClosed;
             browser.BrowserSelectionChanged -= OnBrowserSelectionChanged;
@@ -88,24 +100,29 @@ namespace ComposeVR {
             State.Browsing = false;
         }
 
-        private void OnBrowserSelectionChanged(object sender, BrowserEventArgs e) {
+        private void OnBrowserSelectionChanged(object sender, BrowserEventArgs e)
+        {
             State.ModuleName = e.SelectedResult;
             soundModuleEventArgs.ModuleName = State.ModuleName;
 
-            if (!State.ModuleLoaded) {
+            if (!State.ModuleLoaded)
+            {
                 State.ModuleLoaded = true;
                 //TODO: Make module glow brighter indicate some sound has been loaded
             }
 
-            if(ModuleNameChanged != null) {
+            if (ModuleNameChanged != null)
+            {
                 ModuleNameChanged(this, soundModuleEventArgs);
             }
         }
 
-        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data) {
+        void IPhysicalDataInput.ReceiveData(PhysicalDataPacket data)
+        {
             NoteData incomingMIDI = data as NoteData;
 
-            if(incomingMIDI != null) {
+            if (incomingMIDI != null)
+            {
                 PlayMIDINote(incomingMIDI);
             }
         }
@@ -113,23 +130,28 @@ namespace ComposeVR {
         private string OSCNoteAddress;
         private int[] playingNotes;
 
-        private void PlayMIDINote(NoteData data) {
+        private void PlayMIDINote(NoteData data)
+        {
 
             string noteStatus;
-            if(data.NoteStatus == NoteData.Status.On) {
+            if (data.NoteStatus == NoteData.Status.On)
+            {
                 noteStatus = "on";
                 playingNotes[data.Note] += 1;
             }
-            else {
+            else
+            {
 
                 noteStatus = "off";
                 playingNotes[data.Note] -= 1;
-                if(playingNotes[data.Note] < 0) {
+                if (playingNotes[data.Note] < 0)
+                {
                     playingNotes[data.Note] = 0;
                 }
 
                 //Only send a note off message if none of the inputs are playing the note
-                if(playingNotes[data.Note] != 0) {
+                if (playingNotes[data.Note] != 0)
+                {
                     return;
                 }
 
@@ -144,15 +166,18 @@ namespace ComposeVR {
             Module.GetOSCEventDispatcher().SendOSCPacket(noteAddress, noteMessage);
         }
 
-        public int[] GetPlayingNotes() {
+        public int[] GetPlayingNotes()
+        {
             return playingNotes;
         }
 
-        public bool IsBrowsing() {
+        public bool IsBrowsing()
+        {
             return State.Browsing;
         }
 
-        public string GetName() {
+        public string GetName()
+        {
             return State.ModuleName;
         }
     }

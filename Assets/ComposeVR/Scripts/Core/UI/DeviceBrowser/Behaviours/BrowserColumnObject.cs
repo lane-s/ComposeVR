@@ -7,11 +7,13 @@ using UnityEngine.Events;
 using VRTK;
 using Google.Protobuf.Collections;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
     using Arrow = Protocol.Browser.OnArrowVisibilityChanged.Types.Arrow;
-        
-    public sealed class BrowserColumnObject : MonoBehaviour, IBrowserColumn {
+
+    public sealed class BrowserColumnObject : MonoBehaviour, IBrowserColumn
+    {
 
         public Transform resultButtonPrefab;
         public BrowserColumnController Controller;
@@ -23,7 +25,8 @@ namespace ComposeVR {
         private Color originalNormalColor;
 
 
-        private void Awake() {
+        private void Awake()
+        {
             resultButtons = new List<SelectableButton>();
             CreateArrows();
 
@@ -31,7 +34,8 @@ namespace ComposeVR {
             Controller.Initialize();
         }
 
-        private void CreateArrows() {
+        private void CreateArrows()
+        {
             upArrow = transform.Find("UpArrow").GetComponent<Button>();
             upArrow.onClick.AddListener(
                 () => { Controller.OnArrowClicked(Arrow.Up); }
@@ -39,48 +43,58 @@ namespace ComposeVR {
 
             downArrow = transform.Find("DownArrow").GetComponent<Button>();
             downArrow.onClick.AddListener(
-                () => { Controller.OnArrowClicked(Arrow.Down);  }
+                () => { Controller.OnArrowClicked(Arrow.Down); }
             );
         }
 
-        void IBrowserColumn.UpdateItem(int itemIndex, string itemName) {
+        void IBrowserColumn.UpdateItem(int itemIndex, string itemName)
+        {
             resultButtons[itemIndex].Text = itemName;
         }
 
-        void IBrowserColumn.SelectItem(int itemIndex) {
+        void IBrowserColumn.SelectItem(int itemIndex)
+        {
             //Select button
             resultButtons[itemIndex].Select();
         }
 
-        void IBrowserColumn.DeselectItem(int itemIndex) {
+        void IBrowserColumn.DeselectItem(int itemIndex)
+        {
             resultButtons[itemIndex].Deselect();
         }
 
-        void IBrowserColumn.SetItemVisibility(int itemIndex, bool visible) {
+        void IBrowserColumn.SetItemVisibility(int itemIndex, bool visible)
+        {
             resultButtons[itemIndex].gameObject.SetActive(visible);
         }
 
-        string IBrowserColumn.GetItemText(int itemIndex) {
+        string IBrowserColumn.GetItemText(int itemIndex)
+        {
             return resultButtons[itemIndex].Text;
         }
 
-        void IBrowserColumn.SetArrowVisibility(Arrow arrow, bool visible) {
-            if (arrow == Arrow.Up) {
+        void IBrowserColumn.SetArrowVisibility(Arrow arrow, bool visible)
+        {
+            if (arrow == Arrow.Up)
+            {
                 this.upArrow.gameObject.SetActive(visible);
             }
-            else {
+            else
+            {
                 this.downArrow.gameObject.SetActive(visible);
             }
         }
 
-        void IBrowserColumn.ExpandToSize(int size) {
+        void IBrowserColumn.ExpandToSize(int size)
+        {
 
             float buttonHeight = resultButtonPrefab.GetComponent<RectTransform>().localScale.y;
 
             //Add buttons as needed
             Vector3 buttonPosition = new Vector3(0, (buttonHeight + Controller.Config.ResultSpacing) * resultButtons.Count - Controller.Config.ResultStartOffset, 0);
 
-            while (resultButtons.Count < size) {
+            while (resultButtons.Count < size)
+            {
                 Transform newButton = Instantiate(resultButtonPrefab) as Transform;
                 newButton.SetParent(transform);
                 newButton.localPosition = Vector3.zero;
@@ -116,7 +130,8 @@ namespace ComposeVR {
 
     }
 
-    public interface IBrowserColumn {
+    public interface IBrowserColumn
+    {
         void UpdateItem(int itemIndex, string itemName);
         void SelectItem(int itemIndex);
         void DeselectItem(int itemIndex);

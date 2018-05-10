@@ -2,22 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
-    public class PhysicalConnectionEventArgs : EventArgs {
+namespace ComposeVR
+{
+    public class PhysicalConnectionEventArgs : EventArgs
+    {
         private Cord connectedCord;
         private Transform plugEnd;
 
-        public PhysicalConnectionEventArgs(Cord connectedCord, Transform plugEnd) {
+        public PhysicalConnectionEventArgs(Cord connectedCord, Transform plugEnd)
+        {
             this.connectedCord = connectedCord;
             this.plugEnd = plugEnd;
         }
 
-        public Cord ConnectedCord {
-            get { return connectedCord;  }
-            set { connectedCord = value;  }
+        public Cord ConnectedCord
+        {
+            get { return connectedCord; }
+            set { connectedCord = value; }
         }
 
-        public Transform PlugNodeInCord {
+        public Transform PlugNodeInCord
+        {
             get { return plugEnd; }
             set { plugEnd = value; }
         }
@@ -28,19 +33,24 @@ namespace ComposeVR {
     /// 
     /// They detect nearby Plugs and pass them on to a sibling PlugAttach component if one is present
     /// </summary>
-    public class PhysicalDataEndpoint : MonoBehaviour {
+    public class PhysicalDataEndpoint : MonoBehaviour
+    {
 
         public EventHandler<PhysicalConnectionEventArgs> PlugConnected;
         public EventHandler<PhysicalConnectionEventArgs> PlugDisconnected;
 
-        public void Connect(Cord connectedCord, Transform plugNodeInCord) {
-            if(PlugConnected != null) {
+        public void Connect(Cord connectedCord, Transform plugNodeInCord)
+        {
+            if (PlugConnected != null)
+            {
                 PlugConnected(this, new PhysicalConnectionEventArgs(connectedCord, plugNodeInCord));
             }
         }
 
-        public void Disconnect(Cord connectedCord, Transform plugNodeInCord) {
-            if(PlugDisconnected != null) {
+        public void Disconnect(Cord connectedCord, Transform plugNodeInCord)
+        {
+            if (PlugDisconnected != null)
+            {
                 PlugDisconnected(this, new PhysicalConnectionEventArgs(connectedCord, plugNodeInCord));
             }
         }

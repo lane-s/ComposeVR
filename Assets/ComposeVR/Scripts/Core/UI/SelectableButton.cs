@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
     [RequireComponent(typeof(Button))]
-    public sealed class SelectableButton : MonoBehaviour {
+    public sealed class SelectableButton : MonoBehaviour
+    {
 
         private Button button;
         private Text buttonText;
@@ -14,33 +16,41 @@ namespace ComposeVR {
 
         private const int MAX_TEXT_LENGTH = 25;
 
-        public string Text {
-            get {
-                if(buttonText == null) {
+        public string Text
+        {
+            get
+            {
+                if (buttonText == null)
+                {
                     buttonText = GetComponentInChildren<Text>();
                 }
 
                 return buttonText.text;
             }
 
-            set {
-                if(value.Length > MAX_TEXT_LENGTH) {
+            set
+            {
+                if (value.Length > MAX_TEXT_LENGTH)
+                {
                     buttonText.text = value.Substring(0, MAX_TEXT_LENGTH);
                 }
-                else {
+                else
+                {
                     buttonText.text = value;
                 }
             }
         }
 
         // Use this for initialization
-        void Awake() {
+        void Awake()
+        {
             button = GetComponent<Button>();
             buttonText = GetComponentInChildren<Text>();
             normalColor = button.colors.normalColor;
         }
 
-        public void Select() {
+        public void Select()
+        {
             ColorBlock cb = button.colors;
             cb.normalColor = cb.pressedColor;
             button.colors = cb;
@@ -48,7 +58,8 @@ namespace ComposeVR {
             selected = true;
         }
 
-        public void Deselect() {
+        public void Deselect()
+        {
             ColorBlock cb = button.colors;
             cb.normalColor = normalColor;
             button.colors = cb;
@@ -56,15 +67,18 @@ namespace ComposeVR {
             selected = false;
         }
 
-        public Button GetButton() {
-            if(button == null) {
+        public Button GetButton()
+        {
+            if (button == null)
+            {
                 button = GetComponent<Button>();
             }
 
             return button;
         }
 
-        public bool IsSelected() {
+        public bool IsSelected()
+        {
             return selected;
         }
     }

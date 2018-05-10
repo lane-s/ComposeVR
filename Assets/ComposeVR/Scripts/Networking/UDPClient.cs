@@ -9,8 +9,10 @@ using ComposeVR;
 using System.IO;
 using Google.Protobuf;
 
-namespace ComposeVR {
-    public class UDPClient : MonoBehaviour {
+namespace ComposeVR
+{
+    public class UDPClient : MonoBehaviour
+    {
 
         public string hostIP;
         public int sendPort;
@@ -22,7 +24,8 @@ namespace ComposeVR {
         private UdpClient listener;
 
         // Use this for initialization
-        void Start() {
+        void Start()
+        {
             sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPAddress send_address = IPAddress.Parse(hostIP);
             send_end_point = new IPEndPoint(send_address, sendPort);
@@ -34,16 +37,19 @@ namespace ComposeVR {
             outStream = new MemoryStream();
         }
 
-        private void DataReceived(IAsyncResult ar) {
+        private void DataReceived(IAsyncResult ar)
+        {
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, receivePort);
             byte[] data;
-            try {
+            try
+            {
                 data = listener.EndReceive(ar, ref ip);
                 listener.BeginReceive(new AsyncCallback(DataReceived), null);
                 messageQueue.Enqueue(data);
 
             }
-            catch (Exception receiveException) {
+            catch (Exception receiveException)
+            {
                 Debug.Log("Dgram receive error: " + receiveException.Message);
             }
         }
@@ -52,32 +58,40 @@ namespace ComposeVR {
 
         private MemoryStream outStream;
 
-        public void send(Protocol.Event outgoingEvent) {
-            try {
+        public void send(Protocol.Event outgoingEvent)
+        {
+            try
+            {
                 outStream.SetLength(0);
                 outgoingEvent.WriteDelimitedTo(outStream);
 
                 byte[] data = outStream.ToArray();
-                
+
                 sender.SendTo(data, send_end_point);
             }
-            catch (Exception sendException) {
+            catch (Exception sendException)
+            {
                 Debug.Log("Dgram send error: " + sendException.Message);
             }
         }
 
-        public void sendBytes(byte[] bytes) {
-            try {
+        public void sendBytes(byte[] bytes)
+        {
+            try
+            {
                 sender.SendTo(bytes, send_end_point);
             }
-            catch (Exception sendException) {
+            catch (Exception sendException)
+            {
                 Debug.Log("Dgram send error: " + sendException.Message);
             }
         }
 
         // Update is called once per frame
-        void Update() {
-            while (messageQueue.Count > 0) {
+        void Update()
+        {
+            while (messageQueue.Count > 0)
+            {
                 byte[] data = messageQueue.Dequeue();
                 string message = Encoding.UTF8.GetString(data);
                 Debug.Log("Data received");

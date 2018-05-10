@@ -32,7 +32,7 @@ struct VertexOutputForwardClipBase
 	UNITY_VERTEX_OUTPUT_STEREO
 };
 
-VertexOutputForwardClipBase vertForwardClipBase (VertexInput v)
+VertexOutputForwardClipBase vertForwardClipBase(VertexInput v)
 {
 	VertexOutputForwardClipBase o;
 	UNITY_SETUP_INSTANCE_ID(v);
@@ -40,44 +40,44 @@ VertexOutputForwardClipBase vertForwardClipBase (VertexInput v)
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 	float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
-	#if UNITY_REQUIRE_FRAG_WORLDPOS || PLANE_CLIPPING_ENABLED
-		o.posWorld = posWorld.xyz;
-	#endif
+#if UNITY_REQUIRE_FRAG_WORLDPOS || PLANE_CLIPPING_ENABLED
+	o.posWorld = posWorld.xyz;
+#endif
 	o.pos = UnityObjectToClipPos(v.vertex);
-		
+
 	o.tex = TexCoords(v);
 	o.eyeVec = NormalizePerVertexNormal(posWorld.xyz - _WorldSpaceCameraPos);
 	float3 normalWorld = UnityObjectToWorldNormal(v.normal);
-	#ifdef _TANGENT_TO_WORLD
-		float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
+#ifdef _TANGENT_TO_WORLD
+	float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
 
-		float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);
-		o.tangentToWorldAndParallax[0].xyz = tangentToWorld[0];
-		o.tangentToWorldAndParallax[1].xyz = tangentToWorld[1];
-		o.tangentToWorldAndParallax[2].xyz = tangentToWorld[2];
-	#else
-		o.tangentToWorldAndParallax[0].xyz = 0;
-		o.tangentToWorldAndParallax[1].xyz = 0;
-		o.tangentToWorldAndParallax[2].xyz = normalWorld;
-	#endif
+	float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);
+	o.tangentToWorldAndParallax[0].xyz = tangentToWorld[0];
+	o.tangentToWorldAndParallax[1].xyz = tangentToWorld[1];
+	o.tangentToWorldAndParallax[2].xyz = tangentToWorld[2];
+#else
+	o.tangentToWorldAndParallax[0].xyz = 0;
+	o.tangentToWorldAndParallax[1].xyz = 0;
+	o.tangentToWorldAndParallax[2].xyz = normalWorld;
+#endif
 	//We need this for shadow receving
 	TRANSFER_SHADOW(o);
 
 	o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld);
-	
-	#ifdef _PARALLAXMAP
-		TANGENT_SPACE_ROTATION;
-		half3 viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
-		o.tangentToWorldAndParallax[0].w = viewDirForParallax.x;
-		o.tangentToWorldAndParallax[1].w = viewDirForParallax.y;
-		o.tangentToWorldAndParallax[2].w = viewDirForParallax.z;
-	#endif
 
-	#if UNITY_OPTIMIZE_TEXCUBELOD
-		o.reflUVW 		= reflect(o.eyeVec, normalWorld);
-	#endif
+#ifdef _PARALLAXMAP
+	TANGENT_SPACE_ROTATION;
+	half3 viewDirForParallax = mul(rotation, ObjSpaceViewDir(v.vertex));
+	o.tangentToWorldAndParallax[0].w = viewDirForParallax.x;
+	o.tangentToWorldAndParallax[1].w = viewDirForParallax.y;
+	o.tangentToWorldAndParallax[2].w = viewDirForParallax.z;
+#endif
 
-	UNITY_TRANSFER_FOG(o,o.pos);
+#if UNITY_OPTIMIZE_TEXCUBELOD
+	o.reflUVW = reflect(o.eyeVec, normalWorld);
+#endif
+
+	UNITY_TRANSFER_FOG(o, o.pos);
 	return o;
 }
 
@@ -98,11 +98,11 @@ struct VertexOutputForwardClipAdd
 	UNITY_VERTEX_OUTPUT_STEREO
 
 #if PLANE_CLIPPING_ENABLED
-	float3 posWorld					: TEXCOORD9;
+		float3 posWorld					: TEXCOORD9;
 #endif
 };
 
-VertexOutputForwardClipAdd vertForwardClipAdd (VertexInput v)
+VertexOutputForwardClipAdd vertForwardClipAdd(VertexInput v)
 {
 	VertexOutputForwardClipAdd o;
 	UNITY_SETUP_INSTANCE_ID(v);
@@ -110,57 +110,57 @@ VertexOutputForwardClipAdd vertForwardClipAdd (VertexInput v)
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 	float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
-	
+
 #if PLANE_CLIPPING_ENABLED
-		o.posWorld = posWorld.xyz;
+	o.posWorld = posWorld.xyz;
 #endif
 	o.pos = UnityObjectToClipPos(v.vertex);
 
 	o.tex = TexCoords(v);
 	o.eyeVec = NormalizePerVertexNormal(posWorld.xyz - _WorldSpaceCameraPos);
 	float3 normalWorld = UnityObjectToWorldNormal(v.normal);
-	#ifdef _TANGENT_TO_WORLD
-		float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
+#ifdef _TANGENT_TO_WORLD
+	float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
 
-		float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);
-		o.tangentToWorldAndLightDir[0].xyz = tangentToWorld[0];
-		o.tangentToWorldAndLightDir[1].xyz = tangentToWorld[1];
-		o.tangentToWorldAndLightDir[2].xyz = tangentToWorld[2];
-	#else
-		o.tangentToWorldAndLightDir[0].xyz = 0;
-		o.tangentToWorldAndLightDir[1].xyz = 0;
-		o.tangentToWorldAndLightDir[2].xyz = normalWorld;
-	#endif
+	float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);
+	o.tangentToWorldAndLightDir[0].xyz = tangentToWorld[0];
+	o.tangentToWorldAndLightDir[1].xyz = tangentToWorld[1];
+	o.tangentToWorldAndLightDir[2].xyz = tangentToWorld[2];
+#else
+	o.tangentToWorldAndLightDir[0].xyz = 0;
+	o.tangentToWorldAndLightDir[1].xyz = 0;
+	o.tangentToWorldAndLightDir[2].xyz = normalWorld;
+#endif
 	//We need this for shadow receiving
 	TRANSFER_VERTEX_TO_FRAGMENT(o);
 
 	float3 lightDir = _WorldSpaceLightPos0.xyz - posWorld.xyz * _WorldSpaceLightPos0.w;
-	#ifndef USING_DIRECTIONAL_LIGHT
-		lightDir = NormalizePerVertexNormal(lightDir);
-	#endif
+#ifndef USING_DIRECTIONAL_LIGHT
+	lightDir = NormalizePerVertexNormal(lightDir);
+#endif
 	o.tangentToWorldAndLightDir[0].w = lightDir.x;
 	o.tangentToWorldAndLightDir[1].w = lightDir.y;
 	o.tangentToWorldAndLightDir[2].w = lightDir.z;
 
-	#ifdef _PARALLAXMAP
-		TANGENT_SPACE_ROTATION;
-		o.viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
-	#endif
-	
-	UNITY_TRANSFER_FOG(o,o.pos);
+#ifdef _PARALLAXMAP
+	TANGENT_SPACE_ROTATION;
+	o.viewDirForParallax = mul(rotation, ObjSpaceViewDir(v.vertex));
+#endif
+
+	UNITY_TRANSFER_FOG(o, o.pos);
 	return o;
 }
 
 #if UNITY_REQUIRE_FRAG_WORLDPOS || PLANE_CLIPPING_ENABLED
-	#define IN_WORLDPOS_CLIP(i) i.posWorld
+#define IN_WORLDPOS_CLIP(i) i.posWorld
 #else
-	#define IN_WORLDPOS_CLIP(i) half3(0,0,0)
+#define IN_WORLDPOS_CLIP(i) half3(0,0,0)
 #endif
 
 #if PLANE_CLIPPING_ENABLED
-	#define IN_WORLDPOS_FWDADD_CLIP(i) i.posWorld
+#define IN_WORLDPOS_FWDADD_CLIP(i) i.posWorld
 #else
-	#define IN_WORLDPOS_FWDADD_CLIP(i) half3(0,0,0)
+#define IN_WORLDPOS_FWDADD_CLIP(i) half3(0,0,0)
 #endif
 
 #define FRAGMENT_SETUP_CLIP(x) FragmentCommonData x = \
@@ -170,33 +170,33 @@ VertexOutputForwardClipAdd vertForwardClipAdd (VertexInput v)
 	FragmentSetup(i.tex, i.eyeVec, IN_VIEWDIR4PARALLAX_FWDADD(i), i.tangentToWorldAndLightDir, IN_WORLDPOS_FWDADD_CLIP(i));
 
 
-half4 fragForwardClipBaseInternal (VertexOutputForwardClipBase i)
+half4 fragForwardClipBaseInternal(VertexOutputForwardClipBase i)
 {
 	FRAGMENT_SETUP_CLIP(s)
-	PLANE_CLIP(s.posWorld)
+		PLANE_CLIP(s.posWorld)
 #if UNITY_OPTIMIZE_TEXCUBELOD
-	s.reflUVW		= i.reflUVW;
+		s.reflUVW = i.reflUVW;
 #endif
 
-	UnityLight mainLight = MainLight ();
+	UnityLight mainLight = MainLight();
 	half atten = SHADOW_ATTENUATION(i);
 
 
 	half occlusion = Occlusion(i.tex.xy);
-	UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
+	UnityGI gi = FragmentGI(s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
 
-	half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
-	c.rgb += UNITY_BRDF_GI (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, occlusion, gi);
+	half4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
+	c.rgb += UNITY_BRDF_GI(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, occlusion, gi);
 	c.rgb += Emission(i.tex.xy);
 
 	UNITY_APPLY_FOG(i.fogCoord, c.rgb);
-	return OutputForward (c, s.alpha);
+	return OutputForward(c, s.alpha);
 }
 
 half4 fragForwardClipAddInternal(VertexOutputForwardClipAdd i)
 {
 	FRAGMENT_SETUP_FWDADD_CLIP(s)
-	PLANE_CLIP(s.posWorld)
+		PLANE_CLIP(s.posWorld)
 
 		UnityLight light = AdditiveLight(IN_LIGHTDIR_FWDADD(i), LIGHT_ATTENUATION(i));
 	UnityIndirect noIndirect = ZeroIndirect();
@@ -301,7 +301,7 @@ void fragDeferredClip(
 #endif
 
 	FRAGMENT_SETUP_CLIP(s)
-	PLANE_CLIP(s.posWorld)
+		PLANE_CLIP(s.posWorld)
 #if UNITY_OPTIMIZE_TEXCUBELOD
 		s.reflUVW = i.reflUVW;
 #endif

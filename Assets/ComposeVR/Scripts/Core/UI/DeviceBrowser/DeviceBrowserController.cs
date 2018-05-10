@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ComposeVR {
-    public class BrowserEventArgs : EventArgs {
+namespace ComposeVR
+{
+    public class BrowserEventArgs : EventArgs
+    {
         public string SelectedResult;
         public bool SelectionConfirmed;
     }
 
     [Serializable]
-    public class DeviceBrowserController : RemoteEventHandler {
+    public class DeviceBrowserController : RemoteEventHandler
+    {
 
         public event EventHandler<BrowserEventArgs> BrowserClosed;
         public event EventHandler<BrowserEventArgs> BrowserSelectionChanged;
@@ -18,7 +21,8 @@ namespace ComposeVR {
         private IDeviceBrowser deviceBrowser;
 
         [Serializable]
-        public class DeviceBrowserState {
+        public class DeviceBrowserState
+        {
             public BrowserColumnController ResultColumn;
             public List<BrowserColumnController> FilterColumns;
             public string TargetDeviceType;
@@ -31,11 +35,13 @@ namespace ComposeVR {
         private DeviceBrowserState State = new DeviceBrowserState();
         private BrowserEventArgs browserEventArgs;
 
-        public void SetDeviceBrowser(IDeviceBrowser b) {
+        public void SetDeviceBrowser(IDeviceBrowser b)
+        {
             deviceBrowser = b;
         }
 
-        public void Initialize() {
+        public void Initialize()
+        {
             RegisterRemoteID("browser");
             InitializeColumns();
             SetVisible(false);
@@ -44,7 +50,8 @@ namespace ComposeVR {
             State.SelectedResult = "";
         }
 
-        private void InitializeColumns() {
+        private void InitializeColumns()
+        {
             State.ResultColumn = deviceBrowser.GetResultColumn();
             State.FilterColumns = deviceBrowser.GetFilterColumns();
 
@@ -52,15 +59,18 @@ namespace ComposeVR {
             State.ResultColumn.ItemSelected += OnItemSelected;
             State.ResultColumn.DeviceTypeChanged += OnDeviceTypeChanged;
 
-            foreach(BrowserColumnController c in State.FilterColumns) {
+            foreach (BrowserColumnController c in State.FilterColumns)
+            {
                 c.PageChanged += OnPageChanged;
                 c.ItemSelected += OnItemSelected;
                 c.DeviceTypeChanged += OnDeviceTypeChanged;
             }
         }
 
-        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn) {
-            if(BrowserClosed != null) {
+        public void OpenBrowser(string moduleID, string deviceType, string contentType, int deviceIndex, bool replaceDevice, bool displayTagColumn)
+        {
+            if (BrowserClosed != null)
+            {
                 browserEventArgs.SelectedResult = State.SelectedResult;
                 BrowserClosed(this, browserEventArgs);
             }
@@ -75,8 +85,10 @@ namespace ComposeVR {
             SetVisible(true);
         }
 
-        public void CloseBrowser(bool selectionConfirmed) {
-            if(BrowserClosed != null) {
+        public void CloseBrowser(bool selectionConfirmed)
+        {
+            if (BrowserClosed != null)
+            {
                 browserEventArgs.SelectedResult = State.SelectedResult;
                 browserEventArgs.SelectionConfirmed = selectionConfirmed;
                 BrowserClosed(this, browserEventArgs);
@@ -86,21 +98,27 @@ namespace ComposeVR {
             deviceBrowser.Hide();
         }
 
-        private void SetVisible(bool visible) {
+        private void SetVisible(bool visible)
+        {
             State.ResultColumn.SetVisible(visible);
 
-            foreach(BrowserColumnController c in State.FilterColumns) {
-                if (c.Config.Name.Equals("Tags")) {
+            foreach (BrowserColumnController c in State.FilterColumns)
+            {
+                if (c.Config.Name.Equals("Tags"))
+                {
                     c.SetVisible(visible && State.displayTagColumn);
                 }
-                else {
+                else
+                {
                     c.SetVisible(visible);
                 }
             }
         }
 
-        private void ResetBrowser() {
-            foreach(BrowserColumnController c in State.FilterColumns){
+        private void ResetBrowser()
+        {
+            foreach (BrowserColumnController c in State.FilterColumns)
+            {
                 c.ResetColumn();
             }
 
@@ -110,34 +128,42 @@ namespace ComposeVR {
             State.displayTagColumn = false;
         }
 
-        private void OnPageChanged(object sender, PageChangedEventArgs e) {
-            if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS) {
+        private void OnPageChanged(object sender, PageChangedEventArgs e)
+        {
+            if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS)
+            {
                 RemoteEventEmitter.Instance.ChangeResultsPage(e.PageChange);
             }
-            else if(e.ColumnType == BrowserColumnController.ColumnType.FILTER) {
+            else if (e.ColumnType == BrowserColumnController.ColumnType.FILTER)
+            {
                 RemoteEventEmitter.Instance.ChangeFilterPage(e.ColumnName, e.PageChange);
             }
         }
 
-        private void OnItemSelected(object sender, ItemSelectedEventArgs e) {
-            if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS) {
+        private void OnItemSelected(object sender, ItemSelectedEventArgs e)
+        {
+            if (e.ColumnType == BrowserColumnController.ColumnType.RESULTS)
+            {
                 RemoteEventEmitter.Instance.SelectResult(e.SelectionIndex);
                 State.SelectedResult = e.SelectionName;
 
                 browserEventArgs.SelectedResult = e.SelectionName;
                 browserEventArgs.SelectionConfirmed = false;
-                if(BrowserSelectionChanged != null) {
+                if (BrowserSelectionChanged != null)
+                {
                     BrowserSelectionChanged(this, browserEventArgs);
                 }
             }
-            else if(e.ColumnType == BrowserColumnController.ColumnType.FILTER) {
+            else if (e.ColumnType == BrowserColumnController.ColumnType.FILTER)
+            {
                 RemoteEventEmitter.Instance.SelectFilterItem(e.ColumnName, e.SelectionIndex);
             }
         }
 
-        private void OnDeviceTypeChanged(object sender, DeviceTypeChangedEventArgs e) {
+        private void OnDeviceTypeChanged(object sender, DeviceTypeChangedEventArgs e)
+        {
             State.CurrentDeviceType = e.DeviceType;
-            
+
             /*
             if (State.CurrentDeviceType.Equals(State.TargetDeviceType)) {
                 SetVisible(true);
@@ -147,12 +173,14 @@ namespace ComposeVR {
             }*/
         }
 
-        public void OnConfirmButtonClicked() {
+        public void OnConfirmButtonClicked()
+        {
             CloseBrowser(true);
             RemoteEventEmitter.Instance.CommitSelection(true);
         }
 
-        public void OnCancelButtonClicked() {
+        public void OnCancelButtonClicked()
+        {
             CloseBrowser(false);
             RemoteEventEmitter.Instance.CommitSelection(false);
         }

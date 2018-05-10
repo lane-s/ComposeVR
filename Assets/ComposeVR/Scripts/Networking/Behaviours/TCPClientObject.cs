@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using ComposeVR.Protocol;
 using UnityEngine;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
 
-    public sealed class TCPClientObject : SingletonObject<TCPClientObject>, IEventQueue {
+    public sealed class TCPClientObject : SingletonObject<TCPClientObject>, IEventQueue
+    {
 
         public TCPClientController Controller;
 
@@ -14,7 +16,8 @@ namespace ComposeVR {
         private Queue<Protocol.Event> EventQueue;
         private System.Object eventQueueLock = new System.Object();
 
-        void Awake() {
+        void Awake()
+        {
             Controller.SetEventQueue(this);
             EventQueue = new Queue<Protocol.Event>();
             DontDestroyOnLoad(this.gameObject);
@@ -23,11 +26,14 @@ namespace ComposeVR {
         }
 
         // Update is called once per frame
-        void Update() {
+        void Update()
+        {
             int eventCount = 0;
 
-            lock (eventQueueLock) {
-                if (EventQueue != null) {
+            lock (eventQueueLock)
+            {
+                if (EventQueue != null)
+                {
                     eventCount = EventQueue.Count;
                 }
             }
@@ -35,20 +41,24 @@ namespace ComposeVR {
             //Set the time to stop processing incoming events, otherwise the frame may hang
             float timeout = Time.realtimeSinceStartup + maxUpdateTime;
 
-            while (eventCount > 0) {
+            while (eventCount > 0)
+            {
 
-                if (Time.realtimeSinceStartup > timeout) {
+                if (Time.realtimeSinceStartup > timeout)
+                {
                     break;
                 }
 
                 //Try to get an event from the queue
                 Protocol.Event currentEvent = null;
-                lock (eventQueueLock) {
+                lock (eventQueueLock)
+                {
                     currentEvent = EventQueue.Dequeue();
                 }
 
                 //Send the event on to its target object
-                if (currentEvent != null) {
+                if (currentEvent != null)
+                {
                     RemoteEventRouter.Instance.RouteEvent(currentEvent);
                 }
 
@@ -56,18 +66,22 @@ namespace ComposeVR {
             }
         }
 
-        void OnApplicationQuit() {
+        void OnApplicationQuit()
+        {
             Controller.Close();
         }
 
-        void IEventQueue.QueueEvent(Protocol.Event e) {
-            lock (eventQueueLock) {
+        void IEventQueue.QueueEvent(Protocol.Event e)
+        {
+            lock (eventQueueLock)
+            {
                 EventQueue.Enqueue(e);
             }
         }
     }
 
-    public interface IEventQueue {
+    public interface IEventQueue
+    {
         void QueueEvent(Protocol.Event e);
     }
 }

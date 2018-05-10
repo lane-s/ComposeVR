@@ -4,9 +4,11 @@ using System.Linq;
 using UnityEngine;
 using VRTK;
 
-namespace ComposeVR {
+namespace ComposeVR
+{
     [RequireComponent(typeof(LineRenderer))]
-    public sealed class Cord : MonoBehaviour {
+    public sealed class Cord : MonoBehaviour
+    {
 
         public Transform BranchHandlePrefab;
         public ParticleSystem CordCollapseParticleSystemPrefab;
@@ -33,7 +35,7 @@ namespace ComposeVR {
         private Color cordColor;
         private float flowTextureOffset = 0;
         private bool flowing;
-                
+
         private int collapseStart;
         private int collapseEnd;
         private bool collapsing = false;
@@ -52,27 +54,34 @@ namespace ComposeVR {
 
         private bool allowBranching;
 
-        public Transform StartNode {
+        public Transform StartNode
+        {
             get { return A; }
         }
 
-        public Transform EndNode {
+        public Transform EndNode
+        {
             get { return B; }
         }
 
-        public Color Color {
+        public Color Color
+        {
             get { return cordColor; }
-            set {
+            set
+            {
                 cordColor = value;
-                if (lineRenderer) {
+                if (lineRenderer)
+                {
                     lineRenderer.material.SetColor("_TintColor", cordColor);
                 }
             }
         }
 
-        public List<Vector3> Path {
+        public List<Vector3> Path
+        {
             get { return path; }
-            set {
+            set
+            {
                 path = value;
                 UpdateLine();
                 UpdateBoundingBox();
@@ -80,20 +89,25 @@ namespace ComposeVR {
             }
         }
 
-        public int NumPoints {
+        public int NumPoints
+        {
             get { return Path.Count; }
         }
 
-        public bool Flowing {
+        public bool Flowing
+        {
             get { return flowing; }
-            set {
+            set
+            {
                 flowing = value;
 
-                if (flowing) {
+                if (flowing)
+                {
                     lineRenderer.material.mainTexture = FlowTexture;
                     lineRenderer.material.SetFloat("_EmissionGain", OnEmission);
                 }
-                else {
+                else
+                {
                     lineRenderer.material.mainTexture = null;
                     lineRenderer.material.SetFloat("_EmissionGain", OffEmission);
                 }
@@ -101,17 +115,22 @@ namespace ComposeVR {
             }
         }
 
-        public Vector3 GetPathPointAtIndex(int i) {
-            if(i >= path.Count) {
+        public Vector3 GetPathPointAtIndex(int i)
+        {
+            if (i >= path.Count)
+            {
                 i = path.Count - 1;
-            }else if(i < 0) {
+            }
+            else if (i < 0)
+            {
                 i = 0;
             }
 
             return path[i];
         }
 
-        void Awake() {
+        void Awake()
+        {
             lineRenderer = GetComponent<LineRenderer>();
 
             path = new List<Vector3>();
@@ -133,16 +152,20 @@ namespace ComposeVR {
         }
 
         #region Nearby Controller Detection
-        private void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e) {
-            if (!nearbyControllers.Contains(e.other.transform)) {
+        private void OnControllerEnterArea(object sender, SimpleTriggerEventArgs e)
+        {
+            if (!nearbyControllers.Contains(e.other.transform))
+            {
                 nearbyControllers.Add(e.other.transform);
                 CreateBranchHandles(e.other.transform);
-            }                
+            }
         }
 
-        private void OnControllerLeaveArea(object sender, SimpleTriggerEventArgs e) {
+        private void OnControllerLeaveArea(object sender, SimpleTriggerEventArgs e)
+        {
             int index = nearbyControllers.IndexOf(e.other.transform);
-            if (index != -1) {
+            if (index != -1)
+            {
                 nearbyControllers.RemoveAt(index);
                 Destroy(branchHandles[index].gameObject);
                 branchHandles.RemoveAt(index);
@@ -151,21 +174,28 @@ namespace ComposeVR {
         #endregion Nearby Controller Detection
 
         // Update is called once per frame
-        void Update() {
-            if(A != null && B != null) {
-                if (!collapsing) {
+        void Update()
+        {
+            if (A != null && B != null)
+            {
+                if (!collapsing)
+                {
                     //Start a path from the origin
-                    if (path.Count == 0) {
+                    if (path.Count == 0)
+                    {
                         path.Add(A.position);
                     }
 
-                    if (!lastPos.Equals(B.position)) {
+                    if (!lastPos.Equals(B.position))
+                    {
 
                         updateLine = false;
 
                         //Extend path if the end moves
-                        if (path.Count > 0) {
-                            if (Vector3.Distance(path.Last(), B.position) > SegmentLength) {
+                        if (path.Count > 0)
+                        {
+                            if (Vector3.Distance(path.Last(), B.position) > SegmentLength)
+                            {
                                 path.Add(B.position);
                                 updateLine = true;
                                 timeRelaxed = 0;
@@ -174,30 +204,36 @@ namespace ComposeVR {
                     }
 
                     //Add on to the beginning of the cord if the start point is not at the beginning of the cord path
-                    if (A.gameObject.activeSelf && path[0] != A.position) {
-                        if (Vector3.Distance(path[0], A.position) > SegmentLength) {
+                    if (A.gameObject.activeSelf && path[0] != A.position)
+                    {
+                        if (Vector3.Distance(path[0], A.position) > SegmentLength)
+                        {
                             path.Insert(0, A.position);
                             updateLine = true;
                             timeRelaxed = 0;
                         }
                     }
 
-                    if (timeRelaxed < RelaxTime) {
+                    if (timeRelaxed < RelaxTime)
+                    {
                         timeRelaxed += Time.deltaTime;
 
-                        for (int i = 0; i < RelaxIterationsPerFrame; i++) {
+                        for (int i = 0; i < RelaxIterationsPerFrame; i++)
+                        {
                             RelaxPath();
                         }
 
                         updateLine = true;
                     }
 
-                    if (updateLine) {
+                    if (updateLine)
+                    {
                         UpdateLine();
                         UpdateBoundingBox();
                     }
 
-                    if (nearbyControllers.Count > 0) {
+                    if (nearbyControllers.Count > 0)
+                    {
                         UpdateBranchHandles();
                     }
 
@@ -205,19 +241,23 @@ namespace ComposeVR {
 
                     TranslateFlowTexture();
                 }
-                else if(collapsing) {
+                else if (collapsing)
+                {
                     int lineVertCount = collapseEnd - collapseStart;
 
-                    if(lineVertCount <= 1) {
+                    if (lineVertCount <= 1)
+                    {
                         OnCollapseFinished();
                     }
-                    else {
+                    else
+                    {
                         //Only render the portion of the path that has not yet been collapsed
                         lineRenderer.positionCount = lineVertCount + 1;
                         Vector3[] collapsingPath = new Vector3[lineRenderer.positionCount];
 
                         int j = 0;
-                        for(int i = collapseStart; i <= collapseEnd; i++) {
+                        for (int i = collapseStart; i <= collapseEnd; i++)
+                        {
                             collapsingPath[j] = path[i];
                             j += 1;
                         }
@@ -226,30 +266,39 @@ namespace ComposeVR {
 
                         //Rotate plugs to point away from their movement direction
                         Plug plugA = A.GetComponentInActor<Plug>();
-                        if(plugA != null) {
-                            if (plugALookVector != Vector3.zero) {
+                        if (plugA != null)
+                        {
+                            if (plugALookVector != Vector3.zero)
+                            {
                                 plugA.PlugTransform.transform.rotation = Quaternion.Slerp(plugA.PlugTransform.transform.rotation, Quaternion.LookRotation(plugALookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
                             }
                             plugA.GetComponent<CordFollower>().Speed += COLLAPSE_ACCELERATION;
                         }
 
-                         Plug plugB = B.GetComponentInActor<Plug>();
-                        if(plugB != null) {
-                            if (plugBLookVector != Vector3.zero) {
+                        Plug plugB = B.GetComponentInActor<Plug>();
+                        if (plugB != null)
+                        {
+                            if (plugBLookVector != Vector3.zero)
+                            {
                                 plugB.PlugTransform.transform.rotation = Quaternion.Slerp(plugB.PlugTransform.transform.rotation, Quaternion.LookRotation(plugBLookVector), COLLAPSE_ROTATION_SPEED * Time.deltaTime);
                             }
                             plugB.GetComponent<CordFollower>().Speed += COLLAPSE_ACCELERATION;
                         }
 
                         //Play the collapse particle effect when the cord is almost completely collapsed
-                        if(lineRenderer.positionCount < COLLAPSE_PARTICLE_FIRE_COUNT && collapseParticles != null && !collapseParticles.gameObject.activeSelf) {
+                        if (lineRenderer.positionCount < COLLAPSE_PARTICLE_FIRE_COUNT && collapseParticles != null && !collapseParticles.gameObject.activeSelf)
+                        {
                             collapseParticles.gameObject.SetActive(true);
-                            if(plugA != null && plugB != null) {
+                            if (plugA != null && plugB != null)
+                            {
                                 collapseParticles.transform.position = GetPathPointAtIndex((collapseEnd - collapseStart) / 2 + collapseStart);
-                            }else if(plugA != null) {
+                            }
+                            else if (plugA != null)
+                            {
                                 collapseParticles.transform.position = GetPathPointAtIndex(path.Count - 1);
                             }
-                            else {
+                            else
+                            {
                                 collapseParticles.transform.position = GetPathPointAtIndex(0);
                             }
 
@@ -260,21 +309,27 @@ namespace ComposeVR {
             }
         }
 
-        private void TranslateFlowTexture() {
-            flowTextureOffset = Mathf.Repeat(flowTextureOffset - Time.deltaTime*Flow, 1);
+        private void TranslateFlowTexture()
+        {
+            flowTextureOffset = Mathf.Repeat(flowTextureOffset - Time.deltaTime * Flow, 1);
             lineRenderer.material.mainTextureOffset = new Vector2(flowTextureOffset, 0);
         }
 
-        private BoxCollider GetBoundingBox() {
-            if (boundingBox == null) {
+        private BoxCollider GetBoundingBox()
+        {
+            if (boundingBox == null)
+            {
                 boundingBox = GetComponentInChildren<BoxCollider>();
             }
             return boundingBox;
         }
 
-        private void RelaxPath() {
-            for(int i = 0; i < path.Count; i++) {
-                if(i != 0 && i != path.Count - 1) {
+        private void RelaxPath()
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (i != 0 && i != path.Count - 1)
+                {
                     //Take the average of the current point and the adjacent points on the path
                     Vector3 targetPosition = (path[i - 1] + path[i] + path[i + 1]) / 3;
 
@@ -284,9 +339,12 @@ namespace ComposeVR {
             }
 
             //Prune unecessary points
-            for(int i = 0; i < path.Count; i++) {
-                if(i != 0 && i != path.Count - 1) {
-                    if(Vector3.Distance(path[i - 1], path[i]) < PruneDistance) {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (i != 0 && i != path.Count - 1)
+                {
+                    if (Vector3.Distance(path[i - 1], path[i]) < PruneDistance)
+                    {
                         path.RemoveAt(i);
                     }
                 }
@@ -294,25 +352,28 @@ namespace ComposeVR {
 
         }
 
-        private void UpdateLine() {
+        private void UpdateLine()
+        {
             lineRenderer.positionCount = path.Count;
             lineRenderer.SetPositions(path.ToArray());
         }
 
-        private void UpdateBoundingBox() {
+        private void UpdateBoundingBox()
+        {
             float maxX, maxY, maxZ, minX, minY, minZ;
 
             maxX = maxY = maxZ = Mathf.NegativeInfinity;
             minX = minY = minZ = Mathf.Infinity;
 
-            for(int i = 0; i < path.Count; i++) {
-                minX = Mathf.Min(path[i].x, minX)-BOUNDING_BOX_PADDING/2;
-                minY = Mathf.Min(path[i].y, minY)-BOUNDING_BOX_PADDING/2;
-                minZ = Mathf.Min(path[i].z, minZ)-BOUNDING_BOX_PADDING/2;
+            for (int i = 0; i < path.Count; i++)
+            {
+                minX = Mathf.Min(path[i].x, minX) - BOUNDING_BOX_PADDING / 2;
+                minY = Mathf.Min(path[i].y, minY) - BOUNDING_BOX_PADDING / 2;
+                minZ = Mathf.Min(path[i].z, minZ) - BOUNDING_BOX_PADDING / 2;
 
-                maxX = Mathf.Max(path[i].x, maxX)+BOUNDING_BOX_PADDING/2;
-                maxY = Mathf.Max(path[i].y, maxY)+BOUNDING_BOX_PADDING/2;
-                maxZ = Mathf.Max(path[i].z, maxZ)+BOUNDING_BOX_PADDING/2;
+                maxX = Mathf.Max(path[i].x, maxX) + BOUNDING_BOX_PADDING / 2;
+                maxY = Mathf.Max(path[i].y, maxY) + BOUNDING_BOX_PADDING / 2;
+                maxZ = Mathf.Max(path[i].z, maxZ) + BOUNDING_BOX_PADDING / 2;
             }
 
             Vector3 min = new Vector3(minX, minY, minZ);
@@ -323,19 +384,24 @@ namespace ComposeVR {
         }
 
         #region BranchHandle Management
-        private void CreateBranchHandles(Transform trackedController) {
-            if(nearbyControllers.Count > branchHandles.Count) {
+        private void CreateBranchHandles(Transform trackedController)
+        {
+            if (nearbyControllers.Count > branchHandles.Count)
+            {
                 branchHandles.Add((Instantiate(BranchHandlePrefab) as Transform).GetComponent<BranchHandle>());
                 branchHandles[branchHandles.Count - 1].SourceCord = this;
                 branchHandles[branchHandles.Count - 1].gameObject.SetActive(allowBranching);
                 branchHandles[branchHandles.Count - 1].TrackedController = trackedController;
             }
-        } 
+        }
 
-        public void AllowBranching(bool allow) {
+        public void AllowBranching(bool allow)
+        {
             allowBranching = allow;
-            for(int i = 0; i < branchHandles.Count; i++) {
-                if (branchHandles[i] != null) {
+            for (int i = 0; i < branchHandles.Count; i++)
+            {
+                if (branchHandles[i] != null)
+                {
                     branchHandles[i].gameObject.SetActive(allowBranching);
                 }
             }
@@ -348,13 +414,18 @@ namespace ComposeVR {
         /// 
         /// Currently we use a brute force method as it seems to be ok for the number of points that are on a normal cord segment. If performance of this method becomes a problem, we will have to use space partitioning to reduce the search time
         /// </summary>
-        private void UpdateBranchHandles() {
-            for(int i = 0; i < path.Count; i++) {
-                for(int j = 0; j < nearbyControllers.Count; j++) {
-                    if (branchHandles[j].TrackedController != null) {
+        private void UpdateBranchHandles()
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                for (int j = 0; j < nearbyControllers.Count; j++)
+                {
+                    if (branchHandles[j].TrackedController != null)
+                    {
                         Vector3 diff = branchHandles[j].TrackedController.position - path[i];
 
-                        if (diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance()) {
+                        if (diff.sqrMagnitude <= branchHandles[j].GetControllerSquareDistance())
+                        {
                             branchHandles[j].SetClosestPoint(i, diff.sqrMagnitude);
                         }
                     }
@@ -371,18 +442,21 @@ namespace ComposeVR {
         /// <param name="splitPointIndex"></param>
         /// <param name="splitCord"></param>
         /// <returns></returns>
-        public CordJunction SplitByBranchHandle(BranchHandle handle, int splitPointIndex, Cord splitCord) {
+        public CordJunction SplitByBranchHandle(BranchHandle handle, int splitPointIndex, Cord splitCord)
+        {
 
             //Get the points after the splitPoint and assign them to the splitCord
             List<Vector3> splitPath = new List<Vector3>();
-            for(int i = splitPointIndex; i < path.Count; i++) {
+            for (int i = splitPointIndex; i < path.Count; i++)
+            {
                 splitPath.Add(path[i]);
             }
 
             splitCord.Color = Color;
             splitCord.Flow = Flow;
             splitCord.Connect(handle.transform, B);
-            if (B.GetComponent<BranchHandle>() != null) {
+            if (B.GetComponent<BranchHandle>() != null)
+            {
                 B.GetComponent<BranchHandle>().ReplaceCord(this, splitCord);
             }
 
@@ -392,7 +466,8 @@ namespace ComposeVR {
             int combinedPathLength = path.Count;
 
             //Exclude the points in the splitCord from this cord
-            for(int i = 0; i < combinedPathLength - splitPointIndex; i++) {
+            for (int i = 0; i < combinedPathLength - splitPointIndex; i++)
+            {
                 path.RemoveAt(path.Count - 1);
             }
             B = handle.transform;
@@ -407,7 +482,8 @@ namespace ComposeVR {
             return new CordJunction(JunctionA, JunctionB, Flow);
         }
 
-        public void Connect(Transform start, Transform end) {
+        public void Connect(Transform start, Transform end)
+        {
             A = start;
             B = end;
 
@@ -417,34 +493,46 @@ namespace ComposeVR {
             Plug plugB = B.GetComponentInActor<Plug>();
             ConnectPlug(plugB);
 
-            if(Flow != 0) {
+            if (Flow != 0)
+            {
                 Flowing = true;
             }
-            else {
+            else
+            {
                 Flowing = false;
             }
         }
 
-        private void ConnectPlug(Plug plug) {
-            if (plug == null) {
+        private void ConnectPlug(Plug plug)
+        {
+            if (plug == null)
+            {
                 return;
             }
 
             plug.ConnectedCord = this;
 
-            if (plug.IsPluggedIn()) {
-                if (plug.DestinationEndpoint.GetComponent<PhysicalDataInput>() != null) {
-                    if (plug.CordAttachPoint.Equals(A)) {
+            if (plug.IsPluggedIn())
+            {
+                if (plug.DestinationEndpoint.GetComponent<PhysicalDataInput>() != null)
+                {
+                    if (plug.CordAttachPoint.Equals(A))
+                    {
                         Flow = -1;
                     }
-                    else {
+                    else
+                    {
                         Flow = 1;
                     }
-                }else if (plug.DestinationEndpoint.GetComponent<PhysicalDataOutput>() != null) {
-                    if (plug.CordAttachPoint.Equals(A)) {
+                }
+                else if (plug.DestinationEndpoint.GetComponent<PhysicalDataOutput>() != null)
+                {
+                    if (plug.CordAttachPoint.Equals(A))
+                    {
                         Flow = 1;
                     }
-                    else {
+                    else
+                    {
                         Flow = -1;
                     }
                 }
@@ -467,33 +555,39 @@ namespace ComposeVR {
         /// <param name="reverseFlow"></param>
         /// <param name="cordPos"></param>
         /// <returns></returns>
-        public HashSet<PhysicalDataEndpoint> GetConnectedEndpoints(bool reverseFlow, Transform searchStartNode) {
+        public HashSet<PhysicalDataEndpoint> GetConnectedEndpoints(bool reverseFlow, Transform searchStartNode)
+        {
             HashSet<PhysicalDataEndpoint> results = new HashSet<PhysicalDataEndpoint>();
 
-            float workingFlow = Flow; 
-            if (reverseFlow) {
+            float workingFlow = Flow;
+            if (reverseFlow)
+            {
                 workingFlow = -workingFlow;
             }
 
-            if (workingFlow > 0 && !B.Equals(searchStartNode)) {
+            if (workingFlow > 0 && !B.Equals(searchStartNode))
+            {
                 BranchHandle handleB = B.GetComponent<BranchHandle>();
                 results.UnionWith(GetEndpointsConnectedToHandle(reverseFlow, handleB));
 
                 Plug plugB = B.GetComponentInActor<Plug>();
                 PhysicalDataEndpoint connectedReceptacle = GetConnectedEndpoint(plugB);
 
-                if(connectedReceptacle != null) {
+                if (connectedReceptacle != null)
+                {
                     results.Add(connectedReceptacle);
                 }
             }
-            else if(workingFlow < 0 && !A.Equals(searchStartNode)){
+            else if (workingFlow < 0 && !A.Equals(searchStartNode))
+            {
                 BranchHandle handleA = A.GetComponent<BranchHandle>();
                 results.UnionWith(GetEndpointsConnectedToHandle(reverseFlow, handleA));
 
                 Plug plugA = A.GetComponentInActor<Plug>();
                 PhysicalDataEndpoint connectedReceptacle = GetConnectedEndpoint(plugA);
 
-                if(connectedReceptacle != null) {
+                if (connectedReceptacle != null)
+                {
                     results.Add(connectedReceptacle);
                 }
             }
@@ -501,9 +595,11 @@ namespace ComposeVR {
             return results;
         }
 
-        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToHandle(bool reverseFlow, BranchHandle handle) {
+        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToHandle(bool reverseFlow, BranchHandle handle)
+        {
             HashSet<PhysicalDataEndpoint> results = new HashSet<PhysicalDataEndpoint>();
-            if(handle != null) {
+            if (handle != null)
+            {
                 CordNode downstreamJunctionNode = handle.GetDownstreamJunctionNode(reverseFlow);
                 Transform other = downstreamJunctionNode.Cord.GetOppositeEnd(downstreamJunctionNode.transform);
 
@@ -516,24 +612,31 @@ namespace ComposeVR {
             return results;
         }
 
-        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToNode(bool reverseFlow, CordNode node) {
+        private HashSet<PhysicalDataEndpoint> GetEndpointsConnectedToNode(bool reverseFlow, CordNode node)
+        {
             return node.Cord.GetConnectedEndpoints(reverseFlow, node.transform);
         }
 
-        private PhysicalDataEndpoint GetConnectedEndpoint(Plug plug) {
-            if(plug != null) {
-                if (plug.IsPluggedIn()) {
+        private PhysicalDataEndpoint GetConnectedEndpoint(Plug plug)
+        {
+            if (plug != null)
+            {
+                if (plug.IsPluggedIn())
+                {
                     return plug.DestinationEndpoint;
                 }
             }
             return null;
         }
 
-        public Transform GetOppositeEnd(Transform start) {
-            if (A.Equals(start)) {
+        public Transform GetOppositeEnd(Transform start)
+        {
+            if (A.Equals(start))
+            {
                 return B;
             }
-            else {
+            else
+            {
                 return A;
             }
         }
@@ -541,7 +644,8 @@ namespace ComposeVR {
         #endregion
 
         #region Collapsing
-        public void Collapse() {
+        public void Collapse()
+        {
             Flow = 0;
             Flowing = false;
 
@@ -553,7 +657,8 @@ namespace ComposeVR {
             collapseStart = 0;
             collapseEnd = path.Count - 1;
 
-            if(plugA != null) {
+            if (plugA != null)
+            {
                 CordFollower followerA = plugA.GetComponent<CordFollower>();
                 followerA.enabled = true;
                 followerA.TeleportToPoint(0);
@@ -562,7 +667,8 @@ namespace ComposeVR {
                 plugA.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
             }
 
-            if(plugB != null) {
+            if (plugB != null)
+            {
                 CordFollower followerB = plugB.GetComponent<CordFollower>();
                 followerB.enabled = true;
                 followerB.TeleportToPoint(path.Count - 1);
@@ -572,26 +678,33 @@ namespace ComposeVR {
             }
         }
 
-        private void OnCollapseFinished() {
+        private void OnCollapseFinished()
+        {
 
-            if (A.GetComponent<BranchHandle>() != null) {
+            if (A.GetComponent<BranchHandle>() != null)
+            {
                 A.GetComponent<BranchHandle>().MergeRemainingCords(this);
                 Destroy(A.gameObject);
             }
-            else {
+            else
+            {
                 Plug p = A.GetComponentInActor<Plug>();
-                if(p != null) {
+                if (p != null)
+                {
                     p.DestroyPlug();
                 }
             }
 
-            if (B.GetComponent<BranchHandle>() != null) {
+            if (B.GetComponent<BranchHandle>() != null)
+            {
                 B.GetComponent<BranchHandle>().MergeRemainingCords(this);
                 Destroy(B.gameObject);
             }
-            else {
+            else
+            {
                 Plug p = B.GetComponentInActor<Plug>();
-                if(p != null) {
+                if (p != null)
+                {
                     p.DestroyPlug();
                 }
             }
@@ -599,20 +712,24 @@ namespace ComposeVR {
             DestroyCord();
         }
 
-        public void DestroyCord() {
-            foreach(BranchHandle b in branchHandles) {
+        public void DestroyCord()
+        {
+            foreach (BranchHandle b in branchHandles)
+            {
                 Destroy(b.gameObject);
             }
 
             Destroy(gameObject);
         }
 
-        private void OnStartPointConsumed(object sender, CordFollowerEventArgs e) {
+        private void OnStartPointConsumed(object sender, CordFollowerEventArgs e)
+        {
             collapseStart += 1;
             plugALookVector = -e.NextMoveVector;
         }
 
-        private void OnEndPointConsumed(object sender, CordFollowerEventArgs e) {
+        private void OnEndPointConsumed(object sender, CordFollowerEventArgs e)
+        {
             collapseEnd -= 1;
             plugBLookVector = -e.NextMoveVector;
         }

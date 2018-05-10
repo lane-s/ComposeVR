@@ -111,7 +111,7 @@ public class OvrAvatar : MonoBehaviour
         IndexTip,
         ThumbBase,
         ThumbTip,
-       
+
         Max,
     }
 
@@ -153,8 +153,8 @@ public class OvrAvatar : MonoBehaviour
         OvrAvatarComponent ovrComponent = componentObject.AddComponent<OvrAvatarComponent>();
         trackedComponents.Add(component.name, ovrComponent);
 
-        bool combine_meshes = AddRenderParts(ovrComponent, component, componentObject.transform) 
-            && CombineMeshes 
+        bool combine_meshes = AddRenderParts(ovrComponent, component, componentObject.transform)
+            && CombineMeshes
             && componentObject.name == "body";
 
         if (combine_meshes)

@@ -9,1273 +9,1509 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-namespace ComposeVR.Protocol {
+namespace ComposeVR.Protocol
+{
 
-  /// <summary>Holder for reflection information generated from ComposeVR.proto</summary>
-  public static partial class ComposeVRReflection {
+    /// <summary>Holder for reflection information generated from ComposeVR.proto</summary>
+    public static partial class ComposeVRReflection
+    {
 
-    #region Descriptor
-    /// <summary>File descriptor for ComposeVR.proto</summary>
-    public static pbr::FileDescriptor Descriptor {
-      get { return descriptor; }
-    }
-    private static pbr::FileDescriptor descriptor;
+        #region Descriptor
+        /// <summary>File descriptor for ComposeVR.proto</summary>
+        public static pbr::FileDescriptor Descriptor
+        {
+            get { return descriptor; }
+        }
+        private static pbr::FileDescriptor descriptor;
 
-    static ComposeVRReflection() {
-      byte[] descriptorData = global::System.Convert.FromBase64String(
-          string.Concat(
-            "Cg9Db21wb3NlVlIucHJvdG8SCUNvbXBvc2VWUhoMTW9kdWxlLnByb3RvGg1C",
-            "cm93c2VyLnByb3RvIocBCgVFdmVudBITCgttZXRob2RfbmFtZRgBIAEoCRIw",
-            "Cg1icm93c2VyX2V2ZW50GAIgASgLMhcuQ29tcG9zZVZSLkJyb3dzZXJFdmVu",
-            "dEgAEi4KDG1vZHVsZV9ldmVudBgDIAEoCzIWLkNvbXBvc2VWUi5Nb2R1bGVF",
-            "dmVudEgAQgcKBWV2ZW50IosHCgxCcm93c2VyRXZlbnQSDAoEcGF0aBgBIAEo",
-            "CRI/ChhjaGFuZ2VfZmlsdGVyX3BhZ2VfZXZlbnQYAiABKAsyGy5Db21wb3Nl",
-            "VlIuQ2hhbmdlRmlsdGVyUGFnZUgAEj8KGHNlbGVjdF9maWx0ZXJfaXRlbV9l",
-            "dmVudBgDIAEoCzIbLkNvbXBvc2VWUi5TZWxlY3RGaWx0ZXJJdGVtSAASQQoZ",
-            "Y2hhbmdlX3Jlc3VsdHNfcGFnZV9ldmVudBgEIAEoCzIcLkNvbXBvc2VWUi5D",
-            "aGFuZ2VSZXN1bHRzUGFnZUgAEkIKGmxvYWRfZGV2aWNlX2F0X2luZGV4X2V2",
-            "ZW50GAUgASgLMhwuQ29tcG9zZVZSLkxvYWREZXZpY2VBdEluZGV4SAASRAob",
-            "bG9hZF9kZXZpY2Vfd2l0aF9uYW1lX2V2ZW50GAYgASgLMh0uQ29tcG9zZVZS",
-            "LkxvYWREZXZpY2VXaXRoTmFtZUgAEjsKFm9uX2RldmljZV9sb2FkZWRfZXZl",
-            "bnQYByABKAsyGS5Db21wb3NlVlIuT25EZXZpY2VMb2FkZWRIABJAChlvbl9k",
-            "ZXZpY2Vfbm90X2ZvdW5kX2V2ZW50GAggASgLMhsuQ29tcG9zZVZSLk9uRGV2",
-            "aWNlTm90Rm91bmRIABJMCh9vbl9icm93c2VyX2NvbHVtbl9jaGFuZ2VkX2V2",
-            "ZW50GAkgASgLMiEuQ29tcG9zZVZSLk9uQnJvd3NlckNvbHVtbkNoYW5nZWRI",
-            "ABJQCiFvbl9hcnJvd192aXNpYmlsaXR5X2NoYW5nZWRfZXZlbnQYCiABKAsy",
-            "Iy5Db21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkSAASNgoTY2xv",
-            "c2VfYnJvd3Nlcl9ldmVudBgLIAEoCzIXLkNvbXBvc2VWUi5DbG9zZUJyb3dz",
-            "ZXJIABJICh1vbl9icm93c2VyX2l0ZW1fY2hhbmdlZF9ldmVudBgMIAEoCzIf",
-            "LkNvbXBvc2VWUi5PbkJyb3dzZXJJdGVtQ2hhbmdlZEgAEjYKE3NlbGVjdF9y",
-            "ZXN1bHRfZXZlbnQYDSABKAsyFy5Db21wb3NlVlIuU2VsZWN0UmVzdWx0SAAS",
-            "PAoWY29tbWl0X3NlbGVjdGlvbl9ldmVudBgOIAEoCzIaLkNvbXBvc2VWUi5D",
-            "b21taXRTZWxlY3Rpb25IAEIHCgVldmVudCKdAgoLTW9kdWxlRXZlbnQSEgoK",
-            "aGFuZGxlcl9pZBgBIAEoCRI0ChJvcGVuX2Jyb3dzZXJfZXZlbnQYAiABKAsy",
-            "Fi5Db21wb3NlVlIuT3BlbkJyb3dzZXJIABJBChljcmVhdGVfc291bmRfbW9k",
-            "dWxlX2V2ZW50GAMgASgLMhwuQ29tcG9zZVZSLkNyZWF0ZVNvdW5kTW9kdWxl",
-            "SAASSAodb25fc291bmRfbW9kdWxlX2NyZWF0ZWRfZXZlbnQYBCABKAsyHy5D",
-            "b21wb3NlVlIuT25Tb3VuZE1vZHVsZUNyZWF0ZWRIABIuCg9taWRpX25vdGVf",
-            "ZXZlbnQYBSABKAsyEy5Db21wb3NlVlIuTUlESU5vdGVIAEIHCgVldmVudEI+",
-            "Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90b2NvbEIIUHJvdG9jb2yqAhJD",
-            "b21wb3NlVlIuUHJvdG9jb2xiBnByb3RvMw=="));
-      descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::ComposeVR.Protocol.Module.ModuleReflection.Descriptor, global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+        static ComposeVRReflection()
+        {
+            byte[] descriptorData = global::System.Convert.FromBase64String(
+                string.Concat(
+                  "Cg9Db21wb3NlVlIucHJvdG8SCUNvbXBvc2VWUhoMTW9kdWxlLnByb3RvGg1C",
+                  "cm93c2VyLnByb3RvIocBCgVFdmVudBITCgttZXRob2RfbmFtZRgBIAEoCRIw",
+                  "Cg1icm93c2VyX2V2ZW50GAIgASgLMhcuQ29tcG9zZVZSLkJyb3dzZXJFdmVu",
+                  "dEgAEi4KDG1vZHVsZV9ldmVudBgDIAEoCzIWLkNvbXBvc2VWUi5Nb2R1bGVF",
+                  "dmVudEgAQgcKBWV2ZW50IosHCgxCcm93c2VyRXZlbnQSDAoEcGF0aBgBIAEo",
+                  "CRI/ChhjaGFuZ2VfZmlsdGVyX3BhZ2VfZXZlbnQYAiABKAsyGy5Db21wb3Nl",
+                  "VlIuQ2hhbmdlRmlsdGVyUGFnZUgAEj8KGHNlbGVjdF9maWx0ZXJfaXRlbV9l",
+                  "dmVudBgDIAEoCzIbLkNvbXBvc2VWUi5TZWxlY3RGaWx0ZXJJdGVtSAASQQoZ",
+                  "Y2hhbmdlX3Jlc3VsdHNfcGFnZV9ldmVudBgEIAEoCzIcLkNvbXBvc2VWUi5D",
+                  "aGFuZ2VSZXN1bHRzUGFnZUgAEkIKGmxvYWRfZGV2aWNlX2F0X2luZGV4X2V2",
+                  "ZW50GAUgASgLMhwuQ29tcG9zZVZSLkxvYWREZXZpY2VBdEluZGV4SAASRAob",
+                  "bG9hZF9kZXZpY2Vfd2l0aF9uYW1lX2V2ZW50GAYgASgLMh0uQ29tcG9zZVZS",
+                  "LkxvYWREZXZpY2VXaXRoTmFtZUgAEjsKFm9uX2RldmljZV9sb2FkZWRfZXZl",
+                  "bnQYByABKAsyGS5Db21wb3NlVlIuT25EZXZpY2VMb2FkZWRIABJAChlvbl9k",
+                  "ZXZpY2Vfbm90X2ZvdW5kX2V2ZW50GAggASgLMhsuQ29tcG9zZVZSLk9uRGV2",
+                  "aWNlTm90Rm91bmRIABJMCh9vbl9icm93c2VyX2NvbHVtbl9jaGFuZ2VkX2V2",
+                  "ZW50GAkgASgLMiEuQ29tcG9zZVZSLk9uQnJvd3NlckNvbHVtbkNoYW5nZWRI",
+                  "ABJQCiFvbl9hcnJvd192aXNpYmlsaXR5X2NoYW5nZWRfZXZlbnQYCiABKAsy",
+                  "Iy5Db21wb3NlVlIuT25BcnJvd1Zpc2liaWxpdHlDaGFuZ2VkSAASNgoTY2xv",
+                  "c2VfYnJvd3Nlcl9ldmVudBgLIAEoCzIXLkNvbXBvc2VWUi5DbG9zZUJyb3dz",
+                  "ZXJIABJICh1vbl9icm93c2VyX2l0ZW1fY2hhbmdlZF9ldmVudBgMIAEoCzIf",
+                  "LkNvbXBvc2VWUi5PbkJyb3dzZXJJdGVtQ2hhbmdlZEgAEjYKE3NlbGVjdF9y",
+                  "ZXN1bHRfZXZlbnQYDSABKAsyFy5Db21wb3NlVlIuU2VsZWN0UmVzdWx0SAAS",
+                  "PAoWY29tbWl0X3NlbGVjdGlvbl9ldmVudBgOIAEoCzIaLkNvbXBvc2VWUi5D",
+                  "b21taXRTZWxlY3Rpb25IAEIHCgVldmVudCKdAgoLTW9kdWxlRXZlbnQSEgoK",
+                  "aGFuZGxlcl9pZBgBIAEoCRI0ChJvcGVuX2Jyb3dzZXJfZXZlbnQYAiABKAsy",
+                  "Fi5Db21wb3NlVlIuT3BlbkJyb3dzZXJIABJBChljcmVhdGVfc291bmRfbW9k",
+                  "dWxlX2V2ZW50GAMgASgLMhwuQ29tcG9zZVZSLkNyZWF0ZVNvdW5kTW9kdWxl",
+                  "SAASSAodb25fc291bmRfbW9kdWxlX2NyZWF0ZWRfZXZlbnQYBCABKAsyHy5D",
+                  "b21wb3NlVlIuT25Tb3VuZE1vZHVsZUNyZWF0ZWRIABIuCg9taWRpX25vdGVf",
+                  "ZXZlbnQYBSABKAsyEy5Db21wb3NlVlIuTUlESU5vdGVIAEIHCgVldmVudEI+",
+                  "Ch1jb20ubGFzNHZjLmNvbXBvc2V2ci5wcm90b2NvbEIIUHJvdG9jb2yqAhJD",
+                  "b21wb3NlVlIuUHJvdG9jb2xiBnByb3RvMw=="));
+            descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
+                new pbr::FileDescriptor[] { global::ComposeVR.Protocol.Module.ModuleReflection.Descriptor, global::ComposeVR.Protocol.Browser.BrowserReflection.Descriptor, },
+                new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.Event), global::ComposeVR.Protocol.Event.Parser, new[]{ "MethodName", "BrowserEvent", "ModuleEvent" }, new[]{ "Event" }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.BrowserEvent), global::ComposeVR.Protocol.BrowserEvent.Parser, new[]{ "Path", "ChangeFilterPageEvent", "SelectFilterItemEvent", "ChangeResultsPageEvent", "LoadDeviceAtIndexEvent", "LoadDeviceWithNameEvent", "OnDeviceLoadedEvent", "OnDeviceNotFoundEvent", "OnBrowserColumnChangedEvent", "OnArrowVisibilityChangedEvent", "CloseBrowserEvent", "OnBrowserItemChangedEvent", "SelectResultEvent", "CommitSelectionEvent" }, new[]{ "Event" }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::ComposeVR.Protocol.ModuleEvent), global::ComposeVR.Protocol.ModuleEvent.Parser, new[]{ "HandlerId", "OpenBrowserEvent", "CreateSoundModuleEvent", "OnSoundModuleCreatedEvent", "MidiNoteEvent" }, new[]{ "Event" }, null, null)
-          }));
+                }));
+        }
+        #endregion
+
     }
+    #region Messages
+    public sealed partial class Event : pb::IMessage<Event>
+    {
+        private static readonly pb::MessageParser<Event> _parser = new pb::MessageParser<Event>(() => new Event());
+        private pb::UnknownFieldSet _unknownFields;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pb::MessageParser<Event> Parser { get { return _parser; } }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pbr::MessageDescriptor Descriptor
+        {
+            get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[0]; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        pbr::MessageDescriptor pb::IMessage.Descriptor
+        {
+            get { return Descriptor; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public Event()
+        {
+            OnConstruction();
+        }
+
+        partial void OnConstruction();
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public Event(Event other) : this()
+        {
+            methodName_ = other.methodName_;
+            switch (other.EventCase)
+            {
+                case EventOneofCase.BrowserEvent:
+                    BrowserEvent = other.BrowserEvent.Clone();
+                    break;
+                case EventOneofCase.ModuleEvent:
+                    ModuleEvent = other.ModuleEvent.Clone();
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public Event Clone()
+        {
+            return new Event(this);
+        }
+
+        /// <summary>Field number for the "method_name" field.</summary>
+        public const int MethodNameFieldNumber = 1;
+        private string methodName_ = "";
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public string MethodName
+        {
+            get { return methodName_; }
+            set
+            {
+                methodName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+            }
+        }
+
+        /// <summary>Field number for the "browser_event" field.</summary>
+        public const int BrowserEventFieldNumber = 2;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.BrowserEvent BrowserEvent
+        {
+            get { return eventCase_ == EventOneofCase.BrowserEvent ? (global::ComposeVR.Protocol.BrowserEvent)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.BrowserEvent;
+            }
+        }
+
+        /// <summary>Field number for the "module_event" field.</summary>
+        public const int ModuleEventFieldNumber = 3;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.ModuleEvent ModuleEvent
+        {
+            get { return eventCase_ == EventOneofCase.ModuleEvent ? (global::ComposeVR.Protocol.ModuleEvent)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ModuleEvent;
+            }
+        }
+
+        private object event_;
+        /// <summary>Enum of possible cases for the "event" oneof.</summary>
+        public enum EventOneofCase
+        {
+            None = 0,
+            BrowserEvent = 2,
+            ModuleEvent = 3,
+        }
+        private EventOneofCase eventCase_ = EventOneofCase.None;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public EventOneofCase EventCase
+        {
+            get { return eventCase_; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void ClearEvent()
+        {
+            eventCase_ = EventOneofCase.None;
+            event_ = null;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override bool Equals(object other)
+        {
+            return Equals(other as Event);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public bool Equals(Event other)
+        {
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(other, this))
+            {
+                return true;
+            }
+            if (MethodName != other.MethodName) return false;
+            if (!object.Equals(BrowserEvent, other.BrowserEvent)) return false;
+            if (!object.Equals(ModuleEvent, other.ModuleEvent)) return false;
+            if (EventCase != other.EventCase) return false;
+            return Equals(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override int GetHashCode()
+        {
+            int hash = 1;
+            if (MethodName.Length != 0) hash ^= MethodName.GetHashCode();
+            if (eventCase_ == EventOneofCase.BrowserEvent) hash ^= BrowserEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.ModuleEvent) hash ^= ModuleEvent.GetHashCode();
+            hash ^= (int)eventCase_;
+            if (_unknownFields != null)
+            {
+                hash ^= _unknownFields.GetHashCode();
+            }
+            return hash;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override string ToString()
+        {
+            return pb::JsonFormatter.ToDiagnosticString(this);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void WriteTo(pb::CodedOutputStream output)
+        {
+            if (MethodName.Length != 0)
+            {
+                output.WriteRawTag(10);
+                output.WriteString(MethodName);
+            }
+            if (eventCase_ == EventOneofCase.BrowserEvent)
+            {
+                output.WriteRawTag(18);
+                output.WriteMessage(BrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.ModuleEvent)
+            {
+                output.WriteRawTag(26);
+                output.WriteMessage(ModuleEvent);
+            }
+            if (_unknownFields != null)
+            {
+                _unknownFields.WriteTo(output);
+            }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public int CalculateSize()
+        {
+            int size = 0;
+            if (MethodName.Length != 0)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeStringSize(MethodName);
+            }
+            if (eventCase_ == EventOneofCase.BrowserEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(BrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.ModuleEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(ModuleEvent);
+            }
+            if (_unknownFields != null)
+            {
+                size += _unknownFields.CalculateSize();
+            }
+            return size;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(Event other)
+        {
+            if (other == null)
+            {
+                return;
+            }
+            if (other.MethodName.Length != 0)
+            {
+                MethodName = other.MethodName;
+            }
+            switch (other.EventCase)
+            {
+                case EventOneofCase.BrowserEvent:
+                    if (BrowserEvent == null)
+                    {
+                        BrowserEvent = new global::ComposeVR.Protocol.BrowserEvent();
+                    }
+                    BrowserEvent.MergeFrom(other.BrowserEvent);
+                    break;
+                case EventOneofCase.ModuleEvent:
+                    if (ModuleEvent == null)
+                    {
+                        ModuleEvent = new global::ComposeVR.Protocol.ModuleEvent();
+                    }
+                    ModuleEvent.MergeFrom(other.ModuleEvent);
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(pb::CodedInputStream input)
+        {
+            uint tag;
+            while ((tag = input.ReadTag()) != 0)
+            {
+                switch (tag)
+                {
+                    default:
+                        _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+                        break;
+                    case 10:
+                        {
+                            MethodName = input.ReadString();
+                            break;
+                        }
+                    case 18:
+                        {
+                            global::ComposeVR.Protocol.BrowserEvent subBuilder = new global::ComposeVR.Protocol.BrowserEvent();
+                            if (eventCase_ == EventOneofCase.BrowserEvent)
+                            {
+                                subBuilder.MergeFrom(BrowserEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            BrowserEvent = subBuilder;
+                            break;
+                        }
+                    case 26:
+                        {
+                            global::ComposeVR.Protocol.ModuleEvent subBuilder = new global::ComposeVR.Protocol.ModuleEvent();
+                            if (eventCase_ == EventOneofCase.ModuleEvent)
+                            {
+                                subBuilder.MergeFrom(ModuleEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            ModuleEvent = subBuilder;
+                            break;
+                        }
+                }
+            }
+        }
+
+    }
+
+    public sealed partial class BrowserEvent : pb::IMessage<BrowserEvent>
+    {
+        private static readonly pb::MessageParser<BrowserEvent> _parser = new pb::MessageParser<BrowserEvent>(() => new BrowserEvent());
+        private pb::UnknownFieldSet _unknownFields;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pb::MessageParser<BrowserEvent> Parser { get { return _parser; } }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pbr::MessageDescriptor Descriptor
+        {
+            get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[1]; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        pbr::MessageDescriptor pb::IMessage.Descriptor
+        {
+            get { return Descriptor; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public BrowserEvent()
+        {
+            OnConstruction();
+        }
+
+        partial void OnConstruction();
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public BrowserEvent(BrowserEvent other) : this()
+        {
+            path_ = other.path_;
+            switch (other.EventCase)
+            {
+                case EventOneofCase.ChangeFilterPageEvent:
+                    ChangeFilterPageEvent = other.ChangeFilterPageEvent.Clone();
+                    break;
+                case EventOneofCase.SelectFilterItemEvent:
+                    SelectFilterItemEvent = other.SelectFilterItemEvent.Clone();
+                    break;
+                case EventOneofCase.ChangeResultsPageEvent:
+                    ChangeResultsPageEvent = other.ChangeResultsPageEvent.Clone();
+                    break;
+                case EventOneofCase.LoadDeviceAtIndexEvent:
+                    LoadDeviceAtIndexEvent = other.LoadDeviceAtIndexEvent.Clone();
+                    break;
+                case EventOneofCase.LoadDeviceWithNameEvent:
+                    LoadDeviceWithNameEvent = other.LoadDeviceWithNameEvent.Clone();
+                    break;
+                case EventOneofCase.OnDeviceLoadedEvent:
+                    OnDeviceLoadedEvent = other.OnDeviceLoadedEvent.Clone();
+                    break;
+                case EventOneofCase.OnDeviceNotFoundEvent:
+                    OnDeviceNotFoundEvent = other.OnDeviceNotFoundEvent.Clone();
+                    break;
+                case EventOneofCase.OnBrowserColumnChangedEvent:
+                    OnBrowserColumnChangedEvent = other.OnBrowserColumnChangedEvent.Clone();
+                    break;
+                case EventOneofCase.OnArrowVisibilityChangedEvent:
+                    OnArrowVisibilityChangedEvent = other.OnArrowVisibilityChangedEvent.Clone();
+                    break;
+                case EventOneofCase.CloseBrowserEvent:
+                    CloseBrowserEvent = other.CloseBrowserEvent.Clone();
+                    break;
+                case EventOneofCase.OnBrowserItemChangedEvent:
+                    OnBrowserItemChangedEvent = other.OnBrowserItemChangedEvent.Clone();
+                    break;
+                case EventOneofCase.SelectResultEvent:
+                    SelectResultEvent = other.SelectResultEvent.Clone();
+                    break;
+                case EventOneofCase.CommitSelectionEvent:
+                    CommitSelectionEvent = other.CommitSelectionEvent.Clone();
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public BrowserEvent Clone()
+        {
+            return new BrowserEvent(this);
+        }
+
+        /// <summary>Field number for the "path" field.</summary>
+        public const int PathFieldNumber = 1;
+        private string path_ = "";
+        /// <summary>
+        ///For the front end, the path to a filter column is '/$column_name'. For the backend the path is /filter and the column name is supplied in the message
+        /// </summary>
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public string Path
+        {
+            get { return path_; }
+            set
+            {
+                path_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+            }
+        }
+
+        /// <summary>Field number for the "change_filter_page_event" field.</summary>
+        public const int ChangeFilterPageEventFieldNumber = 2;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.ChangeFilterPage ChangeFilterPageEvent
+        {
+            get { return eventCase_ == EventOneofCase.ChangeFilterPageEvent ? (global::ComposeVR.Protocol.Browser.ChangeFilterPage)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ChangeFilterPageEvent;
+            }
+        }
+
+        /// <summary>Field number for the "select_filter_item_event" field.</summary>
+        public const int SelectFilterItemEventFieldNumber = 3;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.SelectFilterItem SelectFilterItemEvent
+        {
+            get { return eventCase_ == EventOneofCase.SelectFilterItemEvent ? (global::ComposeVR.Protocol.Browser.SelectFilterItem)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.SelectFilterItemEvent;
+            }
+        }
+
+        /// <summary>Field number for the "change_results_page_event" field.</summary>
+        public const int ChangeResultsPageEventFieldNumber = 4;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.ChangeResultsPage ChangeResultsPageEvent
+        {
+            get { return eventCase_ == EventOneofCase.ChangeResultsPageEvent ? (global::ComposeVR.Protocol.Browser.ChangeResultsPage)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ChangeResultsPageEvent;
+            }
+        }
+
+        /// <summary>Field number for the "load_device_at_index_event" field.</summary>
+        public const int LoadDeviceAtIndexEventFieldNumber = 5;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex LoadDeviceAtIndexEvent
+        {
+            get { return eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent ? (global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.LoadDeviceAtIndexEvent;
+            }
+        }
+
+        /// <summary>Field number for the "load_device_with_name_event" field.</summary>
+        public const int LoadDeviceWithNameEventFieldNumber = 6;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.LoadDeviceWithName LoadDeviceWithNameEvent
+        {
+            get { return eventCase_ == EventOneofCase.LoadDeviceWithNameEvent ? (global::ComposeVR.Protocol.Browser.LoadDeviceWithName)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.LoadDeviceWithNameEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_device_loaded_event" field.</summary>
+        public const int OnDeviceLoadedEventFieldNumber = 7;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.OnDeviceLoaded OnDeviceLoadedEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnDeviceLoadedEvent ? (global::ComposeVR.Protocol.Browser.OnDeviceLoaded)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnDeviceLoadedEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_device_not_found_event" field.</summary>
+        public const int OnDeviceNotFoundEventFieldNumber = 8;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.OnDeviceNotFound OnDeviceNotFoundEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnDeviceNotFoundEvent ? (global::ComposeVR.Protocol.Browser.OnDeviceNotFound)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnDeviceNotFoundEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_browser_column_changed_event" field.</summary>
+        public const int OnBrowserColumnChangedEventFieldNumber = 9;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged OnBrowserColumnChangedEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent ? (global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnBrowserColumnChangedEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_arrow_visibility_changed_event" field.</summary>
+        public const int OnArrowVisibilityChangedEventFieldNumber = 10;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged OnArrowVisibilityChangedEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent ? (global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnArrowVisibilityChangedEvent;
+            }
+        }
+
+        /// <summary>Field number for the "close_browser_event" field.</summary>
+        public const int CloseBrowserEventFieldNumber = 11;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.CloseBrowser CloseBrowserEvent
+        {
+            get { return eventCase_ == EventOneofCase.CloseBrowserEvent ? (global::ComposeVR.Protocol.Browser.CloseBrowser)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CloseBrowserEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_browser_item_changed_event" field.</summary>
+        public const int OnBrowserItemChangedEventFieldNumber = 12;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.OnBrowserItemChanged OnBrowserItemChangedEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnBrowserItemChangedEvent ? (global::ComposeVR.Protocol.Browser.OnBrowserItemChanged)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnBrowserItemChangedEvent;
+            }
+        }
+
+        /// <summary>Field number for the "select_result_event" field.</summary>
+        public const int SelectResultEventFieldNumber = 13;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.SelectResult SelectResultEvent
+        {
+            get { return eventCase_ == EventOneofCase.SelectResultEvent ? (global::ComposeVR.Protocol.Browser.SelectResult)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.SelectResultEvent;
+            }
+        }
+
+        /// <summary>Field number for the "commit_selection_event" field.</summary>
+        public const int CommitSelectionEventFieldNumber = 14;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Browser.CommitSelection CommitSelectionEvent
+        {
+            get { return eventCase_ == EventOneofCase.CommitSelectionEvent ? (global::ComposeVR.Protocol.Browser.CommitSelection)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CommitSelectionEvent;
+            }
+        }
+
+        private object event_;
+        /// <summary>Enum of possible cases for the "event" oneof.</summary>
+        public enum EventOneofCase
+        {
+            None = 0,
+            ChangeFilterPageEvent = 2,
+            SelectFilterItemEvent = 3,
+            ChangeResultsPageEvent = 4,
+            LoadDeviceAtIndexEvent = 5,
+            LoadDeviceWithNameEvent = 6,
+            OnDeviceLoadedEvent = 7,
+            OnDeviceNotFoundEvent = 8,
+            OnBrowserColumnChangedEvent = 9,
+            OnArrowVisibilityChangedEvent = 10,
+            CloseBrowserEvent = 11,
+            OnBrowserItemChangedEvent = 12,
+            SelectResultEvent = 13,
+            CommitSelectionEvent = 14,
+        }
+        private EventOneofCase eventCase_ = EventOneofCase.None;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public EventOneofCase EventCase
+        {
+            get { return eventCase_; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void ClearEvent()
+        {
+            eventCase_ = EventOneofCase.None;
+            event_ = null;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override bool Equals(object other)
+        {
+            return Equals(other as BrowserEvent);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public bool Equals(BrowserEvent other)
+        {
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(other, this))
+            {
+                return true;
+            }
+            if (Path != other.Path) return false;
+            if (!object.Equals(ChangeFilterPageEvent, other.ChangeFilterPageEvent)) return false;
+            if (!object.Equals(SelectFilterItemEvent, other.SelectFilterItemEvent)) return false;
+            if (!object.Equals(ChangeResultsPageEvent, other.ChangeResultsPageEvent)) return false;
+            if (!object.Equals(LoadDeviceAtIndexEvent, other.LoadDeviceAtIndexEvent)) return false;
+            if (!object.Equals(LoadDeviceWithNameEvent, other.LoadDeviceWithNameEvent)) return false;
+            if (!object.Equals(OnDeviceLoadedEvent, other.OnDeviceLoadedEvent)) return false;
+            if (!object.Equals(OnDeviceNotFoundEvent, other.OnDeviceNotFoundEvent)) return false;
+            if (!object.Equals(OnBrowserColumnChangedEvent, other.OnBrowserColumnChangedEvent)) return false;
+            if (!object.Equals(OnArrowVisibilityChangedEvent, other.OnArrowVisibilityChangedEvent)) return false;
+            if (!object.Equals(CloseBrowserEvent, other.CloseBrowserEvent)) return false;
+            if (!object.Equals(OnBrowserItemChangedEvent, other.OnBrowserItemChangedEvent)) return false;
+            if (!object.Equals(SelectResultEvent, other.SelectResultEvent)) return false;
+            if (!object.Equals(CommitSelectionEvent, other.CommitSelectionEvent)) return false;
+            if (EventCase != other.EventCase) return false;
+            return Equals(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override int GetHashCode()
+        {
+            int hash = 1;
+            if (Path.Length != 0) hash ^= Path.GetHashCode();
+            if (eventCase_ == EventOneofCase.ChangeFilterPageEvent) hash ^= ChangeFilterPageEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.SelectFilterItemEvent) hash ^= SelectFilterItemEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.ChangeResultsPageEvent) hash ^= ChangeResultsPageEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent) hash ^= LoadDeviceAtIndexEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent) hash ^= LoadDeviceWithNameEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent) hash ^= OnDeviceLoadedEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent) hash ^= OnDeviceNotFoundEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) hash ^= OnBrowserColumnChangedEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) hash ^= OnArrowVisibilityChangedEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.CloseBrowserEvent) hash ^= CloseBrowserEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) hash ^= OnBrowserItemChangedEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.SelectResultEvent) hash ^= SelectResultEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.CommitSelectionEvent) hash ^= CommitSelectionEvent.GetHashCode();
+            hash ^= (int)eventCase_;
+            if (_unknownFields != null)
+            {
+                hash ^= _unknownFields.GetHashCode();
+            }
+            return hash;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override string ToString()
+        {
+            return pb::JsonFormatter.ToDiagnosticString(this);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void WriteTo(pb::CodedOutputStream output)
+        {
+            if (Path.Length != 0)
+            {
+                output.WriteRawTag(10);
+                output.WriteString(Path);
+            }
+            if (eventCase_ == EventOneofCase.ChangeFilterPageEvent)
+            {
+                output.WriteRawTag(18);
+                output.WriteMessage(ChangeFilterPageEvent);
+            }
+            if (eventCase_ == EventOneofCase.SelectFilterItemEvent)
+            {
+                output.WriteRawTag(26);
+                output.WriteMessage(SelectFilterItemEvent);
+            }
+            if (eventCase_ == EventOneofCase.ChangeResultsPageEvent)
+            {
+                output.WriteRawTag(34);
+                output.WriteMessage(ChangeResultsPageEvent);
+            }
+            if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent)
+            {
+                output.WriteRawTag(42);
+                output.WriteMessage(LoadDeviceAtIndexEvent);
+            }
+            if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent)
+            {
+                output.WriteRawTag(50);
+                output.WriteMessage(LoadDeviceWithNameEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent)
+            {
+                output.WriteRawTag(58);
+                output.WriteMessage(OnDeviceLoadedEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent)
+            {
+                output.WriteRawTag(66);
+                output.WriteMessage(OnDeviceNotFoundEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent)
+            {
+                output.WriteRawTag(74);
+                output.WriteMessage(OnBrowserColumnChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent)
+            {
+                output.WriteRawTag(82);
+                output.WriteMessage(OnArrowVisibilityChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.CloseBrowserEvent)
+            {
+                output.WriteRawTag(90);
+                output.WriteMessage(CloseBrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent)
+            {
+                output.WriteRawTag(98);
+                output.WriteMessage(OnBrowserItemChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.SelectResultEvent)
+            {
+                output.WriteRawTag(106);
+                output.WriteMessage(SelectResultEvent);
+            }
+            if (eventCase_ == EventOneofCase.CommitSelectionEvent)
+            {
+                output.WriteRawTag(114);
+                output.WriteMessage(CommitSelectionEvent);
+            }
+            if (_unknownFields != null)
+            {
+                _unknownFields.WriteTo(output);
+            }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public int CalculateSize()
+        {
+            int size = 0;
+            if (Path.Length != 0)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeStringSize(Path);
+            }
+            if (eventCase_ == EventOneofCase.ChangeFilterPageEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(ChangeFilterPageEvent);
+            }
+            if (eventCase_ == EventOneofCase.SelectFilterItemEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(SelectFilterItemEvent);
+            }
+            if (eventCase_ == EventOneofCase.ChangeResultsPageEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(ChangeResultsPageEvent);
+            }
+            if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(LoadDeviceAtIndexEvent);
+            }
+            if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(LoadDeviceWithNameEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnDeviceLoadedEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnDeviceNotFoundEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnBrowserColumnChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnArrowVisibilityChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.CloseBrowserEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(CloseBrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnBrowserItemChangedEvent);
+            }
+            if (eventCase_ == EventOneofCase.SelectResultEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(SelectResultEvent);
+            }
+            if (eventCase_ == EventOneofCase.CommitSelectionEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(CommitSelectionEvent);
+            }
+            if (_unknownFields != null)
+            {
+                size += _unknownFields.CalculateSize();
+            }
+            return size;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(BrowserEvent other)
+        {
+            if (other == null)
+            {
+                return;
+            }
+            if (other.Path.Length != 0)
+            {
+                Path = other.Path;
+            }
+            switch (other.EventCase)
+            {
+                case EventOneofCase.ChangeFilterPageEvent:
+                    if (ChangeFilterPageEvent == null)
+                    {
+                        ChangeFilterPageEvent = new global::ComposeVR.Protocol.Browser.ChangeFilterPage();
+                    }
+                    ChangeFilterPageEvent.MergeFrom(other.ChangeFilterPageEvent);
+                    break;
+                case EventOneofCase.SelectFilterItemEvent:
+                    if (SelectFilterItemEvent == null)
+                    {
+                        SelectFilterItemEvent = new global::ComposeVR.Protocol.Browser.SelectFilterItem();
+                    }
+                    SelectFilterItemEvent.MergeFrom(other.SelectFilterItemEvent);
+                    break;
+                case EventOneofCase.ChangeResultsPageEvent:
+                    if (ChangeResultsPageEvent == null)
+                    {
+                        ChangeResultsPageEvent = new global::ComposeVR.Protocol.Browser.ChangeResultsPage();
+                    }
+                    ChangeResultsPageEvent.MergeFrom(other.ChangeResultsPageEvent);
+                    break;
+                case EventOneofCase.LoadDeviceAtIndexEvent:
+                    if (LoadDeviceAtIndexEvent == null)
+                    {
+                        LoadDeviceAtIndexEvent = new global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex();
+                    }
+                    LoadDeviceAtIndexEvent.MergeFrom(other.LoadDeviceAtIndexEvent);
+                    break;
+                case EventOneofCase.LoadDeviceWithNameEvent:
+                    if (LoadDeviceWithNameEvent == null)
+                    {
+                        LoadDeviceWithNameEvent = new global::ComposeVR.Protocol.Browser.LoadDeviceWithName();
+                    }
+                    LoadDeviceWithNameEvent.MergeFrom(other.LoadDeviceWithNameEvent);
+                    break;
+                case EventOneofCase.OnDeviceLoadedEvent:
+                    if (OnDeviceLoadedEvent == null)
+                    {
+                        OnDeviceLoadedEvent = new global::ComposeVR.Protocol.Browser.OnDeviceLoaded();
+                    }
+                    OnDeviceLoadedEvent.MergeFrom(other.OnDeviceLoadedEvent);
+                    break;
+                case EventOneofCase.OnDeviceNotFoundEvent:
+                    if (OnDeviceNotFoundEvent == null)
+                    {
+                        OnDeviceNotFoundEvent = new global::ComposeVR.Protocol.Browser.OnDeviceNotFound();
+                    }
+                    OnDeviceNotFoundEvent.MergeFrom(other.OnDeviceNotFoundEvent);
+                    break;
+                case EventOneofCase.OnBrowserColumnChangedEvent:
+                    if (OnBrowserColumnChangedEvent == null)
+                    {
+                        OnBrowserColumnChangedEvent = new global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged();
+                    }
+                    OnBrowserColumnChangedEvent.MergeFrom(other.OnBrowserColumnChangedEvent);
+                    break;
+                case EventOneofCase.OnArrowVisibilityChangedEvent:
+                    if (OnArrowVisibilityChangedEvent == null)
+                    {
+                        OnArrowVisibilityChangedEvent = new global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged();
+                    }
+                    OnArrowVisibilityChangedEvent.MergeFrom(other.OnArrowVisibilityChangedEvent);
+                    break;
+                case EventOneofCase.CloseBrowserEvent:
+                    if (CloseBrowserEvent == null)
+                    {
+                        CloseBrowserEvent = new global::ComposeVR.Protocol.Browser.CloseBrowser();
+                    }
+                    CloseBrowserEvent.MergeFrom(other.CloseBrowserEvent);
+                    break;
+                case EventOneofCase.OnBrowserItemChangedEvent:
+                    if (OnBrowserItemChangedEvent == null)
+                    {
+                        OnBrowserItemChangedEvent = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
+                    }
+                    OnBrowserItemChangedEvent.MergeFrom(other.OnBrowserItemChangedEvent);
+                    break;
+                case EventOneofCase.SelectResultEvent:
+                    if (SelectResultEvent == null)
+                    {
+                        SelectResultEvent = new global::ComposeVR.Protocol.Browser.SelectResult();
+                    }
+                    SelectResultEvent.MergeFrom(other.SelectResultEvent);
+                    break;
+                case EventOneofCase.CommitSelectionEvent:
+                    if (CommitSelectionEvent == null)
+                    {
+                        CommitSelectionEvent = new global::ComposeVR.Protocol.Browser.CommitSelection();
+                    }
+                    CommitSelectionEvent.MergeFrom(other.CommitSelectionEvent);
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(pb::CodedInputStream input)
+        {
+            uint tag;
+            while ((tag = input.ReadTag()) != 0)
+            {
+                switch (tag)
+                {
+                    default:
+                        _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+                        break;
+                    case 10:
+                        {
+                            Path = input.ReadString();
+                            break;
+                        }
+                    case 18:
+                        {
+                            global::ComposeVR.Protocol.Browser.ChangeFilterPage subBuilder = new global::ComposeVR.Protocol.Browser.ChangeFilterPage();
+                            if (eventCase_ == EventOneofCase.ChangeFilterPageEvent)
+                            {
+                                subBuilder.MergeFrom(ChangeFilterPageEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            ChangeFilterPageEvent = subBuilder;
+                            break;
+                        }
+                    case 26:
+                        {
+                            global::ComposeVR.Protocol.Browser.SelectFilterItem subBuilder = new global::ComposeVR.Protocol.Browser.SelectFilterItem();
+                            if (eventCase_ == EventOneofCase.SelectFilterItemEvent)
+                            {
+                                subBuilder.MergeFrom(SelectFilterItemEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            SelectFilterItemEvent = subBuilder;
+                            break;
+                        }
+                    case 34:
+                        {
+                            global::ComposeVR.Protocol.Browser.ChangeResultsPage subBuilder = new global::ComposeVR.Protocol.Browser.ChangeResultsPage();
+                            if (eventCase_ == EventOneofCase.ChangeResultsPageEvent)
+                            {
+                                subBuilder.MergeFrom(ChangeResultsPageEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            ChangeResultsPageEvent = subBuilder;
+                            break;
+                        }
+                    case 42:
+                        {
+                            global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex subBuilder = new global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex();
+                            if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent)
+                            {
+                                subBuilder.MergeFrom(LoadDeviceAtIndexEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            LoadDeviceAtIndexEvent = subBuilder;
+                            break;
+                        }
+                    case 50:
+                        {
+                            global::ComposeVR.Protocol.Browser.LoadDeviceWithName subBuilder = new global::ComposeVR.Protocol.Browser.LoadDeviceWithName();
+                            if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent)
+                            {
+                                subBuilder.MergeFrom(LoadDeviceWithNameEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            LoadDeviceWithNameEvent = subBuilder;
+                            break;
+                        }
+                    case 58:
+                        {
+                            global::ComposeVR.Protocol.Browser.OnDeviceLoaded subBuilder = new global::ComposeVR.Protocol.Browser.OnDeviceLoaded();
+                            if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent)
+                            {
+                                subBuilder.MergeFrom(OnDeviceLoadedEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnDeviceLoadedEvent = subBuilder;
+                            break;
+                        }
+                    case 66:
+                        {
+                            global::ComposeVR.Protocol.Browser.OnDeviceNotFound subBuilder = new global::ComposeVR.Protocol.Browser.OnDeviceNotFound();
+                            if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent)
+                            {
+                                subBuilder.MergeFrom(OnDeviceNotFoundEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnDeviceNotFoundEvent = subBuilder;
+                            break;
+                        }
+                    case 74:
+                        {
+                            global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged();
+                            if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent)
+                            {
+                                subBuilder.MergeFrom(OnBrowserColumnChangedEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnBrowserColumnChangedEvent = subBuilder;
+                            break;
+                        }
+                    case 82:
+                        {
+                            global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged();
+                            if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent)
+                            {
+                                subBuilder.MergeFrom(OnArrowVisibilityChangedEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnArrowVisibilityChangedEvent = subBuilder;
+                            break;
+                        }
+                    case 90:
+                        {
+                            global::ComposeVR.Protocol.Browser.CloseBrowser subBuilder = new global::ComposeVR.Protocol.Browser.CloseBrowser();
+                            if (eventCase_ == EventOneofCase.CloseBrowserEvent)
+                            {
+                                subBuilder.MergeFrom(CloseBrowserEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            CloseBrowserEvent = subBuilder;
+                            break;
+                        }
+                    case 98:
+                        {
+                            global::ComposeVR.Protocol.Browser.OnBrowserItemChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
+                            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent)
+                            {
+                                subBuilder.MergeFrom(OnBrowserItemChangedEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnBrowserItemChangedEvent = subBuilder;
+                            break;
+                        }
+                    case 106:
+                        {
+                            global::ComposeVR.Protocol.Browser.SelectResult subBuilder = new global::ComposeVR.Protocol.Browser.SelectResult();
+                            if (eventCase_ == EventOneofCase.SelectResultEvent)
+                            {
+                                subBuilder.MergeFrom(SelectResultEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            SelectResultEvent = subBuilder;
+                            break;
+                        }
+                    case 114:
+                        {
+                            global::ComposeVR.Protocol.Browser.CommitSelection subBuilder = new global::ComposeVR.Protocol.Browser.CommitSelection();
+                            if (eventCase_ == EventOneofCase.CommitSelectionEvent)
+                            {
+                                subBuilder.MergeFrom(CommitSelectionEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            CommitSelectionEvent = subBuilder;
+                            break;
+                        }
+                }
+            }
+        }
+
+    }
+
+    public sealed partial class ModuleEvent : pb::IMessage<ModuleEvent>
+    {
+        private static readonly pb::MessageParser<ModuleEvent> _parser = new pb::MessageParser<ModuleEvent>(() => new ModuleEvent());
+        private pb::UnknownFieldSet _unknownFields;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pb::MessageParser<ModuleEvent> Parser { get { return _parser; } }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public static pbr::MessageDescriptor Descriptor
+        {
+            get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[2]; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        pbr::MessageDescriptor pb::IMessage.Descriptor
+        {
+            get { return Descriptor; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public ModuleEvent()
+        {
+            OnConstruction();
+        }
+
+        partial void OnConstruction();
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public ModuleEvent(ModuleEvent other) : this()
+        {
+            handlerId_ = other.handlerId_;
+            switch (other.EventCase)
+            {
+                case EventOneofCase.OpenBrowserEvent:
+                    OpenBrowserEvent = other.OpenBrowserEvent.Clone();
+                    break;
+                case EventOneofCase.CreateSoundModuleEvent:
+                    CreateSoundModuleEvent = other.CreateSoundModuleEvent.Clone();
+                    break;
+                case EventOneofCase.OnSoundModuleCreatedEvent:
+                    OnSoundModuleCreatedEvent = other.OnSoundModuleCreatedEvent.Clone();
+                    break;
+                case EventOneofCase.MidiNoteEvent:
+                    MidiNoteEvent = other.MidiNoteEvent.Clone();
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public ModuleEvent Clone()
+        {
+            return new ModuleEvent(this);
+        }
+
+        /// <summary>Field number for the "handler_id" field.</summary>
+        public const int HandlerIdFieldNumber = 1;
+        private string handlerId_ = "";
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public string HandlerId
+        {
+            get { return handlerId_; }
+            set
+            {
+                handlerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+            }
+        }
+
+        /// <summary>Field number for the "open_browser_event" field.</summary>
+        public const int OpenBrowserEventFieldNumber = 2;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Module.OpenBrowser OpenBrowserEvent
+        {
+            get { return eventCase_ == EventOneofCase.OpenBrowserEvent ? (global::ComposeVR.Protocol.Module.OpenBrowser)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OpenBrowserEvent;
+            }
+        }
+
+        /// <summary>Field number for the "create_sound_module_event" field.</summary>
+        public const int CreateSoundModuleEventFieldNumber = 3;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Module.CreateSoundModule CreateSoundModuleEvent
+        {
+            get { return eventCase_ == EventOneofCase.CreateSoundModuleEvent ? (global::ComposeVR.Protocol.Module.CreateSoundModule)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CreateSoundModuleEvent;
+            }
+        }
+
+        /// <summary>Field number for the "on_sound_module_created_event" field.</summary>
+        public const int OnSoundModuleCreatedEventFieldNumber = 4;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Module.OnSoundModuleCreated OnSoundModuleCreatedEvent
+        {
+            get { return eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent ? (global::ComposeVR.Protocol.Module.OnSoundModuleCreated)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnSoundModuleCreatedEvent;
+            }
+        }
+
+        /// <summary>Field number for the "midi_note_event" field.</summary>
+        public const int MidiNoteEventFieldNumber = 5;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::ComposeVR.Protocol.Module.MIDINote MidiNoteEvent
+        {
+            get { return eventCase_ == EventOneofCase.MidiNoteEvent ? (global::ComposeVR.Protocol.Module.MIDINote)event_ : null; }
+            set
+            {
+                event_ = value;
+                eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.MidiNoteEvent;
+            }
+        }
+
+        private object event_;
+        /// <summary>Enum of possible cases for the "event" oneof.</summary>
+        public enum EventOneofCase
+        {
+            None = 0,
+            OpenBrowserEvent = 2,
+            CreateSoundModuleEvent = 3,
+            OnSoundModuleCreatedEvent = 4,
+            MidiNoteEvent = 5,
+        }
+        private EventOneofCase eventCase_ = EventOneofCase.None;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public EventOneofCase EventCase
+        {
+            get { return eventCase_; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void ClearEvent()
+        {
+            eventCase_ = EventOneofCase.None;
+            event_ = null;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override bool Equals(object other)
+        {
+            return Equals(other as ModuleEvent);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public bool Equals(ModuleEvent other)
+        {
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(other, this))
+            {
+                return true;
+            }
+            if (HandlerId != other.HandlerId) return false;
+            if (!object.Equals(OpenBrowserEvent, other.OpenBrowserEvent)) return false;
+            if (!object.Equals(CreateSoundModuleEvent, other.CreateSoundModuleEvent)) return false;
+            if (!object.Equals(OnSoundModuleCreatedEvent, other.OnSoundModuleCreatedEvent)) return false;
+            if (!object.Equals(MidiNoteEvent, other.MidiNoteEvent)) return false;
+            if (EventCase != other.EventCase) return false;
+            return Equals(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override int GetHashCode()
+        {
+            int hash = 1;
+            if (HandlerId.Length != 0) hash ^= HandlerId.GetHashCode();
+            if (eventCase_ == EventOneofCase.OpenBrowserEvent) hash ^= OpenBrowserEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) hash ^= CreateSoundModuleEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) hash ^= OnSoundModuleCreatedEvent.GetHashCode();
+            if (eventCase_ == EventOneofCase.MidiNoteEvent) hash ^= MidiNoteEvent.GetHashCode();
+            hash ^= (int)eventCase_;
+            if (_unknownFields != null)
+            {
+                hash ^= _unknownFields.GetHashCode();
+            }
+            return hash;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public override string ToString()
+        {
+            return pb::JsonFormatter.ToDiagnosticString(this);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void WriteTo(pb::CodedOutputStream output)
+        {
+            if (HandlerId.Length != 0)
+            {
+                output.WriteRawTag(10);
+                output.WriteString(HandlerId);
+            }
+            if (eventCase_ == EventOneofCase.OpenBrowserEvent)
+            {
+                output.WriteRawTag(18);
+                output.WriteMessage(OpenBrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.CreateSoundModuleEvent)
+            {
+                output.WriteRawTag(26);
+                output.WriteMessage(CreateSoundModuleEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent)
+            {
+                output.WriteRawTag(34);
+                output.WriteMessage(OnSoundModuleCreatedEvent);
+            }
+            if (eventCase_ == EventOneofCase.MidiNoteEvent)
+            {
+                output.WriteRawTag(42);
+                output.WriteMessage(MidiNoteEvent);
+            }
+            if (_unknownFields != null)
+            {
+                _unknownFields.WriteTo(output);
+            }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public int CalculateSize()
+        {
+            int size = 0;
+            if (HandlerId.Length != 0)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeStringSize(HandlerId);
+            }
+            if (eventCase_ == EventOneofCase.OpenBrowserEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OpenBrowserEvent);
+            }
+            if (eventCase_ == EventOneofCase.CreateSoundModuleEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(CreateSoundModuleEvent);
+            }
+            if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnSoundModuleCreatedEvent);
+            }
+            if (eventCase_ == EventOneofCase.MidiNoteEvent)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(MidiNoteEvent);
+            }
+            if (_unknownFields != null)
+            {
+                size += _unknownFields.CalculateSize();
+            }
+            return size;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(ModuleEvent other)
+        {
+            if (other == null)
+            {
+                return;
+            }
+            if (other.HandlerId.Length != 0)
+            {
+                HandlerId = other.HandlerId;
+            }
+            switch (other.EventCase)
+            {
+                case EventOneofCase.OpenBrowserEvent:
+                    if (OpenBrowserEvent == null)
+                    {
+                        OpenBrowserEvent = new global::ComposeVR.Protocol.Module.OpenBrowser();
+                    }
+                    OpenBrowserEvent.MergeFrom(other.OpenBrowserEvent);
+                    break;
+                case EventOneofCase.CreateSoundModuleEvent:
+                    if (CreateSoundModuleEvent == null)
+                    {
+                        CreateSoundModuleEvent = new global::ComposeVR.Protocol.Module.CreateSoundModule();
+                    }
+                    CreateSoundModuleEvent.MergeFrom(other.CreateSoundModuleEvent);
+                    break;
+                case EventOneofCase.OnSoundModuleCreatedEvent:
+                    if (OnSoundModuleCreatedEvent == null)
+                    {
+                        OnSoundModuleCreatedEvent = new global::ComposeVR.Protocol.Module.OnSoundModuleCreated();
+                    }
+                    OnSoundModuleCreatedEvent.MergeFrom(other.OnSoundModuleCreatedEvent);
+                    break;
+                case EventOneofCase.MidiNoteEvent:
+                    if (MidiNoteEvent == null)
+                    {
+                        MidiNoteEvent = new global::ComposeVR.Protocol.Module.MIDINote();
+                    }
+                    MidiNoteEvent.MergeFrom(other.MidiNoteEvent);
+                    break;
+            }
+
+            _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public void MergeFrom(pb::CodedInputStream input)
+        {
+            uint tag;
+            while ((tag = input.ReadTag()) != 0)
+            {
+                switch (tag)
+                {
+                    default:
+                        _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+                        break;
+                    case 10:
+                        {
+                            HandlerId = input.ReadString();
+                            break;
+                        }
+                    case 18:
+                        {
+                            global::ComposeVR.Protocol.Module.OpenBrowser subBuilder = new global::ComposeVR.Protocol.Module.OpenBrowser();
+                            if (eventCase_ == EventOneofCase.OpenBrowserEvent)
+                            {
+                                subBuilder.MergeFrom(OpenBrowserEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OpenBrowserEvent = subBuilder;
+                            break;
+                        }
+                    case 26:
+                        {
+                            global::ComposeVR.Protocol.Module.CreateSoundModule subBuilder = new global::ComposeVR.Protocol.Module.CreateSoundModule();
+                            if (eventCase_ == EventOneofCase.CreateSoundModuleEvent)
+                            {
+                                subBuilder.MergeFrom(CreateSoundModuleEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            CreateSoundModuleEvent = subBuilder;
+                            break;
+                        }
+                    case 34:
+                        {
+                            global::ComposeVR.Protocol.Module.OnSoundModuleCreated subBuilder = new global::ComposeVR.Protocol.Module.OnSoundModuleCreated();
+                            if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent)
+                            {
+                                subBuilder.MergeFrom(OnSoundModuleCreatedEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            OnSoundModuleCreatedEvent = subBuilder;
+                            break;
+                        }
+                    case 42:
+                        {
+                            global::ComposeVR.Protocol.Module.MIDINote subBuilder = new global::ComposeVR.Protocol.Module.MIDINote();
+                            if (eventCase_ == EventOneofCase.MidiNoteEvent)
+                            {
+                                subBuilder.MergeFrom(MidiNoteEvent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            MidiNoteEvent = subBuilder;
+                            break;
+                        }
+                }
+            }
+        }
+
+    }
+
     #endregion
-
-  }
-  #region Messages
-  public sealed partial class Event : pb::IMessage<Event> {
-    private static readonly pb::MessageParser<Event> _parser = new pb::MessageParser<Event>(() => new Event());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Event> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[0]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Event() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Event(Event other) : this() {
-      methodName_ = other.methodName_;
-      switch (other.EventCase) {
-        case EventOneofCase.BrowserEvent:
-          BrowserEvent = other.BrowserEvent.Clone();
-          break;
-        case EventOneofCase.ModuleEvent:
-          ModuleEvent = other.ModuleEvent.Clone();
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Event Clone() {
-      return new Event(this);
-    }
-
-    /// <summary>Field number for the "method_name" field.</summary>
-    public const int MethodNameFieldNumber = 1;
-    private string methodName_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string MethodName {
-      get { return methodName_; }
-      set {
-        methodName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "browser_event" field.</summary>
-    public const int BrowserEventFieldNumber = 2;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.BrowserEvent BrowserEvent {
-      get { return eventCase_ == EventOneofCase.BrowserEvent ? (global::ComposeVR.Protocol.BrowserEvent) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.BrowserEvent;
-      }
-    }
-
-    /// <summary>Field number for the "module_event" field.</summary>
-    public const int ModuleEventFieldNumber = 3;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.ModuleEvent ModuleEvent {
-      get { return eventCase_ == EventOneofCase.ModuleEvent ? (global::ComposeVR.Protocol.ModuleEvent) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ModuleEvent;
-      }
-    }
-
-    private object event_;
-    /// <summary>Enum of possible cases for the "event" oneof.</summary>
-    public enum EventOneofCase {
-      None = 0,
-      BrowserEvent = 2,
-      ModuleEvent = 3,
-    }
-    private EventOneofCase eventCase_ = EventOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EventOneofCase EventCase {
-      get { return eventCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearEvent() {
-      eventCase_ = EventOneofCase.None;
-      event_ = null;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as Event);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Event other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (MethodName != other.MethodName) return false;
-      if (!object.Equals(BrowserEvent, other.BrowserEvent)) return false;
-      if (!object.Equals(ModuleEvent, other.ModuleEvent)) return false;
-      if (EventCase != other.EventCase) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (MethodName.Length != 0) hash ^= MethodName.GetHashCode();
-      if (eventCase_ == EventOneofCase.BrowserEvent) hash ^= BrowserEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.ModuleEvent) hash ^= ModuleEvent.GetHashCode();
-      hash ^= (int) eventCase_;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (MethodName.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(MethodName);
-      }
-      if (eventCase_ == EventOneofCase.BrowserEvent) {
-        output.WriteRawTag(18);
-        output.WriteMessage(BrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.ModuleEvent) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ModuleEvent);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (MethodName.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(MethodName);
-      }
-      if (eventCase_ == EventOneofCase.BrowserEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(BrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.ModuleEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ModuleEvent);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Event other) {
-      if (other == null) {
-        return;
-      }
-      if (other.MethodName.Length != 0) {
-        MethodName = other.MethodName;
-      }
-      switch (other.EventCase) {
-        case EventOneofCase.BrowserEvent:
-          if (BrowserEvent == null) {
-            BrowserEvent = new global::ComposeVR.Protocol.BrowserEvent();
-          }
-          BrowserEvent.MergeFrom(other.BrowserEvent);
-          break;
-        case EventOneofCase.ModuleEvent:
-          if (ModuleEvent == null) {
-            ModuleEvent = new global::ComposeVR.Protocol.ModuleEvent();
-          }
-          ModuleEvent.MergeFrom(other.ModuleEvent);
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            MethodName = input.ReadString();
-            break;
-          }
-          case 18: {
-            global::ComposeVR.Protocol.BrowserEvent subBuilder = new global::ComposeVR.Protocol.BrowserEvent();
-            if (eventCase_ == EventOneofCase.BrowserEvent) {
-              subBuilder.MergeFrom(BrowserEvent);
-            }
-            input.ReadMessage(subBuilder);
-            BrowserEvent = subBuilder;
-            break;
-          }
-          case 26: {
-            global::ComposeVR.Protocol.ModuleEvent subBuilder = new global::ComposeVR.Protocol.ModuleEvent();
-            if (eventCase_ == EventOneofCase.ModuleEvent) {
-              subBuilder.MergeFrom(ModuleEvent);
-            }
-            input.ReadMessage(subBuilder);
-            ModuleEvent = subBuilder;
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class BrowserEvent : pb::IMessage<BrowserEvent> {
-    private static readonly pb::MessageParser<BrowserEvent> _parser = new pb::MessageParser<BrowserEvent>(() => new BrowserEvent());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<BrowserEvent> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[1]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public BrowserEvent() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public BrowserEvent(BrowserEvent other) : this() {
-      path_ = other.path_;
-      switch (other.EventCase) {
-        case EventOneofCase.ChangeFilterPageEvent:
-          ChangeFilterPageEvent = other.ChangeFilterPageEvent.Clone();
-          break;
-        case EventOneofCase.SelectFilterItemEvent:
-          SelectFilterItemEvent = other.SelectFilterItemEvent.Clone();
-          break;
-        case EventOneofCase.ChangeResultsPageEvent:
-          ChangeResultsPageEvent = other.ChangeResultsPageEvent.Clone();
-          break;
-        case EventOneofCase.LoadDeviceAtIndexEvent:
-          LoadDeviceAtIndexEvent = other.LoadDeviceAtIndexEvent.Clone();
-          break;
-        case EventOneofCase.LoadDeviceWithNameEvent:
-          LoadDeviceWithNameEvent = other.LoadDeviceWithNameEvent.Clone();
-          break;
-        case EventOneofCase.OnDeviceLoadedEvent:
-          OnDeviceLoadedEvent = other.OnDeviceLoadedEvent.Clone();
-          break;
-        case EventOneofCase.OnDeviceNotFoundEvent:
-          OnDeviceNotFoundEvent = other.OnDeviceNotFoundEvent.Clone();
-          break;
-        case EventOneofCase.OnBrowserColumnChangedEvent:
-          OnBrowserColumnChangedEvent = other.OnBrowserColumnChangedEvent.Clone();
-          break;
-        case EventOneofCase.OnArrowVisibilityChangedEvent:
-          OnArrowVisibilityChangedEvent = other.OnArrowVisibilityChangedEvent.Clone();
-          break;
-        case EventOneofCase.CloseBrowserEvent:
-          CloseBrowserEvent = other.CloseBrowserEvent.Clone();
-          break;
-        case EventOneofCase.OnBrowserItemChangedEvent:
-          OnBrowserItemChangedEvent = other.OnBrowserItemChangedEvent.Clone();
-          break;
-        case EventOneofCase.SelectResultEvent:
-          SelectResultEvent = other.SelectResultEvent.Clone();
-          break;
-        case EventOneofCase.CommitSelectionEvent:
-          CommitSelectionEvent = other.CommitSelectionEvent.Clone();
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public BrowserEvent Clone() {
-      return new BrowserEvent(this);
-    }
-
-    /// <summary>Field number for the "path" field.</summary>
-    public const int PathFieldNumber = 1;
-    private string path_ = "";
-    /// <summary>
-    ///For the front end, the path to a filter column is '/$column_name'. For the backend the path is /filter and the column name is supplied in the message
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Path {
-      get { return path_; }
-      set {
-        path_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "change_filter_page_event" field.</summary>
-    public const int ChangeFilterPageEventFieldNumber = 2;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.ChangeFilterPage ChangeFilterPageEvent {
-      get { return eventCase_ == EventOneofCase.ChangeFilterPageEvent ? (global::ComposeVR.Protocol.Browser.ChangeFilterPage) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ChangeFilterPageEvent;
-      }
-    }
-
-    /// <summary>Field number for the "select_filter_item_event" field.</summary>
-    public const int SelectFilterItemEventFieldNumber = 3;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.SelectFilterItem SelectFilterItemEvent {
-      get { return eventCase_ == EventOneofCase.SelectFilterItemEvent ? (global::ComposeVR.Protocol.Browser.SelectFilterItem) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.SelectFilterItemEvent;
-      }
-    }
-
-    /// <summary>Field number for the "change_results_page_event" field.</summary>
-    public const int ChangeResultsPageEventFieldNumber = 4;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.ChangeResultsPage ChangeResultsPageEvent {
-      get { return eventCase_ == EventOneofCase.ChangeResultsPageEvent ? (global::ComposeVR.Protocol.Browser.ChangeResultsPage) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.ChangeResultsPageEvent;
-      }
-    }
-
-    /// <summary>Field number for the "load_device_at_index_event" field.</summary>
-    public const int LoadDeviceAtIndexEventFieldNumber = 5;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex LoadDeviceAtIndexEvent {
-      get { return eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent ? (global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.LoadDeviceAtIndexEvent;
-      }
-    }
-
-    /// <summary>Field number for the "load_device_with_name_event" field.</summary>
-    public const int LoadDeviceWithNameEventFieldNumber = 6;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.LoadDeviceWithName LoadDeviceWithNameEvent {
-      get { return eventCase_ == EventOneofCase.LoadDeviceWithNameEvent ? (global::ComposeVR.Protocol.Browser.LoadDeviceWithName) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.LoadDeviceWithNameEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_device_loaded_event" field.</summary>
-    public const int OnDeviceLoadedEventFieldNumber = 7;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.OnDeviceLoaded OnDeviceLoadedEvent {
-      get { return eventCase_ == EventOneofCase.OnDeviceLoadedEvent ? (global::ComposeVR.Protocol.Browser.OnDeviceLoaded) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnDeviceLoadedEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_device_not_found_event" field.</summary>
-    public const int OnDeviceNotFoundEventFieldNumber = 8;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.OnDeviceNotFound OnDeviceNotFoundEvent {
-      get { return eventCase_ == EventOneofCase.OnDeviceNotFoundEvent ? (global::ComposeVR.Protocol.Browser.OnDeviceNotFound) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnDeviceNotFoundEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_browser_column_changed_event" field.</summary>
-    public const int OnBrowserColumnChangedEventFieldNumber = 9;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged OnBrowserColumnChangedEvent {
-      get { return eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent ? (global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnBrowserColumnChangedEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_arrow_visibility_changed_event" field.</summary>
-    public const int OnArrowVisibilityChangedEventFieldNumber = 10;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged OnArrowVisibilityChangedEvent {
-      get { return eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent ? (global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnArrowVisibilityChangedEvent;
-      }
-    }
-
-    /// <summary>Field number for the "close_browser_event" field.</summary>
-    public const int CloseBrowserEventFieldNumber = 11;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.CloseBrowser CloseBrowserEvent {
-      get { return eventCase_ == EventOneofCase.CloseBrowserEvent ? (global::ComposeVR.Protocol.Browser.CloseBrowser) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CloseBrowserEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_browser_item_changed_event" field.</summary>
-    public const int OnBrowserItemChangedEventFieldNumber = 12;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.OnBrowserItemChanged OnBrowserItemChangedEvent {
-      get { return eventCase_ == EventOneofCase.OnBrowserItemChangedEvent ? (global::ComposeVR.Protocol.Browser.OnBrowserItemChanged) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnBrowserItemChangedEvent;
-      }
-    }
-
-    /// <summary>Field number for the "select_result_event" field.</summary>
-    public const int SelectResultEventFieldNumber = 13;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.SelectResult SelectResultEvent {
-      get { return eventCase_ == EventOneofCase.SelectResultEvent ? (global::ComposeVR.Protocol.Browser.SelectResult) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.SelectResultEvent;
-      }
-    }
-
-    /// <summary>Field number for the "commit_selection_event" field.</summary>
-    public const int CommitSelectionEventFieldNumber = 14;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Browser.CommitSelection CommitSelectionEvent {
-      get { return eventCase_ == EventOneofCase.CommitSelectionEvent ? (global::ComposeVR.Protocol.Browser.CommitSelection) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CommitSelectionEvent;
-      }
-    }
-
-    private object event_;
-    /// <summary>Enum of possible cases for the "event" oneof.</summary>
-    public enum EventOneofCase {
-      None = 0,
-      ChangeFilterPageEvent = 2,
-      SelectFilterItemEvent = 3,
-      ChangeResultsPageEvent = 4,
-      LoadDeviceAtIndexEvent = 5,
-      LoadDeviceWithNameEvent = 6,
-      OnDeviceLoadedEvent = 7,
-      OnDeviceNotFoundEvent = 8,
-      OnBrowserColumnChangedEvent = 9,
-      OnArrowVisibilityChangedEvent = 10,
-      CloseBrowserEvent = 11,
-      OnBrowserItemChangedEvent = 12,
-      SelectResultEvent = 13,
-      CommitSelectionEvent = 14,
-    }
-    private EventOneofCase eventCase_ = EventOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EventOneofCase EventCase {
-      get { return eventCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearEvent() {
-      eventCase_ = EventOneofCase.None;
-      event_ = null;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as BrowserEvent);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(BrowserEvent other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Path != other.Path) return false;
-      if (!object.Equals(ChangeFilterPageEvent, other.ChangeFilterPageEvent)) return false;
-      if (!object.Equals(SelectFilterItemEvent, other.SelectFilterItemEvent)) return false;
-      if (!object.Equals(ChangeResultsPageEvent, other.ChangeResultsPageEvent)) return false;
-      if (!object.Equals(LoadDeviceAtIndexEvent, other.LoadDeviceAtIndexEvent)) return false;
-      if (!object.Equals(LoadDeviceWithNameEvent, other.LoadDeviceWithNameEvent)) return false;
-      if (!object.Equals(OnDeviceLoadedEvent, other.OnDeviceLoadedEvent)) return false;
-      if (!object.Equals(OnDeviceNotFoundEvent, other.OnDeviceNotFoundEvent)) return false;
-      if (!object.Equals(OnBrowserColumnChangedEvent, other.OnBrowserColumnChangedEvent)) return false;
-      if (!object.Equals(OnArrowVisibilityChangedEvent, other.OnArrowVisibilityChangedEvent)) return false;
-      if (!object.Equals(CloseBrowserEvent, other.CloseBrowserEvent)) return false;
-      if (!object.Equals(OnBrowserItemChangedEvent, other.OnBrowserItemChangedEvent)) return false;
-      if (!object.Equals(SelectResultEvent, other.SelectResultEvent)) return false;
-      if (!object.Equals(CommitSelectionEvent, other.CommitSelectionEvent)) return false;
-      if (EventCase != other.EventCase) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Path.Length != 0) hash ^= Path.GetHashCode();
-      if (eventCase_ == EventOneofCase.ChangeFilterPageEvent) hash ^= ChangeFilterPageEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.SelectFilterItemEvent) hash ^= SelectFilterItemEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.ChangeResultsPageEvent) hash ^= ChangeResultsPageEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent) hash ^= LoadDeviceAtIndexEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent) hash ^= LoadDeviceWithNameEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent) hash ^= OnDeviceLoadedEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent) hash ^= OnDeviceNotFoundEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) hash ^= OnBrowserColumnChangedEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) hash ^= OnArrowVisibilityChangedEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.CloseBrowserEvent) hash ^= CloseBrowserEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) hash ^= OnBrowserItemChangedEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.SelectResultEvent) hash ^= SelectResultEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.CommitSelectionEvent) hash ^= CommitSelectionEvent.GetHashCode();
-      hash ^= (int) eventCase_;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (Path.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Path);
-      }
-      if (eventCase_ == EventOneofCase.ChangeFilterPageEvent) {
-        output.WriteRawTag(18);
-        output.WriteMessage(ChangeFilterPageEvent);
-      }
-      if (eventCase_ == EventOneofCase.SelectFilterItemEvent) {
-        output.WriteRawTag(26);
-        output.WriteMessage(SelectFilterItemEvent);
-      }
-      if (eventCase_ == EventOneofCase.ChangeResultsPageEvent) {
-        output.WriteRawTag(34);
-        output.WriteMessage(ChangeResultsPageEvent);
-      }
-      if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent) {
-        output.WriteRawTag(42);
-        output.WriteMessage(LoadDeviceAtIndexEvent);
-      }
-      if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent) {
-        output.WriteRawTag(50);
-        output.WriteMessage(LoadDeviceWithNameEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent) {
-        output.WriteRawTag(58);
-        output.WriteMessage(OnDeviceLoadedEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent) {
-        output.WriteRawTag(66);
-        output.WriteMessage(OnDeviceNotFoundEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) {
-        output.WriteRawTag(74);
-        output.WriteMessage(OnBrowserColumnChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) {
-        output.WriteRawTag(82);
-        output.WriteMessage(OnArrowVisibilityChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.CloseBrowserEvent) {
-        output.WriteRawTag(90);
-        output.WriteMessage(CloseBrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
-        output.WriteRawTag(98);
-        output.WriteMessage(OnBrowserItemChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.SelectResultEvent) {
-        output.WriteRawTag(106);
-        output.WriteMessage(SelectResultEvent);
-      }
-      if (eventCase_ == EventOneofCase.CommitSelectionEvent) {
-        output.WriteRawTag(114);
-        output.WriteMessage(CommitSelectionEvent);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (Path.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Path);
-      }
-      if (eventCase_ == EventOneofCase.ChangeFilterPageEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ChangeFilterPageEvent);
-      }
-      if (eventCase_ == EventOneofCase.SelectFilterItemEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(SelectFilterItemEvent);
-      }
-      if (eventCase_ == EventOneofCase.ChangeResultsPageEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ChangeResultsPageEvent);
-      }
-      if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LoadDeviceAtIndexEvent);
-      }
-      if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LoadDeviceWithNameEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnDeviceLoadedEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnDeviceNotFoundEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnBrowserColumnChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnArrowVisibilityChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.CloseBrowserEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CloseBrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnBrowserItemChangedEvent);
-      }
-      if (eventCase_ == EventOneofCase.SelectResultEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(SelectResultEvent);
-      }
-      if (eventCase_ == EventOneofCase.CommitSelectionEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CommitSelectionEvent);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(BrowserEvent other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Path.Length != 0) {
-        Path = other.Path;
-      }
-      switch (other.EventCase) {
-        case EventOneofCase.ChangeFilterPageEvent:
-          if (ChangeFilterPageEvent == null) {
-            ChangeFilterPageEvent = new global::ComposeVR.Protocol.Browser.ChangeFilterPage();
-          }
-          ChangeFilterPageEvent.MergeFrom(other.ChangeFilterPageEvent);
-          break;
-        case EventOneofCase.SelectFilterItemEvent:
-          if (SelectFilterItemEvent == null) {
-            SelectFilterItemEvent = new global::ComposeVR.Protocol.Browser.SelectFilterItem();
-          }
-          SelectFilterItemEvent.MergeFrom(other.SelectFilterItemEvent);
-          break;
-        case EventOneofCase.ChangeResultsPageEvent:
-          if (ChangeResultsPageEvent == null) {
-            ChangeResultsPageEvent = new global::ComposeVR.Protocol.Browser.ChangeResultsPage();
-          }
-          ChangeResultsPageEvent.MergeFrom(other.ChangeResultsPageEvent);
-          break;
-        case EventOneofCase.LoadDeviceAtIndexEvent:
-          if (LoadDeviceAtIndexEvent == null) {
-            LoadDeviceAtIndexEvent = new global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex();
-          }
-          LoadDeviceAtIndexEvent.MergeFrom(other.LoadDeviceAtIndexEvent);
-          break;
-        case EventOneofCase.LoadDeviceWithNameEvent:
-          if (LoadDeviceWithNameEvent == null) {
-            LoadDeviceWithNameEvent = new global::ComposeVR.Protocol.Browser.LoadDeviceWithName();
-          }
-          LoadDeviceWithNameEvent.MergeFrom(other.LoadDeviceWithNameEvent);
-          break;
-        case EventOneofCase.OnDeviceLoadedEvent:
-          if (OnDeviceLoadedEvent == null) {
-            OnDeviceLoadedEvent = new global::ComposeVR.Protocol.Browser.OnDeviceLoaded();
-          }
-          OnDeviceLoadedEvent.MergeFrom(other.OnDeviceLoadedEvent);
-          break;
-        case EventOneofCase.OnDeviceNotFoundEvent:
-          if (OnDeviceNotFoundEvent == null) {
-            OnDeviceNotFoundEvent = new global::ComposeVR.Protocol.Browser.OnDeviceNotFound();
-          }
-          OnDeviceNotFoundEvent.MergeFrom(other.OnDeviceNotFoundEvent);
-          break;
-        case EventOneofCase.OnBrowserColumnChangedEvent:
-          if (OnBrowserColumnChangedEvent == null) {
-            OnBrowserColumnChangedEvent = new global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged();
-          }
-          OnBrowserColumnChangedEvent.MergeFrom(other.OnBrowserColumnChangedEvent);
-          break;
-        case EventOneofCase.OnArrowVisibilityChangedEvent:
-          if (OnArrowVisibilityChangedEvent == null) {
-            OnArrowVisibilityChangedEvent = new global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged();
-          }
-          OnArrowVisibilityChangedEvent.MergeFrom(other.OnArrowVisibilityChangedEvent);
-          break;
-        case EventOneofCase.CloseBrowserEvent:
-          if (CloseBrowserEvent == null) {
-            CloseBrowserEvent = new global::ComposeVR.Protocol.Browser.CloseBrowser();
-          }
-          CloseBrowserEvent.MergeFrom(other.CloseBrowserEvent);
-          break;
-        case EventOneofCase.OnBrowserItemChangedEvent:
-          if (OnBrowserItemChangedEvent == null) {
-            OnBrowserItemChangedEvent = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
-          }
-          OnBrowserItemChangedEvent.MergeFrom(other.OnBrowserItemChangedEvent);
-          break;
-        case EventOneofCase.SelectResultEvent:
-          if (SelectResultEvent == null) {
-            SelectResultEvent = new global::ComposeVR.Protocol.Browser.SelectResult();
-          }
-          SelectResultEvent.MergeFrom(other.SelectResultEvent);
-          break;
-        case EventOneofCase.CommitSelectionEvent:
-          if (CommitSelectionEvent == null) {
-            CommitSelectionEvent = new global::ComposeVR.Protocol.Browser.CommitSelection();
-          }
-          CommitSelectionEvent.MergeFrom(other.CommitSelectionEvent);
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            Path = input.ReadString();
-            break;
-          }
-          case 18: {
-            global::ComposeVR.Protocol.Browser.ChangeFilterPage subBuilder = new global::ComposeVR.Protocol.Browser.ChangeFilterPage();
-            if (eventCase_ == EventOneofCase.ChangeFilterPageEvent) {
-              subBuilder.MergeFrom(ChangeFilterPageEvent);
-            }
-            input.ReadMessage(subBuilder);
-            ChangeFilterPageEvent = subBuilder;
-            break;
-          }
-          case 26: {
-            global::ComposeVR.Protocol.Browser.SelectFilterItem subBuilder = new global::ComposeVR.Protocol.Browser.SelectFilterItem();
-            if (eventCase_ == EventOneofCase.SelectFilterItemEvent) {
-              subBuilder.MergeFrom(SelectFilterItemEvent);
-            }
-            input.ReadMessage(subBuilder);
-            SelectFilterItemEvent = subBuilder;
-            break;
-          }
-          case 34: {
-            global::ComposeVR.Protocol.Browser.ChangeResultsPage subBuilder = new global::ComposeVR.Protocol.Browser.ChangeResultsPage();
-            if (eventCase_ == EventOneofCase.ChangeResultsPageEvent) {
-              subBuilder.MergeFrom(ChangeResultsPageEvent);
-            }
-            input.ReadMessage(subBuilder);
-            ChangeResultsPageEvent = subBuilder;
-            break;
-          }
-          case 42: {
-            global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex subBuilder = new global::ComposeVR.Protocol.Browser.LoadDeviceAtIndex();
-            if (eventCase_ == EventOneofCase.LoadDeviceAtIndexEvent) {
-              subBuilder.MergeFrom(LoadDeviceAtIndexEvent);
-            }
-            input.ReadMessage(subBuilder);
-            LoadDeviceAtIndexEvent = subBuilder;
-            break;
-          }
-          case 50: {
-            global::ComposeVR.Protocol.Browser.LoadDeviceWithName subBuilder = new global::ComposeVR.Protocol.Browser.LoadDeviceWithName();
-            if (eventCase_ == EventOneofCase.LoadDeviceWithNameEvent) {
-              subBuilder.MergeFrom(LoadDeviceWithNameEvent);
-            }
-            input.ReadMessage(subBuilder);
-            LoadDeviceWithNameEvent = subBuilder;
-            break;
-          }
-          case 58: {
-            global::ComposeVR.Protocol.Browser.OnDeviceLoaded subBuilder = new global::ComposeVR.Protocol.Browser.OnDeviceLoaded();
-            if (eventCase_ == EventOneofCase.OnDeviceLoadedEvent) {
-              subBuilder.MergeFrom(OnDeviceLoadedEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnDeviceLoadedEvent = subBuilder;
-            break;
-          }
-          case 66: {
-            global::ComposeVR.Protocol.Browser.OnDeviceNotFound subBuilder = new global::ComposeVR.Protocol.Browser.OnDeviceNotFound();
-            if (eventCase_ == EventOneofCase.OnDeviceNotFoundEvent) {
-              subBuilder.MergeFrom(OnDeviceNotFoundEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnDeviceNotFoundEvent = subBuilder;
-            break;
-          }
-          case 74: {
-            global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnBrowserColumnChanged();
-            if (eventCase_ == EventOneofCase.OnBrowserColumnChangedEvent) {
-              subBuilder.MergeFrom(OnBrowserColumnChangedEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnBrowserColumnChangedEvent = subBuilder;
-            break;
-          }
-          case 82: {
-            global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnArrowVisibilityChanged();
-            if (eventCase_ == EventOneofCase.OnArrowVisibilityChangedEvent) {
-              subBuilder.MergeFrom(OnArrowVisibilityChangedEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnArrowVisibilityChangedEvent = subBuilder;
-            break;
-          }
-          case 90: {
-            global::ComposeVR.Protocol.Browser.CloseBrowser subBuilder = new global::ComposeVR.Protocol.Browser.CloseBrowser();
-            if (eventCase_ == EventOneofCase.CloseBrowserEvent) {
-              subBuilder.MergeFrom(CloseBrowserEvent);
-            }
-            input.ReadMessage(subBuilder);
-            CloseBrowserEvent = subBuilder;
-            break;
-          }
-          case 98: {
-            global::ComposeVR.Protocol.Browser.OnBrowserItemChanged subBuilder = new global::ComposeVR.Protocol.Browser.OnBrowserItemChanged();
-            if (eventCase_ == EventOneofCase.OnBrowserItemChangedEvent) {
-              subBuilder.MergeFrom(OnBrowserItemChangedEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnBrowserItemChangedEvent = subBuilder;
-            break;
-          }
-          case 106: {
-            global::ComposeVR.Protocol.Browser.SelectResult subBuilder = new global::ComposeVR.Protocol.Browser.SelectResult();
-            if (eventCase_ == EventOneofCase.SelectResultEvent) {
-              subBuilder.MergeFrom(SelectResultEvent);
-            }
-            input.ReadMessage(subBuilder);
-            SelectResultEvent = subBuilder;
-            break;
-          }
-          case 114: {
-            global::ComposeVR.Protocol.Browser.CommitSelection subBuilder = new global::ComposeVR.Protocol.Browser.CommitSelection();
-            if (eventCase_ == EventOneofCase.CommitSelectionEvent) {
-              subBuilder.MergeFrom(CommitSelectionEvent);
-            }
-            input.ReadMessage(subBuilder);
-            CommitSelectionEvent = subBuilder;
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class ModuleEvent : pb::IMessage<ModuleEvent> {
-    private static readonly pb::MessageParser<ModuleEvent> _parser = new pb::MessageParser<ModuleEvent>(() => new ModuleEvent());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<ModuleEvent> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::ComposeVR.Protocol.ComposeVRReflection.Descriptor.MessageTypes[2]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ModuleEvent() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ModuleEvent(ModuleEvent other) : this() {
-      handlerId_ = other.handlerId_;
-      switch (other.EventCase) {
-        case EventOneofCase.OpenBrowserEvent:
-          OpenBrowserEvent = other.OpenBrowserEvent.Clone();
-          break;
-        case EventOneofCase.CreateSoundModuleEvent:
-          CreateSoundModuleEvent = other.CreateSoundModuleEvent.Clone();
-          break;
-        case EventOneofCase.OnSoundModuleCreatedEvent:
-          OnSoundModuleCreatedEvent = other.OnSoundModuleCreatedEvent.Clone();
-          break;
-        case EventOneofCase.MidiNoteEvent:
-          MidiNoteEvent = other.MidiNoteEvent.Clone();
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ModuleEvent Clone() {
-      return new ModuleEvent(this);
-    }
-
-    /// <summary>Field number for the "handler_id" field.</summary>
-    public const int HandlerIdFieldNumber = 1;
-    private string handlerId_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string HandlerId {
-      get { return handlerId_; }
-      set {
-        handlerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "open_browser_event" field.</summary>
-    public const int OpenBrowserEventFieldNumber = 2;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Module.OpenBrowser OpenBrowserEvent {
-      get { return eventCase_ == EventOneofCase.OpenBrowserEvent ? (global::ComposeVR.Protocol.Module.OpenBrowser) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OpenBrowserEvent;
-      }
-    }
-
-    /// <summary>Field number for the "create_sound_module_event" field.</summary>
-    public const int CreateSoundModuleEventFieldNumber = 3;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Module.CreateSoundModule CreateSoundModuleEvent {
-      get { return eventCase_ == EventOneofCase.CreateSoundModuleEvent ? (global::ComposeVR.Protocol.Module.CreateSoundModule) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.CreateSoundModuleEvent;
-      }
-    }
-
-    /// <summary>Field number for the "on_sound_module_created_event" field.</summary>
-    public const int OnSoundModuleCreatedEventFieldNumber = 4;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Module.OnSoundModuleCreated OnSoundModuleCreatedEvent {
-      get { return eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent ? (global::ComposeVR.Protocol.Module.OnSoundModuleCreated) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.OnSoundModuleCreatedEvent;
-      }
-    }
-
-    /// <summary>Field number for the "midi_note_event" field.</summary>
-    public const int MidiNoteEventFieldNumber = 5;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::ComposeVR.Protocol.Module.MIDINote MidiNoteEvent {
-      get { return eventCase_ == EventOneofCase.MidiNoteEvent ? (global::ComposeVR.Protocol.Module.MIDINote) event_ : null; }
-      set {
-        event_ = value;
-        eventCase_ = value == null ? EventOneofCase.None : EventOneofCase.MidiNoteEvent;
-      }
-    }
-
-    private object event_;
-    /// <summary>Enum of possible cases for the "event" oneof.</summary>
-    public enum EventOneofCase {
-      None = 0,
-      OpenBrowserEvent = 2,
-      CreateSoundModuleEvent = 3,
-      OnSoundModuleCreatedEvent = 4,
-      MidiNoteEvent = 5,
-    }
-    private EventOneofCase eventCase_ = EventOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EventOneofCase EventCase {
-      get { return eventCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearEvent() {
-      eventCase_ = EventOneofCase.None;
-      event_ = null;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as ModuleEvent);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(ModuleEvent other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (HandlerId != other.HandlerId) return false;
-      if (!object.Equals(OpenBrowserEvent, other.OpenBrowserEvent)) return false;
-      if (!object.Equals(CreateSoundModuleEvent, other.CreateSoundModuleEvent)) return false;
-      if (!object.Equals(OnSoundModuleCreatedEvent, other.OnSoundModuleCreatedEvent)) return false;
-      if (!object.Equals(MidiNoteEvent, other.MidiNoteEvent)) return false;
-      if (EventCase != other.EventCase) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (HandlerId.Length != 0) hash ^= HandlerId.GetHashCode();
-      if (eventCase_ == EventOneofCase.OpenBrowserEvent) hash ^= OpenBrowserEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) hash ^= CreateSoundModuleEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) hash ^= OnSoundModuleCreatedEvent.GetHashCode();
-      if (eventCase_ == EventOneofCase.MidiNoteEvent) hash ^= MidiNoteEvent.GetHashCode();
-      hash ^= (int) eventCase_;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (HandlerId.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(HandlerId);
-      }
-      if (eventCase_ == EventOneofCase.OpenBrowserEvent) {
-        output.WriteRawTag(18);
-        output.WriteMessage(OpenBrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) {
-        output.WriteRawTag(26);
-        output.WriteMessage(CreateSoundModuleEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) {
-        output.WriteRawTag(34);
-        output.WriteMessage(OnSoundModuleCreatedEvent);
-      }
-      if (eventCase_ == EventOneofCase.MidiNoteEvent) {
-        output.WriteRawTag(42);
-        output.WriteMessage(MidiNoteEvent);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (HandlerId.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(HandlerId);
-      }
-      if (eventCase_ == EventOneofCase.OpenBrowserEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OpenBrowserEvent);
-      }
-      if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CreateSoundModuleEvent);
-      }
-      if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(OnSoundModuleCreatedEvent);
-      }
-      if (eventCase_ == EventOneofCase.MidiNoteEvent) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MidiNoteEvent);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(ModuleEvent other) {
-      if (other == null) {
-        return;
-      }
-      if (other.HandlerId.Length != 0) {
-        HandlerId = other.HandlerId;
-      }
-      switch (other.EventCase) {
-        case EventOneofCase.OpenBrowserEvent:
-          if (OpenBrowserEvent == null) {
-            OpenBrowserEvent = new global::ComposeVR.Protocol.Module.OpenBrowser();
-          }
-          OpenBrowserEvent.MergeFrom(other.OpenBrowserEvent);
-          break;
-        case EventOneofCase.CreateSoundModuleEvent:
-          if (CreateSoundModuleEvent == null) {
-            CreateSoundModuleEvent = new global::ComposeVR.Protocol.Module.CreateSoundModule();
-          }
-          CreateSoundModuleEvent.MergeFrom(other.CreateSoundModuleEvent);
-          break;
-        case EventOneofCase.OnSoundModuleCreatedEvent:
-          if (OnSoundModuleCreatedEvent == null) {
-            OnSoundModuleCreatedEvent = new global::ComposeVR.Protocol.Module.OnSoundModuleCreated();
-          }
-          OnSoundModuleCreatedEvent.MergeFrom(other.OnSoundModuleCreatedEvent);
-          break;
-        case EventOneofCase.MidiNoteEvent:
-          if (MidiNoteEvent == null) {
-            MidiNoteEvent = new global::ComposeVR.Protocol.Module.MIDINote();
-          }
-          MidiNoteEvent.MergeFrom(other.MidiNoteEvent);
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            HandlerId = input.ReadString();
-            break;
-          }
-          case 18: {
-            global::ComposeVR.Protocol.Module.OpenBrowser subBuilder = new global::ComposeVR.Protocol.Module.OpenBrowser();
-            if (eventCase_ == EventOneofCase.OpenBrowserEvent) {
-              subBuilder.MergeFrom(OpenBrowserEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OpenBrowserEvent = subBuilder;
-            break;
-          }
-          case 26: {
-            global::ComposeVR.Protocol.Module.CreateSoundModule subBuilder = new global::ComposeVR.Protocol.Module.CreateSoundModule();
-            if (eventCase_ == EventOneofCase.CreateSoundModuleEvent) {
-              subBuilder.MergeFrom(CreateSoundModuleEvent);
-            }
-            input.ReadMessage(subBuilder);
-            CreateSoundModuleEvent = subBuilder;
-            break;
-          }
-          case 34: {
-            global::ComposeVR.Protocol.Module.OnSoundModuleCreated subBuilder = new global::ComposeVR.Protocol.Module.OnSoundModuleCreated();
-            if (eventCase_ == EventOneofCase.OnSoundModuleCreatedEvent) {
-              subBuilder.MergeFrom(OnSoundModuleCreatedEvent);
-            }
-            input.ReadMessage(subBuilder);
-            OnSoundModuleCreatedEvent = subBuilder;
-            break;
-          }
-          case 42: {
-            global::ComposeVR.Protocol.Module.MIDINote subBuilder = new global::ComposeVR.Protocol.Module.MIDINote();
-            if (eventCase_ == EventOneofCase.MidiNoteEvent) {
-              subBuilder.MergeFrom(MidiNoteEvent);
-            }
-            input.ReadMessage(subBuilder);
-            MidiNoteEvent = subBuilder;
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  #endregion
 
 }
 
