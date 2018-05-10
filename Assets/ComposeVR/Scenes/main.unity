@@ -8672,8 +8672,7 @@ MonoBehaviour:
   _useExplicitConnection: 1
   _explicitConnection: {fileID: 392492853}
   _drawDefaultInspector: 1
-  _myOSCConnections:
-  - {fileID: 392492853}
+  _myOSCConnections: []
 --- !u!4 &778660830
 Transform:
   m_ObjectHideFlags: 0

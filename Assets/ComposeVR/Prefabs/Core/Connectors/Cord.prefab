@@ -123,7 +123,7 @@ MonoBehaviour:
   Flow: 1
   OnEmission: 0.4
   OffEmission: 0.25
-  RelaxIterationsPerFrame: 2
+  RelaxIterationsPerFrame: 3
 --- !u!114 &114682616248407738
 MonoBehaviour:
   m_ObjectHideFlags: 1

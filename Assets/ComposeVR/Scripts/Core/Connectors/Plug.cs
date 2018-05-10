@@ -37,7 +37,7 @@ namespace ComposeVR
         private Vector3 plugColliderCenter;
         private float plugColliderHeight;
 
-        private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.02f;
+        private const float PLUGGED_IN_COLLIDER_HEIGHT = 0.03f;
 
         public Cord ConnectedCord
         {
@@ -125,7 +125,17 @@ namespace ComposeVR
                 connectedCord.AllowBranching(true);
             }
 
-            StartCoroutine(TryCollapse());
+            if(DestinationEndpoint != null)
+            {
+                transform.SetParent(null);
+            }
+
+            TryCollapseCord();
+        }
+
+        public void TryCollapseCord()
+        {
+            StartCoroutine(TryCollapseRoutine());
         }
 
         /// <summary>
@@ -133,7 +143,7 @@ namespace ComposeVR
         ///     1. Both ends of the cord are plugs and neither plug is plugged in
         ///     2. One end of the cord is an unplugged plug and the other is a BranchHandle.
         /// </summary>
-        private IEnumerator TryCollapse()
+        private IEnumerator TryCollapseRoutine()
         {
             yield return null;
             if (!IsPluggedIn() && connectedCord != null)

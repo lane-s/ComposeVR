@@ -92,6 +92,10 @@ namespace ComposeVR
 
         public void OnLockedPlugWillBeDestroyed()
         {
+            if (nearbyPlugs.Contains(LockedPlug))
+            {
+                nearbyPlugs.Remove(LockedPlug);
+            }
             UnlockPlug();
         }
 

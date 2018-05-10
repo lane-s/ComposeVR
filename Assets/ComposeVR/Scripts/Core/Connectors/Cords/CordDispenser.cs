@@ -155,6 +155,7 @@ namespace ComposeVR
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation);
             secondaryPlug.name = "Secondary";
 
+            primaryPlug.transform.SetParent(PlugStart);
             secondaryPlug.transform.SetParent(PlugStart);
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
@@ -232,7 +233,6 @@ namespace ComposeVR
                     StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
                     secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 
-                    Debug.Log("Forcing secondary plug lock");
                     GetComponent<SocketPlugReceptacle>().ForcePlugLockAndConnect(secondaryPlug);
 
                     CreateCord();
@@ -263,7 +263,6 @@ namespace ComposeVR
 
         private IEnumerator ExtendPlug(Plug p, Vector3 target)
         {
-            Debug.Log("Extending plug: " + p.name);
             p.gameObject.SetActive(true);
             p.transform.position = PlugStart.position;
             p.transform.rotation = PlugStart.rotation;
@@ -278,7 +277,6 @@ namespace ComposeVR
             {
                 yield return new WaitForEndOfFrame();
             }
-            Debug.Log("Finished extending: " + p.name);
         }
 
         private IEnumerator RetractPlug(Plug p)

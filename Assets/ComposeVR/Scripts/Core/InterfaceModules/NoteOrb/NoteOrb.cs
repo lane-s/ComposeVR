@@ -182,10 +182,24 @@ namespace ComposeVR
                 {
                     SelfDestruct(this, defaultSelfDestructArgs);
                 }
-                Destroy(gameObject);
+
+                DestroyNoteOrb();
             }
 
             e.interactingObject.GetComponent<VRTK_ControllerEvents>().ButtonOnePressed -= OnDuplicateButtonPressed;
+        }
+
+        private void DestroyNoteOrb()
+        {
+            Plug childPlug = GetComponentInChildren<Plug>();
+            if(childPlug != null)
+            {
+                //If a plug was plugged in, detach it and see if it should be collapsed back into a cord
+                childPlug.transform.SetParent(null);
+                childPlug.TryCollapseCord();
+            }
+
+            Destroy(gameObject);
         }
 
         private void OnDuplicateButtonPressed(object sender, ControllerInteractionEventArgs e)

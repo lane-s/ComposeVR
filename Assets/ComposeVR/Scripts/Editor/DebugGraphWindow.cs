@@ -32,7 +32,8 @@ public class DebugGraphWindow : EditorWindow
 
     private Rect clearButtonRect;
 
-    private Rect graphViewport;
+    private Rect normalizedGraphViewport;
+    private Rect graphSpaceViewport;
 
     private Rect xAxisRect;
     private bool draggingXAxis;
@@ -47,15 +48,23 @@ public class DebugGraphWindow : EditorWindow
 
     private RenderTexture graphTexture;
     private Rect graphWindowRect;
+    private Rect previousGraphWindowRect;
+
+    private Color graphBgColor;
+    private Color graphXAxisBgColor;
+    private Color graphYAxisBgColor;
 
     private Vector2 previousWindowSize;
     private const int GRAPH_LEFT_MARGIN = 200;
     private const int CONTROL_WIDTH = 150;
-    private const int AXIS_WIDTH = 30;
+    private const int AXIS_WIDTH = 20;
 
     private const float SMALL_MARGIN = 15.0f;
 
     private const int GRAPH_BOTTOM_MARGIN = 15;
+
+    private const float HORIZONTAL_SCALE_SENSITIVITY = 1f;
+    private const float VERTICAL_SCALE_SENSITIVITY = 3f;
 
     private float timeOffset;
 
@@ -69,11 +78,16 @@ public class DebugGraphWindow : EditorWindow
         graphMin = new Vector2(0, 0);
         graphMax = new Vector2(1, 1);
 
-        graphViewport = new Rect(0, 0, 1, 1);
+        normalizedGraphViewport = new Rect(0, 0, 1, 1);
+        graphSpaceViewport = new Rect(0, 0, 1, 1);
+
         xAxisRect = new Rect(GRAPH_LEFT_MARGIN, 0, (int)position.width - GRAPH_LEFT_MARGIN, AXIS_WIDTH);
         yAxisRect = new Rect(GRAPH_LEFT_MARGIN - AXIS_WIDTH, 0, AXIS_WIDTH, (int)position.height);
 
         graphWindowRect = new Rect(GRAPH_LEFT_MARGIN, 0, (int)position.width - GRAPH_LEFT_MARGIN, (int)position.height);
+        graphBgColor = new Color(0.2f, 0.2f, 0.2f);
+        graphXAxisBgColor = Color.grey;
+        graphYAxisBgColor = new Color(0.4f, 0.4f, 0.4f);
 
         UseRandomData();
 
@@ -97,7 +111,7 @@ public class DebugGraphWindow : EditorWindow
         if (!graphData.ContainsKey(variableName))
         {
             graphData.Add(variableName, new Queue<Vector2>());
-            graphColors.Add(variableName, new Color(Random.value, Random.value, Random.value));
+            graphColors.Add(variableName, Color.green);
         }
 
         graphData[variableName].Enqueue(point);
@@ -107,6 +121,7 @@ public class DebugGraphWindow : EditorWindow
 
         graphMin.x = Mathf.Min(graphMin.x, point.x);
         graphMin.y = Mathf.Min(graphMin.y, point.y);
+
     }
 
     private void OnGUI()
@@ -122,7 +137,7 @@ public class DebugGraphWindow : EditorWindow
 
     private void DrawValueLabels()
     {
-        GUILayout.BeginArea(new Rect(0, SMALL_MARGIN, CONTROL_WIDTH, position.height - SMALL_MARGIN * 2));
+        GUILayout.BeginArea(new Rect(SMALL_MARGIN, SMALL_MARGIN, CONTROL_WIDTH, position.height - SMALL_MARGIN * 2));
         int entryIndex = 0;
 
         foreach(KeyValuePair<string, Queue<Vector2>> entry in graphData)
@@ -161,13 +176,13 @@ public class DebugGraphWindow : EditorWindow
             GL.PushMatrix();
             GL.LoadPixelMatrix();
             GL.Viewport(xAxisRectViewport);
-            GL.Clear(true, true, Color.yellow);
+            GL.Clear(true, true, graphXAxisBgColor);
             GL.PopMatrix();
 
             GL.PushMatrix();
             GL.LoadPixelMatrix();
             GL.Viewport(yAxisRect);
-            GL.Clear(true, true, Color.cyan);
+            GL.Clear(true, true, graphYAxisBgColor);
             GL.PopMatrix();
         }
     }
@@ -184,6 +199,16 @@ public class DebugGraphWindow : EditorWindow
             lastDragPosition = Event.current.mousePosition;
 
             //Handle scaling and panning    
+            if(dragVector.magnitude > 0)
+            {
+                float widthChange = dragVector.y / Screen.height * HORIZONTAL_SCALE_SENSITIVITY * normalizedGraphViewport.width;
+
+                normalizedGraphViewport.width += widthChange;
+                normalizedGraphViewport.x -= (dragVector.x / Screen.width * normalizedGraphViewport.width + widthChange / 2);
+
+                Repaint();
+            }
+
         }else if(draggingXAxis && Event.current.rawType == EventType.MouseUp)
         {
             draggingXAxis = false;
@@ -200,6 +225,15 @@ public class DebugGraphWindow : EditorWindow
             lastDragPosition = Event.current.mousePosition;
 
             //Handle scaling and panning    
+            if(dragVector.magnitude > 0)
+            {
+                float heightChange = dragVector.x / Screen.width * VERTICAL_SCALE_SENSITIVITY * normalizedGraphViewport.height;
+
+                normalizedGraphViewport.height -= heightChange;
+                normalizedGraphViewport.y -= (dragVector.y / Screen.height * normalizedGraphViewport.height - heightChange / 2);
+
+                Repaint();
+            }
         }else if(draggingYAxis && Event.current.rawType == EventType.MouseUp)
         {
             draggingYAxis = false;
@@ -211,13 +245,31 @@ public class DebugGraphWindow : EditorWindow
         graphWindowRect.width = position.width - GRAPH_LEFT_MARGIN;
         graphWindowRect.height = position.height - AXIS_WIDTH;
 
+        if (previousGraphWindowRect.width != graphWindowRect.width)
+        {
+            //Update normalizedGraphViewport width
+        }else if(previousGraphWindowRect.height != graphWindowRect.height)
+        {
+            //Update normalizedGraphViewport height
+        }
+
+        //Resizing the graph window should also resize the viewport so that no scaling occurs from resizing the window
+
         if(Event.current.type == EventType.Repaint)
         {
+            float graphWidth = graphMax.x - graphMin.x;
+            float graphHeight = graphMax.y - graphMin.y;
+
+            graphSpaceViewport.width = normalizedGraphViewport.width * graphWidth;
+            graphSpaceViewport.height = normalizedGraphViewport.height * graphHeight;
+            graphSpaceViewport.x = normalizedGraphViewport.x * graphWidth;
+            graphSpaceViewport.y = normalizedGraphViewport.y * graphHeight;
+
             GL.PushMatrix();
             GL.LoadPixelMatrix();
             GL.Viewport(graphWindowRect);
 
-            GL.Clear(true, true, Color.black);
+            GL.Clear(true, true, graphBgColor);
             foreach(KeyValuePair<string, Queue<Vector2>> entry in graphData)
             {
                 GL.Begin(GL.LINES);
@@ -236,12 +288,14 @@ public class DebugGraphWindow : EditorWindow
 
             GL.PopMatrix();
         }
+
+        previousGraphWindowRect = graphWindowRect;
     }
 
     private Vector3 TransformGraphVertex(Vector2 v)
     {
-        float normalizedX = (v.x - graphMin.x) / (graphMax.x - graphMin.x);
-        float normalizedY = (v.y - graphMin.y) / (graphMax.y - graphMin.y);
+        float normalizedX = (v.x - graphSpaceViewport.x) / graphSpaceViewport.width;
+        float normalizedY = (v.y - graphSpaceViewport.y) / graphSpaceViewport.height;
 
         return new Vector3(normalizedX * Screen.width, normalizedY * Screen.height - GRAPH_BOTTOM_MARGIN, 0);
     }

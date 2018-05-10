@@ -26,7 +26,7 @@ namespace ComposeVR
         private SnapToTargetRotation rotationSnap;
         private IEnumerator snapToSocketRoutine;
 
-        private const float PLUG_SNAP_OFFSET = 0.025f;
+        private const float PLUG_SNAP_OFFSET = 0.01f;
 
         protected override void OnPlugLocked()
         {
