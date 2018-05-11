@@ -34,6 +34,9 @@ namespace ComposeVR
         public float KeySpacing = 0.001f;
         public float TickStrength = 20f;
 
+        public GlobalEvent NoteSelectorShow;
+        public GlobalEvent NoteSelectorHide;
+
         private Deque<Key> keys;
         private ObjectPool keyPool;
 
@@ -85,6 +88,7 @@ namespace ComposeVR
             }
 
             Init(initialNote);
+            NoteSelectorShow.Raise();
             return true;
         }
 
@@ -93,6 +97,7 @@ namespace ComposeVR
             Cleanup();
             targetHand = SDK_BaseController.ControllerHand.None;
             transform.SetParent(ComposeVRManager.Instance.transform);
+            NoteSelectorHide.Raise();
         }
 
         // Use this for initialization

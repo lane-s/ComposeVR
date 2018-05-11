@@ -29,10 +29,11 @@ namespace ComposeVR
     [RequireComponent(typeof(VRTK_InteractableObject))]
     public class NoteOrb : MonoBehaviour
     {
+        public SharedInt LastSelectedNote;
+        public NoteColorScheme NoteColors;
 
         public event EventHandler<EventArgs> SelfDestruct;
         private EventArgs defaultSelfDestructArgs;
-
 
         public float HitEmissionGain;
         public float TouchHapticsStrength;
@@ -140,7 +141,7 @@ namespace ComposeVR
 
             HMD = GameObject.FindGameObjectWithTag("Headset").transform;
 
-            noteSelector = ComposeVRManager.Instance.NoteSelectorObject;
+            noteSelector = FindObjectOfType<NoteSelector>();
             defaultSelfDestructArgs = new EventArgs();
         }
 
@@ -236,7 +237,6 @@ namespace ComposeVR
             {
                 noteSelector.NoteSelected += OnNoteSelectionChanged;
                 SetRootNote(noteSelector.GetSelectedNote());
-                ComposeVRManager.Instance.ModuleMenu.Hide();
             }
         }
 
@@ -265,7 +265,6 @@ namespace ComposeVR
             noteSelector.NoteSelected -= OnNoteSelectionChanged;
             noteSelector.Release();
             displayingNoteSelector = false;
-            ComposeVRManager.Instance.ModuleMenu.Display();
         }
 
         void OnShellTriggerEnter(object sender, SimpleTriggerEventArgs args)
@@ -368,7 +367,7 @@ namespace ComposeVR
             Baton baton = other.GetComponent<Baton>();
             if (baton)
             {
-                SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
+                SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
 
                 if (other.GetComponent<ActorSubObject>())
                 {
@@ -537,13 +536,13 @@ namespace ComposeVR
                 SetCoreNote(noteCores[0], note);
             }
 
-            ComposeVRManager.Instance.LastNoteSelected = note;
+            LastSelectedNote.Value = note;
         }
 
         private void SetCoreNote(NoteCore core, int note)
         {
             core.Note = note;
-            core.Color = ComposeVRManager.Instance.NoteColors.GetNoteColor(note);
+            core.Color = NoteColors.GetNoteColor(note);
         }
 
         private IEnumerator PreviewSelection()
@@ -551,7 +550,7 @@ namespace ComposeVR
             //Copy current selection so that the correct notes are turned off
             List<int> currentSelection = new List<int>(selectedNotes);
 
-            SetShellColor(ComposeVRManager.Instance.NoteColors.GetNoteColor(selectedNotes[0]));
+            SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
             OrbOn(95);
             yield return new WaitForSecondsRealtime(0.1f);
             SetShellColor(baseShellColor);
@@ -643,6 +642,32 @@ namespace ComposeVR
         {
             NoteOrb foreignOrb = sender as NoteOrb;
             MergeCores(foreignOrb);
+        }
+
+        public void OnPlayModeExited()
+        {
+            if(collidingControllers.Count > 0)
+            {
+                foreach(VRTK_ControllerReference controller in collidingControllers)
+                {
+                    controller.scriptAlias.GetComponent<ControllerNoteTrigger>().NoteTriggered -= OnControllerTriggerPressed;
+                    controller.scriptAlias.GetComponent<ControllerNoteTrigger>().NoteReleased -= OnControllerTriggerReleased;
+                }
+            }
+
+            if(controllersPlayingOrb.Count > 0)
+            {
+                HashSet<VRTK_ControllerReference> playersCopy = new HashSet<VRTK_ControllerReference>(controllersPlayingOrb);
+                foreach(VRTK_ControllerReference controller in playersCopy)
+                {
+                    OrbOffFromControllerExit(controller);
+                }
+            }
+
+            SetShellColor(baseShellColor);
+
+            controllersPlayingOrb.Clear();
+            collidingControllers.Clear();
         }
     }
 }

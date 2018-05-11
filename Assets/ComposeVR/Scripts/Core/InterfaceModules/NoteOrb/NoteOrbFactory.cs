@@ -7,37 +7,9 @@ namespace ComposeVR
 {
     public static class NoteOrbFactory
     {
-        private static GameObject _orbPrefab;
-        private static GameObject OrbPrefab
-        {
-            get
-            {
-                if (_orbPrefab == null)
-                {
-                    _orbPrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteOrb");
-                }
-
-                return _orbPrefab;
-            }
-        }
-
-        private static GameObject _corePrefab;
-        private static GameObject CorePrefab
-        {
-            get
-            {
-                if (_corePrefab == null)
-                {
-                    _corePrefab = AssetLoader.LoadCoreAssetBundle().LoadAsset<GameObject>("NoteCore");
-                }
-
-                return _corePrefab;
-            }
-        }
-
         public static NoteOrb DefaultNoteOrb(Vector3 position, Quaternion rotation)
         {
-            return Object.Instantiate(OrbPrefab, position, rotation).GetComponent<NoteOrb>();
+            return Object.Instantiate(ComposeVRManager.Instance.NoteOrbPrefab, position, rotation).GetComponent<NoteOrb>();
         }
 
         public static NoteOrb DuplicateNoteOrb(NoteOrb sourceOrb)
@@ -71,7 +43,7 @@ namespace ComposeVR
 
         private static NoteCore DuplicateNoteCore(NoteCore sourceCore)
         {
-            NoteCore copy = Object.Instantiate(CorePrefab, sourceCore.transform.position, sourceCore.transform.rotation).GetComponent<NoteCore>();
+            NoteCore copy = Object.Instantiate(ComposeVRManager.Instance.NoteCorePrefab, sourceCore.transform.position, sourceCore.transform.rotation).GetComponent<NoteCore>();
             copy.Color = sourceCore.Color;
             copy.Note = sourceCore.Note;
             return copy;

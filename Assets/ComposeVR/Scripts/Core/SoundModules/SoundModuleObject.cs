@@ -26,6 +26,9 @@ namespace ComposeVR
         private Transform faderSystem;
         private Text gainDisplay;
 
+        private OSCEventDispatcher oscEventDispatcher;
+        private DeviceBrowserObject deviceBrowserObject;
+
         void Awake()
         {
             input = GetComponentInChildren<PhysicalDataInput>();
@@ -33,6 +36,8 @@ namespace ComposeVR
             Controller.SetController(this);
 
             GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += OnUngrabbed;
+            deviceBrowserObject = FindObjectOfType<DeviceBrowserObject>();
+            oscEventDispatcher = FindObjectOfType<OSCEventDispatcher>();
         }
 
         void OnUngrabbed(object sender, InteractableObjectEventArgs e)
@@ -101,7 +106,7 @@ namespace ComposeVR
             string address = "/" + Controller.GetID() + "/trackParam/volume";
             OscMessage volumeChange = new OscMessage(address, e.normalizedValue);
 
-            ComposeVRManager.Instance.OSCEventDispatcher.SendOSCPacket(address, volumeChange);
+            oscEventDispatcher.SendOSCPacket(address, volumeChange);
         }
 
         private void SetGainDisplayText(float gain)
@@ -121,7 +126,7 @@ namespace ComposeVR
 
         void ISoundModule.PositionBrowser()
         {
-            DeviceBrowserObject browser = ComposeVRManager.Instance.DeviceBrowserObject;
+            DeviceBrowserObject browser = deviceBrowserObject;
 
             //Position browser above module
             browser.transform.position = transform.position + Vector3.up * Controller.Config.browserYOffset;
@@ -138,22 +143,17 @@ namespace ComposeVR
 
         DeviceBrowserController ISoundModule.GetBrowserController()
         {
-            return ComposeVRManager.Instance.DeviceBrowserObject.Controller;
+            return deviceBrowserObject.Controller;
         }
 
-        ComposeVROSCEventDispatcher ISoundModule.GetOSCEventDispatcher()
+        OSCEventDispatcher ISoundModule.GetOSCEventDispatcher()
         {
-            return ComposeVRManager.Instance.OSCEventDispatcher;
+            return oscEventDispatcher;
         }
 
         PhysicalDataInput ISoundModule.GetInputJack()
         {
             return input;
-        }
-
-        SoundModuleMenu ISoundModule.GetModuleMenu()
-        {
-            return ComposeVRManager.Instance.SoundModuleMenu;
         }
     }
 
@@ -162,8 +162,7 @@ namespace ComposeVR
         void PositionBrowser();
         void AllowPointerSelection(bool allow);
         DeviceBrowserController GetBrowserController();
-        ComposeVROSCEventDispatcher GetOSCEventDispatcher();
+        OSCEventDispatcher GetOSCEventDispatcher();
         PhysicalDataInput GetInputJack();
-        SoundModuleMenu GetModuleMenu();
     }
 }

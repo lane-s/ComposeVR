@@ -7,6 +7,7 @@ namespace ComposeVR
 {
     public class ModuleMenu : MonoBehaviour, IDisplayable
     {
+        public SharedInt LastSelectedNote;
 
         private void Awake()
         {
@@ -29,7 +30,7 @@ namespace ComposeVR
             NoteOrb noteMini = GetComponentInChildren<NoteOrb>();
             if (noteMini != null)
             {
-                noteMini.SetRootNote(ComposeVRManager.Instance.LastNoteSelected);
+                noteMini.SetRootNote(LastSelectedNote.Value);
             }
         }
 

@@ -29,8 +29,6 @@ namespace ComposeVR
         [Tooltip("How far away from the instantiator can a minature get before it is released")]
         public float ReleaseDistance = 0.075f;
 
-        public bool HideMenuOnRelease = false;
-
         private Miniature currentMiniature;
         private VRTK_InteractableObject currentMiniInteractable;
 
@@ -72,10 +70,6 @@ namespace ComposeVR
 
         private void ReleaseMiniature()
         {
-            if (HideMenuOnRelease)
-            {
-                ComposeVRManager.Instance.ModuleMenu.Hide();
-            }
 
             currentMiniInteractable.InteractableObjectUngrabbed -= OnMiniatureUnGrabbed;
             currentMiniature.Release();

@@ -1859,7 +1859,6 @@ MonoBehaviour:
   Prefab: {fileID: 114779029635642784, guid: 5ff14a5263eed2b4baf965c73cfa0056, type: 2}
   SpinSpeed: 0
   ReleaseDistance: 0.075
-  HideMenuOnRelease: 1
 --- !u!1 &158442034
 GameObject:
   m_ObjectHideFlags: 0
@@ -4624,6 +4623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6a73363219dc2f4f8e359a89f62784f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LastSelectedNote: {fileID: 11400000, guid: 2a2e022b6ae32c542b281b41e8a7d8f2, type: 2}
 --- !u!1 &370837255
 GameObject:
   m_ObjectHideFlags: 0
@@ -8672,7 +8672,8 @@ MonoBehaviour:
   _useExplicitConnection: 1
   _explicitConnection: {fileID: 392492853}
   _drawDefaultInspector: 1
-  _myOSCConnections: []
+  _myOSCConnections:
+  - {fileID: 392492853}
 --- !u!4 &778660830
 Transform:
   m_ObjectHideFlags: 0
@@ -10378,8 +10379,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c29f1620f00f7e24fbde1ad5274ac7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LastNoteSelected: 60
-  NoteColors: {fileID: 11400000, guid: bdb18bd807d3f4040871e30e3468e171, type: 2}
+  NoteOrbPrefab: {fileID: 114472644314344026, guid: 5ff14a5263eed2b4baf965c73cfa0056,
+    type: 2}
+  NoteCorePrefab: {fileID: 114918036035187314, guid: f8603b2b0a123fe48bd4852e0ab8b6a2,
+    type: 2}
 --- !u!1 &934981563
 GameObject:
   m_ObjectHideFlags: 0
@@ -12019,7 +12022,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 160868, guid: 6b9dbb125b47726449ffe47a4110f342, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6b9dbb125b47726449ffe47a4110f342, type: 2}
@@ -14317,6 +14320,8 @@ GameObject:
   - component: {fileID: 1163938802}
   - component: {fileID: 1163938801}
   - component: {fileID: 1163938803}
+  - component: {fileID: 1163938805}
+  - component: {fileID: 1163938804}
   m_Layer: 0
   m_Name: MenuCube
   m_TagString: Untagged
@@ -14354,6 +14359,8 @@ MonoBehaviour:
   SelectionStep: 2
   RotationSpeed: 479.8
   AxisChangeBeforeRotate: 0.4
+  PlayModeEntered: {fileID: 11400000, guid: 69c891f3ac0437b4fb172ed486a0136b, type: 2}
+  PlayModeExited: {fileID: 11400000, guid: 00b7ca8bf268d11419cbbcfeed37f39a, type: 2}
   PlayMode: 0
 --- !u!23 &1163938801
 MeshRenderer:
@@ -14407,6 +14414,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HasReachedTarget: 0
   UseLocalRotation: 1
+--- !u!114 &1163938804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163938798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cd43896cb75c046bc01c1f94b710c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 73f9b8386c20a7c4d8eecb59f53c0e58, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1163938800}
+        m_MethodName: ShowMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!114 &1163938805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163938798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cd43896cb75c046bc01c1f94b710c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 9f003353967c536469fe8d9b05baf62f, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1163938800}
+        m_MethodName: HideMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!1 &1169261713
 GameObject:
   m_ObjectHideFlags: 0
@@ -15102,7 +15165,6 @@ MonoBehaviour:
   Prefab: {fileID: 114156612307153794, guid: 7aac26f07be2de24aaf25c3de50b95ca, type: 2}
   SpinSpeed: 0
   ReleaseDistance: 0.075
-  HideMenuOnRelease: 0
 --- !u!1 &1231426892
 GameObject:
   m_ObjectHideFlags: 0
@@ -18255,6 +18317,8 @@ MonoBehaviour:
   HalfKeys: 9
   KeySpacing: 0.0005
   TickStrength: 100
+  NoteSelectorShow: {fileID: 11400000, guid: 9f003353967c536469fe8d9b05baf62f, type: 2}
+  NoteSelectorHide: {fileID: 11400000, guid: 73f9b8386c20a7c4d8eecb59f53c0e58, type: 2}
 --- !u!1 &1537931205
 GameObject:
   m_ObjectHideFlags: 0

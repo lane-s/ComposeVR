@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2522546056
+CRC: 1758894811
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 56435a5580f08e698868edf12b489949
+    Hash: a374ed88652b747c4b4598382ca88ed2
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f4b431d234c3b90e74827a57e52cc221
+    Hash: fe67de1f4c9ebc8eda53391c02e2b778
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -30,6 +30,8 @@ ClassTypes:
 - Class: 65
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 11500000, guid: b8a3c31105cb01f46b0a3b4632e4b4a3, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 6822492143946574c84307dc6550cb12, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 87123092e0f24f1418ed74d994a8db6a, type: 3}
@@ -50,6 +52,10 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 38203e47a528d4c498d0a1764db37b1e, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 58cd43896cb75c046bc01c1f94b710c9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8dd520b9168c68b47bfb434ee786dc70, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: bca7dadcc5b3e56428a2a22c9189166a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 5982102e1cf606d40a08172f3c6c75c4, type: 3}
@@ -62,7 +68,12 @@ ClassTypes:
 Assets:
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Chromatic.asset
 - Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteOrb.prefab
+- Assets/ComposeVR/ScriptableObjects/GlobalEvents/NoteSelectorShow.asset
+- Assets/ComposeVR/ScriptableObjects/GlobalEvents/PlayModeEntered.asset
+- Assets/ComposeVR/ScriptableObjects/GlobalEvents/NoteSelectorHide.asset
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Zieverink.asset
+- Assets/ComposeVR/ScriptableObjects/LastSelectedNote.asset
 - Assets/ComposeVR/Prefabs/Core/InterfaceModules/NoteOrb/NoteCore.prefab
+- Assets/ComposeVR/ScriptableObjects/GlobalEvents/PlayModeExited.asset
 - Assets/ComposeVR/ScriptableObjects/NoteColorSchemes/Scriabin.asset
 Dependencies: []

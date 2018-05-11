@@ -4,9 +4,8 @@ using UnityEngine;
 using UniOSC;
 using OSCsharp.Data;
 
-public class ComposeVROSCEventDispatcher : UniOSCEventDispatcher
+public class OSCEventDispatcher : UniOSCEventDispatcher
 {
-
 
     public override void Awake()
     {

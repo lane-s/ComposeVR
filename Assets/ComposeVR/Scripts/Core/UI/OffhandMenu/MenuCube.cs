@@ -15,6 +15,9 @@ namespace ComposeVR
 
         public float AxisChangeBeforeRotate = 0.1f;
 
+        public GlobalEvent PlayModeEntered;
+        public GlobalEvent PlayModeExited;
+
         private SnapToTargetRotation rotationSnap;
 
         public bool PlayMode = false;
@@ -51,17 +54,34 @@ namespace ComposeVR
 
             if (PlayMode)
             {
-                for (int i = 0; i < transform.childCount; i++)
-                {
-                    transform.GetChild(i).GetComponent<IDisplayable>().Hide();
-                }
+                PlayModeEntered.Raise();
+                HideMenu();
             }
             else
             {
-                for (int i = 0; i < transform.childCount; i++)
-                {
-                    transform.GetChild(i).GetComponent<IDisplayable>().Display();
-                }
+                PlayModeExited.Raise();
+                ShowMenu();
+            }
+        }
+
+        public void ShowMenu()
+        {
+            if (PlayMode)
+            {
+                return;
+            }
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).GetComponent<IDisplayable>().Display();
+            }
+        }
+
+        public void HideMenu()
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).GetComponent<IDisplayable>().Hide();
             }
         }
     }
