@@ -200,12 +200,12 @@ namespace ComposeVR
 
         private void DestroyNoteOrb()
         {
-            Plug childPlug = GetComponentInChildren<Plug>();
-            if(childPlug != null)
+            PlugReceptacle plugReceptacle = GetComponentInChildren<PlugReceptacle>();
+            if(plugReceptacle.LockedPlug != null)
             {
                 //If a plug was plugged in, detach it and see if it should be collapsed back into a cord
-                childPlug.transform.SetParent(null);
-                childPlug.TryCollapseCord();
+                plugReceptacle.LockedPlug.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = null;
+                plugReceptacle.LockedPlug.TryCollapseCord();
             }
 
             Destroy(gameObject);

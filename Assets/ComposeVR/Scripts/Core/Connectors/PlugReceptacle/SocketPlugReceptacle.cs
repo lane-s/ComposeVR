@@ -250,7 +250,7 @@ namespace ComposeVR
             }
 
             LockedPlug.ConnectToDataEndpoint(plugReceptacle);
-            LockedPlug.transform.SetParent(PlugConnectionPoint);
+            LockedPlug.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = PlugConnectionPoint.gameObject;
             yield return null;
         }
 
@@ -277,7 +277,6 @@ namespace ComposeVR
                 LockedPlug.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += OnLockedPlugGrabbed;
 
                 LockedPlug.ConnectToDataEndpoint(plugReceptacle);
-                LockedPlug.transform.SetParent(PlugConnectionPoint);
             }
         }
     }

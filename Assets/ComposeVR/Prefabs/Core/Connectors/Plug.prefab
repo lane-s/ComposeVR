@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 135858767354311850}
   - component: {fileID: 114620639719833418}
   - component: {fileID: 114421103069163854}
+  - component: {fileID: 114682735640978996}
   m_Layer: 13
   m_Name: Plug
   m_TagString: Untagged
@@ -310,6 +311,29 @@ MonoBehaviour:
   throwVelocityWithAttachDistance: 0
   throwMultiplier: 1
   onGrabCollisionDelay: 0
+--- !u!114 &114682735640978996
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417998939927070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe5040c2eaa9ff147b80ded004191c67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameObjectToFollow: {fileID: 0}
+  gameObjectToChange: {fileID: 0}
+  followsPosition: 1
+  smoothsPosition: 0
+  maxAllowedPerFrameDistanceDifference: 0.003
+  followsRotation: 1
+  smoothsRotation: 0
+  maxAllowedPerFrameAngleDifference: 1.5
+  followsScale: 1
+  smoothsScale: 0
+  maxAllowedPerFrameSizeDifference: 0.003
+  _moment: 2
 --- !u!114 &114789629393421264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -352,6 +376,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasReachedTarget: 0
+  UseLocalRotation: 0
 --- !u!135 &135858767354311850
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -107,6 +107,8 @@ namespace ComposeVR
 
         private void OnGrabbed(object sender, InteractableObjectEventArgs e)
         {
+            GetComponent<VRTK_TransformFollow>().gameObjectToFollow = null;
+
             if (DestinationEndpoint == null)
             {
                 PlugTransform.SetParent(null);
@@ -127,7 +129,7 @@ namespace ComposeVR
 
             if(DestinationEndpoint != null)
             {
-                transform.SetParent(null);
+                GetComponent<VRTK_TransformFollow>().gameObjectToFollow = null;
             }
 
             TryCollapseCord();
@@ -185,7 +187,7 @@ namespace ComposeVR
             DestinationEndpoint.Disconnect(connectedCord, CordAttachPoint);
             DestinationEndpoint = null;
 
-            transform.SetParent(null);
+            transform.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = null;
             PlugTransform.GetComponent<CapsuleCollider>().center = plugColliderCenter;
             PlugTransform.GetComponent<CapsuleCollider>().height = plugColliderHeight;
 
@@ -200,6 +202,8 @@ namespace ComposeVR
 
         public void ConnectToDataEndpoint(PhysicalDataEndpoint receptacle)
         {
+            ResetPlugTransform();
+
             DestinationEndpoint = receptacle;
 
             float flow = 1;

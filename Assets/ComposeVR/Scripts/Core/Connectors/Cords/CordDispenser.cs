@@ -29,12 +29,25 @@ namespace ComposeVR
         private SimpleTrigger controllerDetector;
         private List<VRTK_InteractGrab> nearbyControllers;
 
+        public GameObject primaryPlugAttach;
+        public GameObject secondaryPlugAttach;
+
         public enum State { Free, WaitingForGrab, Blocked }
         private State state;
 
         void Awake()
         {
             nearbyControllers = new List<VRTK_InteractGrab>();
+        }
+
+        private GameObject CreatePlugAttach(string name)
+        {
+            GameObject plugAttach = new GameObject(name);
+            plugAttach.transform.position = PlugStart.position;
+            plugAttach.transform.rotation = PlugStart.rotation;
+            plugAttach.transform.SetParent(transform);
+            plugAttach.AddComponent<SnapToTargetPosition>();
+            return plugAttach;
         }
 
         private void Start()
@@ -65,11 +78,6 @@ namespace ComposeVR
         {
             controllerDetector.transform.position = ControllerDetectorVolume.position;
             controllerDetector.transform.rotation = ControllerDetectorVolume.rotation;
-
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                Debug.Log(transform.parent.gameObject.name + " state: " + state);
-            }
         }
 
         /// <summary>
@@ -99,14 +107,16 @@ namespace ComposeVR
         /// </summary>
         private void CreateCord()
         {
+            primaryPlugAttach = CreatePlugAttach("PrimaryPlugAttach");
+            secondaryPlugAttach = CreatePlugAttach("SecondaryPlugAttach");
+
             primaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation);
             primaryPlug.name = "Primary";
+            primaryPlug.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = primaryPlugAttach;
 
             secondaryPlug = Instantiate(PlugPrefab, PlugStart.position, PlugStart.rotation);
             secondaryPlug.name = "Secondary";
-
-            primaryPlug.transform.SetParent(PlugStart);
-            secondaryPlug.transform.SetParent(PlugStart);
+            secondaryPlug.GetComponent<VRTK_TransformFollow>().gameObjectToFollow = secondaryPlugAttach;
 
             cord = Instantiate(CordPrefab).GetComponent<Cord>();
             cord.Connect(secondaryPlug.CordAttachPoint, primaryPlug.CordAttachPoint);
@@ -173,15 +183,27 @@ namespace ComposeVR
         private IEnumerator WaitingForGrab()
         {
             cord.gameObject.SetActive(true);
-            StartCoroutine(ExtendPlug(primaryPlug, PlugStart.position + PlugStart.forward * ExtendDistance));
+            StartCoroutine(ExtendPlug(primaryPlug, primaryPlugAttach, PlugStart.position + PlugStart.forward * ExtendDistance));
 
             while (state == State.WaitingForGrab)
             {
                 if (primaryPlug.GetComponent<VRTK_InteractableObject>().IsGrabbed())
                 {
+                    Destroy(primaryPlugAttach);
 
-                    StartCoroutine(ExtendPlug(secondaryPlug, PlugConnectionPoint.position));
-                    secondaryPlug.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
+                    InteractableObjectEventHandler destroyPlugAttach = null;
+                    VRTK_InteractableObject secondaryPlugInteractable = secondaryPlug.GetComponent<VRTK_InteractableObject>();
+
+                    destroyPlugAttach = (object sender, InteractableObjectEventArgs e) =>
+                    {
+                        Destroy(secondaryPlugAttach);
+                        secondaryPlugInteractable.InteractableObjectGrabbed -= destroyPlugAttach;
+                    };
+
+                    secondaryPlugInteractable.InteractableObjectGrabbed += destroyPlugAttach;
+
+                    StartCoroutine(ExtendPlug(secondaryPlug, secondaryPlugAttach, PlugConnectionPoint.position));
+                    secondaryPlugAttach.transform.rotation *= Quaternion.AngleAxis(180.0f, Vector3.up);
 
                     GetComponent<SocketPlugReceptacle>().ForcePlugLockAndConnect(secondaryPlug);
 
@@ -190,7 +212,7 @@ namespace ComposeVR
                 }
                 else if (nearbyControllers.Count == 0)
                 {
-                    StartCoroutine(RetractPlug(primaryPlug.GetComponent<Plug>()));
+                    StartCoroutine(RetractPlug(primaryPlug, primaryPlugAttach));
                     state = State.Free;
                 }
 
@@ -198,6 +220,7 @@ namespace ComposeVR
             }
 
         }
+
 
         /// <summary>
         /// A blocked dispenser waits for the blocking plug to leave
@@ -211,32 +234,31 @@ namespace ComposeVR
             }
         }
 
-        private IEnumerator ExtendPlug(Plug p, Vector3 target)
+        private IEnumerator ExtendPlug(Plug p, GameObject plugAttach, Vector3 target)
         {
             p.gameObject.SetActive(true);
-            p.transform.position = PlugStart.position;
-            p.transform.rotation = PlugStart.rotation;
+            plugAttach.transform.position = PlugStart.position;
+            plugAttach.transform.rotation = PlugStart.rotation;
             p.PlugTransform.position = PlugStart.position;
             p.PlugTransform.rotation = PlugStart.rotation;
 
-            p.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
+            plugAttach.GetComponent<SnapToTargetPosition>().SnapToTarget(target, ExtendSpeed);
 
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 
-            while (!p.GetComponent<SnapToTargetPosition>().HasReachedTarget)
+            while (plugAttach != null && !plugAttach.GetComponent<SnapToTargetPosition>().HasReachedTarget)
             {
                 yield return new WaitForEndOfFrame();
             }
         }
 
-        private IEnumerator RetractPlug(Plug p)
+        private IEnumerator RetractPlug(Plug p, GameObject plugAttach)
         {
 
-            p.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
-
+            plugAttach.GetComponent<SnapToTargetPosition>().SnapToTarget(PlugStart.position, ExtendSpeed);
             p.GetComponent<VRTK_InteractableObject>().isGrabbable = false;
 
-            while (!p.GetComponent<SnapToTargetPosition>().HasReachedTarget)
+            while (plugAttach != null && !plugAttach.GetComponent<SnapToTargetPosition>().HasReachedTarget)
             {
                 yield return new WaitForEndOfFrame();
             }
