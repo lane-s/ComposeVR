@@ -12,6 +12,7 @@ namespace ComposeVR
     public class Baton : MonoBehaviour
     {
         public ControllerNoteTrigger Controller;
+        public SimpleTrigger PlayTrigger;
 
         private VRTK_ControllerReference controllerReference;
         private Vector3 controllerVelocity;
@@ -30,21 +31,26 @@ namespace ComposeVR
             }
         }
 
-        private HashSet<TriggerableObject> collidingTriggers;
-        private HashSet<TriggerableObject> triggeredObjects;
+        private HashSet<Triggerable> collidingTriggers;
+        private HashSet<Triggerable> triggeredObjects;
 
         private TriggerEventArgs lastTriggerEventArgs;
 
         private void Awake()
         {
             VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(Controller.gameObject);
-            triggeredObjects = new HashSet<TriggerableObject>();
+            triggeredObjects = new HashSet<Triggerable>();
 
             Controller.NoteTriggered += OnNoteTriggered;
             Controller.NoteReleased += OnNoteReleased;
 
-            collidingTriggers = new HashSet<TriggerableObject>();
-            triggeredObjects = new HashSet<TriggerableObject>();
+            collidingTriggers = new HashSet<Triggerable>();
+            triggeredObjects = new HashSet<Triggerable>();
+
+            lastTriggerEventArgs = new TriggerEventArgs();
+
+            PlayTrigger.TriggerEnter += OnPlayTriggerEnter;
+            PlayTrigger.TriggerExit += OnPlayTriggerExit;
         }
 
         void Update()
@@ -53,9 +59,9 @@ namespace ComposeVR
             angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(controllerReference);
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnPlayTriggerEnter(object sender, SimpleTriggerEventArgs e)
         {
-            TriggerableObject triggerable = other.transform.GetComponentInActor<TriggerableObject>();
+            Triggerable triggerable = e.other.transform.GetComponentInActor<Triggerable>();
             if (triggerable != null)
             {
                 collidingTriggers.Add(triggerable);
@@ -67,9 +73,9 @@ namespace ComposeVR
             }
         }
 
-        private void OnTriggerExit(Collider other)
+        private void OnPlayTriggerExit(object sender, SimpleTriggerEventArgs e)
         {
-            TriggerableObject triggerable = other.transform.GetComponentInActor<TriggerableObject>();
+            Triggerable triggerable = e.other.transform.GetComponentInActor<Triggerable>();
             if (triggerable != null)
             {
                 collidingTriggers.Remove(triggerable);
@@ -77,7 +83,7 @@ namespace ComposeVR
             }
         }
 
-        private void StartTriggering(TriggerableObject triggerable, TriggerEventArgs args)
+        private void StartTriggering(Triggerable triggerable, TriggerEventArgs args)
         {
             if (triggeredObjects.Add(triggerable))
             {
@@ -90,7 +96,7 @@ namespace ComposeVR
             }
         }
 
-        private void StopTriggering(TriggerableObject triggerable, TriggerEventArgs args)
+        private void StopTriggering(Triggerable triggerable, TriggerEventArgs args)
         {
             if (triggeredObjects.Remove(triggerable))
             {
@@ -106,7 +112,7 @@ namespace ComposeVR
         private void OnNoteTriggered(object sender, TriggerEventArgs e)
         {
             lastTriggerEventArgs = e;
-            foreach(TriggerableObject triggerable in collidingTriggers)
+            foreach(Triggerable triggerable in collidingTriggers)
             {
                 StartTriggering(triggerable, e);
             }
@@ -114,7 +120,13 @@ namespace ComposeVR
 
         private void OnNoteReleased(object sender, EventArgs e)
         {
-            foreach(TriggerableObject triggerable in collidingTriggers)
+            StopTriggeringAll();
+        }
+
+        private void StopTriggeringAll()
+        {
+            HashSet<Triggerable> triggeredObjectsCopy = new HashSet<Triggerable>(triggeredObjects);
+            foreach(Triggerable triggerable in triggeredObjectsCopy)
             {
                 StopTriggering(triggerable, lastTriggerEventArgs);
             }
@@ -128,6 +140,17 @@ namespace ComposeVR
         private void StopHapticFeedback()
         {
             GetComponent<MIDINoteHaptics>().StopHapticFeedback();
+        }
+
+        public void OnPlayModeEntered()
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+        }
+
+        public void OnPlayModeExited()
+        {
+            StopTriggeringAll();
+            transform.GetChild(0).gameObject.SetActive(false);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ComposeVR
 {
-    public class TriggerableObject : MonoBehaviour {
+    public class Triggerable : MonoBehaviour {
 
         public event EventHandler<TriggerEventArgs> TriggerStarted;
         public event EventHandler<TriggerEventArgs> TriggerEnded;

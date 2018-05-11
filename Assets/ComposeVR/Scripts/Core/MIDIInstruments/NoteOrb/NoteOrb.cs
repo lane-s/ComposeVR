@@ -27,7 +27,7 @@ namespace ComposeVR
 
     [RequireComponent(typeof(Scalable))]
     [RequireComponent(typeof(VRTK_InteractableObject))]
-    [RequireComponent(typeof(TriggerableObject))]
+    [RequireComponent(typeof(Triggerable))]
     public class NoteOrb : MonoBehaviour
     {
 
@@ -149,8 +149,8 @@ namespace ComposeVR
             previewTriggerEventArgs = new TriggerEventArgs();
             previewTriggerEventArgs.Velocity = 95;
 
-            GetComponent<TriggerableObject>().TriggerStarted += OrbOn;
-            GetComponent<TriggerableObject>().TriggerEnded += OrbOff;
+            GetComponent<Triggerable>().TriggerStarted += OrbOn;
+            GetComponent<Triggerable>().TriggerEnded += OrbOff;
         }
 
         void Update()
@@ -372,7 +372,7 @@ namespace ComposeVR
 
         private void HandleBatonCollisionEnter(Collider other)
         {
-            Baton baton = other.transform.GetComponent<Baton>();
+            Baton baton = other.transform.GetComponentInActor<Baton>();
             if (baton != null)
             {
                 collidingBatons.Add(baton);
@@ -382,7 +382,7 @@ namespace ComposeVR
 
         private void HandleBatonCollisionExit(Collider other)
         {
-            Baton baton = other.transform.GetComponent<Baton>();
+            Baton baton = other.transform.GetComponentInActor<Baton>();
             if (baton != null)
             {
                 collidingBatons.Remove(baton);
@@ -401,6 +401,7 @@ namespace ComposeVR
             }
 
             SetShellEmissionGain(HitEmissionGain);
+            SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
         }
 
         private void OrbOff(object sender, TriggerEventArgs args)
@@ -411,6 +412,10 @@ namespace ComposeVR
             }
 
             SetShellEmissionGain(baseShellEmissionGain);
+            if(collidingBatons.Count == 0)
+            {
+                SetShellColor(baseShellColor);
+            }
         }
 
         private void NoteOn(int note, int velocity)
