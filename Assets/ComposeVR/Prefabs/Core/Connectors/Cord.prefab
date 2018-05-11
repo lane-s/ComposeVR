@@ -21,6 +21,8 @@ GameObject:
   - component: {fileID: 4796985893594418}
   - component: {fileID: 114001894019258860}
   - component: {fileID: 120035059295198088}
+  - component: {fileID: 114059476944147804}
+  - component: {fileID: 114883025226356250}
   m_Layer: 0
   m_Name: Cord
   m_TagString: Untagged
@@ -124,6 +126,34 @@ MonoBehaviour:
   OnEmission: 0.4
   OffEmission: 0.25
   RelaxIterationsPerFrame: 3
+--- !u!114 &114059476944147804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503533830402588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cd43896cb75c046bc01c1f94b710c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 9f003353967c536469fe8d9b05baf62f, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114001894019258860}
+        m_MethodName: AllowBranching
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114682616248407738
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -135,6 +165,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc748bd3d640b424299809d973084cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114883025226356250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503533830402588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cd43896cb75c046bc01c1f94b710c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 73f9b8386c20a7c4d8eecb59f53c0e58, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114001894019258860}
+        m_MethodName: AllowBranching
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!120 &120035059295198088
 LineRenderer:
   m_ObjectHideFlags: 1

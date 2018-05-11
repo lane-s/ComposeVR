@@ -16,7 +16,6 @@ namespace ComposeVR
         public Transform PlugStart;
         public Transform PlugConnectionPoint;
 
-        public SimpleTrigger BlockerDetector;
         public Transform ControllerDetectorVolume;
 
         public float ExtendDistance;
@@ -30,16 +29,11 @@ namespace ComposeVR
         private SimpleTrigger controllerDetector;
         private List<VRTK_InteractGrab> nearbyControllers;
 
-        private int numBlockers;
-
         public enum State { Free, WaitingForGrab, Blocked }
         private State state;
 
         void Awake()
         {
-            BlockerDetector.TriggerEnter += OnBlockerEnterArea;
-            BlockerDetector.TriggerExit += OnBlockerLeaveArea;
-
             nearbyControllers = new List<VRTK_InteractGrab>();
         }
 
@@ -76,50 +70,6 @@ namespace ComposeVR
             {
                 Debug.Log(transform.parent.gameObject.name + " state: " + state);
             }
-        }
-
-        /// <summary>
-        /// Keep track of objects that block the jack, but ignore plugs from the cord that the jack currently manages
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void OnBlockerEnterArea(object sender, SimpleTriggerEventArgs e)
-        {
-            Plug p = e.other.GetComponent<Plug>();
-            if (p == null && e.other.GetComponent<ActorSubObject>())
-            {
-                p = e.other.GetComponent<ActorSubObject>().Actor.GetComponent<Plug>();
-            }
-
-            if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug)))
-            {
-                return;
-            }
-
-            numBlockers += 1;
-        }
-
-        void OnBlockerLeaveArea(object sender, SimpleTriggerEventArgs e)
-        {
-            Plug p = e.other.GetComponent<Plug>();
-            if (p == null && e.other.GetComponent<ActorSubObject>())
-            {
-                p = e.other.GetComponent<ActorSubObject>().Actor.GetComponent<Plug>();
-            }
-
-            if (p != null && (p.Equals(primaryPlug) || p.Equals(secondaryPlug)))
-            {
-                return;
-            }
-
-            numBlockers -= 1;
-            numBlockers = Math.Max(numBlockers, 0);
-        }
-
-        public void OnBlockerDestroyed()
-        {
-            numBlockers -= 1;
-            numBlockers = Mathf.Max(numBlockers, 0);
         }
 
         /// <summary>
@@ -205,7 +155,7 @@ namespace ComposeVR
                         }
                     }
 
-                    if (!holdingObject && numBlockers == 0)
+                    if (!holdingObject)
                     {
                         state = State.WaitingForGrab;
                         break;
