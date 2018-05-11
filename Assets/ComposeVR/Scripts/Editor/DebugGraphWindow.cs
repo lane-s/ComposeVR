@@ -137,6 +137,11 @@ public class DebugGraphWindow : EditorWindow
 
     private void DrawValueLabels()
     {
+        if(graphData == null)
+        {
+            return;
+        }
+
         GUILayout.BeginArea(new Rect(SMALL_MARGIN, SMALL_MARGIN, CONTROL_WIDTH, position.height - SMALL_MARGIN * 2));
         int entryIndex = 0;
 
@@ -270,20 +275,23 @@ public class DebugGraphWindow : EditorWindow
             GL.Viewport(graphWindowRect);
 
             GL.Clear(true, true, graphBgColor);
-            foreach(KeyValuePair<string, Queue<Vector2>> entry in graphData)
+            if(graphData != null)
             {
-                GL.Begin(GL.LINES);
-                GL.Color(graphColors[entry.Key]);
-
-                Vector3 lastPoint = TransformGraphVertex(entry.Value.Peek());
-                foreach(Vector2 point in entry.Value)
+                foreach(KeyValuePair<string, Queue<Vector2>> entry in graphData)
                 {
-                    Vector3 vertex = TransformGraphVertex(point);
-                    GL.Vertex(lastPoint);
-                    GL.Vertex(vertex);
-                    lastPoint = vertex;
+                    GL.Begin(GL.LINES);
+                    GL.Color(graphColors[entry.Key]);
+
+                    Vector3 lastPoint = TransformGraphVertex(entry.Value.Peek());
+                    foreach(Vector2 point in entry.Value)
+                    {
+                        Vector3 vertex = TransformGraphVertex(point);
+                        GL.Vertex(lastPoint);
+                        GL.Vertex(vertex);
+                        lastPoint = vertex;
+                    }
+                    GL.End();
                 }
-                GL.End();
             }
 
             GL.PopMatrix();

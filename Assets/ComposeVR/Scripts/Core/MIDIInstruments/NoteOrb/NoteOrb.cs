@@ -27,13 +27,15 @@ namespace ComposeVR
 
     [RequireComponent(typeof(Scalable))]
     [RequireComponent(typeof(VRTK_InteractableObject))]
+    [RequireComponent(typeof(TriggerableObject))]
     public class NoteOrb : MonoBehaviour
     {
-        public SharedInt LastSelectedNote;
-        public NoteColorScheme NoteColors;
 
         public event EventHandler<EventArgs> SelfDestruct;
         private EventArgs defaultSelfDestructArgs;
+
+        public SharedInt LastSelectedNote;
+        public NoteColorScheme NoteColors;
 
         public float HitEmissionGain;
         public float TouchHapticsStrength;
@@ -88,8 +90,7 @@ namespace ComposeVR
         private int hapticNote;
 
         private SimpleTrigger shellTrigger;
-        private HashSet<VRTK_ControllerReference> collidingControllers;
-        private HashSet<VRTK_ControllerReference> controllersPlayingOrb;
+        private HashSet<Baton> collidingBatons;
 
         private bool onCooldown = false;
         private const float cooldownTime = 0.3f;
@@ -103,6 +104,8 @@ namespace ComposeVR
 
         private Transform coreContainer;
         private Transform coreContainerLowerBound;
+
+        private TriggerEventArgs previewTriggerEventArgs;
 
         void Awake()
         {
@@ -128,8 +131,7 @@ namespace ComposeVR
             noteCores = new List<NoteCore>();
             noteCores.Add(initialCore);
 
-            collidingControllers = new HashSet<VRTK_ControllerReference>();
-            controllersPlayingOrb = new HashSet<VRTK_ControllerReference>();
+            collidingBatons = new HashSet<Baton>();
 
             selectedNotes = new List<int>();
 
@@ -143,6 +145,12 @@ namespace ComposeVR
 
             noteSelector = FindObjectOfType<NoteSelector>();
             defaultSelfDestructArgs = new EventArgs();
+
+            previewTriggerEventArgs = new TriggerEventArgs();
+            previewTriggerEventArgs.Velocity = 95;
+
+            GetComponent<TriggerableObject>().TriggerStarted += OrbOn;
+            GetComponent<TriggerableObject>().TriggerEnded += OrbOff;
         }
 
         void Update()
@@ -364,111 +372,38 @@ namespace ComposeVR
 
         private void HandleBatonCollisionEnter(Collider other)
         {
-            Baton baton = other.GetComponent<Baton>();
-            if (baton)
+            Baton baton = other.transform.GetComponent<Baton>();
+            if (baton != null)
             {
+                collidingBatons.Add(baton);
                 SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
-
-                if (other.GetComponent<ActorSubObject>())
-                {
-                    Transform owner = other.GetComponent<ActorSubObject>().Actor;
-
-                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(owner.gameObject);
-                    if (!collidingControllers.Contains(controllerReference))
-                    {
-                        if (owner.GetComponent<ControllerNoteTrigger>().TriggerIsPressed())
-                        {
-                            OrbOnFromControllerEnter(owner.GetComponent<ControllerNoteTrigger>().GetNoteVelocity(), controllerReference);
-                        }
-
-                        owner.GetComponent<ControllerNoteTrigger>().NoteTriggered += OnControllerTriggerPressed;
-                        owner.GetComponent<ControllerNoteTrigger>().NoteReleased += OnControllerTriggerReleased;
-
-                        collidingControllers.Add(controllerReference);
-                    }
-                }
             }
         }
 
         private void HandleBatonCollisionExit(Collider other)
         {
-            Baton baton = other.GetComponent<Baton>();
-            if (baton)
-            {
-                SetShellColor(baseShellColor);
-                if (other.GetComponent<ActorSubObject>())
-                {
-                    Transform actor = other.GetComponent<ActorSubObject>().Actor;
-
-                    VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(actor.gameObject);
-
-                    if (collidingControllers.Contains(controllerReference))
-                    {
-                        collidingControllers.Remove(controllerReference);
-
-                        actor.GetComponent<ControllerNoteTrigger>().NoteTriggered -= OnControllerTriggerPressed;
-                        actor.GetComponent<ControllerNoteTrigger>().NoteReleased -= OnControllerTriggerReleased;
-
-                        OrbOffFromControllerExit(controllerReference);
-                        if (selectedNotes.Count > 0)
-                        {
-                            baton.StopHapticFeedback(hapticNote);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void OrbOnFromControllerEnter(int velocity, VRTK_ControllerReference controller)
-        {
-            if (controllersPlayingOrb.Contains(controller))
-            {
-                return;
-            }
-
-            controllersPlayingOrb.Add(controller);
-
-            if (selectedNotes.Count > 0)
-            {
-                Baton baton = controller.scriptAlias.GetComponent<BatonHolder>().baton;
-                if (baton != null)
-                {
-                    baton.StartHapticFeedback(hapticNote);
-                }
-            }
-
-            OrbOn(velocity);
-        }
-
-        private void OrbOffFromControllerExit(VRTK_ControllerReference controller)
-        {
-            if (!controllersPlayingOrb.Contains(controller))
-            {
-                return;
-            }
-
-            controllersPlayingOrb.Remove(controller);
-
-            Baton baton = controller.scriptAlias.GetComponent<BatonHolder>().baton;
+            Baton baton = other.transform.GetComponent<Baton>();
             if (baton != null)
             {
-                baton.StopHapticFeedback(hapticNote);
+                collidingBatons.Remove(baton);
+                if(collidingBatons.Count == 0)
+                {
+                    SetShellColor(baseShellColor);
+                }
             }
-
-            OrbOff();
         }
 
-        private void OrbOn(int velocity)
+        private void OrbOn(object sender, TriggerEventArgs args)
         {
             foreach (int note in selectedNotes)
             {
-                NoteOn(note, velocity);
+                NoteOn(note, args.Velocity);
             }
 
             SetShellEmissionGain(HitEmissionGain);
         }
 
-        private void OrbOff()
+        private void OrbOff(object sender, TriggerEventArgs args)
         {
             foreach (int note in selectedNotes)
             {
@@ -489,22 +424,6 @@ namespace ComposeVR
             int velocity = 110;
             NoteData data = new NoteData(NoteData.Status.Off, note, velocity);
             output.SendData(data);
-        }
-
-        private void OnControllerTriggerPressed(object sender, NoteTriggerEventArgs e)
-        {
-            ControllerNoteTrigger noteTrigger = sender as ControllerNoteTrigger;
-            VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(noteTrigger.gameObject);
-
-            OrbOnFromControllerEnter(e.Velocity, controllerReference);
-        }
-
-        private void OnControllerTriggerReleased(object sender, EventArgs e)
-        {
-            ControllerNoteTrigger noteTrigger = sender as ControllerNoteTrigger;
-            VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(noteTrigger.gameObject);
-
-            OrbOffFromControllerExit(controllerReference);
         }
 
         private const float NOTE_CHOOSER_OFFSET = 0.1f;
@@ -551,7 +470,7 @@ namespace ComposeVR
             List<int> currentSelection = new List<int>(selectedNotes);
 
             SetShellColor(NoteColors.GetNoteColor(selectedNotes[0]));
-            OrbOn(95);
+            OrbOn(this, previewTriggerEventArgs);
             yield return new WaitForSecondsRealtime(0.1f);
             SetShellColor(baseShellColor);
 
@@ -646,28 +565,8 @@ namespace ComposeVR
 
         public void OnPlayModeExited()
         {
-            if(collidingControllers.Count > 0)
-            {
-                foreach(VRTK_ControllerReference controller in collidingControllers)
-                {
-                    controller.scriptAlias.GetComponent<ControllerNoteTrigger>().NoteTriggered -= OnControllerTriggerPressed;
-                    controller.scriptAlias.GetComponent<ControllerNoteTrigger>().NoteReleased -= OnControllerTriggerReleased;
-                }
-            }
-
-            if(controllersPlayingOrb.Count > 0)
-            {
-                HashSet<VRTK_ControllerReference> playersCopy = new HashSet<VRTK_ControllerReference>(controllersPlayingOrb);
-                foreach(VRTK_ControllerReference controller in playersCopy)
-                {
-                    OrbOffFromControllerExit(controller);
-                }
-            }
-
+            collidingBatons.Clear();
             SetShellColor(baseShellColor);
-
-            controllersPlayingOrb.Clear();
-            collidingControllers.Clear();
         }
     }
 }

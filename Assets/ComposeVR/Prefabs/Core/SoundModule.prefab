@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 114156612307153794}
   - component: {fileID: 114862776286696654}
   - component: {fileID: 114575657119108014}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SoundModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -772,7 +772,6 @@ MonoBehaviour:
     type: 2}
   PlugStart: {fileID: 4215379520491632}
   PlugConnectionPoint: {fileID: 4258723983952294}
-  BlockerDetector: {fileID: 114347008308406370}
   ControllerDetectorVolume: {fileID: 4672822431426868}
   ExtendDistance: 0.3
   ExtendSpeed: 3

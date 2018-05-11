@@ -7,20 +7,16 @@ using System;
 
 namespace ComposeVR
 {
-    public class NoteTriggerEventArgs : EventArgs
+    public class TriggerEventArgs : EventArgs
     {
         public int Velocity;
-        public NoteTriggerEventArgs(int noteVelocity)
-        {
-            Velocity = noteVelocity;
-        }
     }
 
     [RequireComponent(typeof(VRTK_ControllerEvents))]
     public class ControllerNoteTrigger : MonoBehaviour
     {
 
-        public event EventHandler<NoteTriggerEventArgs> NoteTriggered;
+        public event EventHandler<TriggerEventArgs> NoteTriggered;
         public event EventHandler<EventArgs> NoteReleased;
 
         public OVRInput.RawAxis1D VelocityAxis;
@@ -36,7 +32,7 @@ namespace ComposeVR
         private bool triggerStarted = false;
 
         private EventArgs defaultArgs;
-        private NoteTriggerEventArgs noteTriggerArgs;
+        private TriggerEventArgs noteTriggerArgs;
 
         private float onTime;
         private float offTime;
@@ -48,7 +44,7 @@ namespace ComposeVR
         {
             lastXTriggerPos = new Queue<float>();
             defaultArgs = new EventArgs();
-            noteTriggerArgs = new NoteTriggerEventArgs(60);
+            noteTriggerArgs = new TriggerEventArgs();
             lastLocalIncreaseTime = Mathf.Infinity;
         }
 
@@ -131,7 +127,7 @@ namespace ComposeVR
             return (int)avgTrigger.Remap(IgnoreTriggerThreshold, 1.0f, 50, 127);
         }
 
-        public bool TriggerIsPressed()
+        public bool IsTriggerPressed()
         {
             return GetAverageTriggerPosOverLastXFrames() > IgnoreTriggerThreshold;
         }
