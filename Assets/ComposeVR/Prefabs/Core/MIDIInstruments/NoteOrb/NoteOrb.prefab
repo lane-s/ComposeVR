@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf483d41b0b4624796c90f632afd782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxGrabberSeparation: 0.08
+  MaxGrabberSeparation: 0.05
   PositionSnapSpeed: 0.2
   RotationSnapSpeed: 900
   PlugLockTrigger: {fileID: 114058011466846836}

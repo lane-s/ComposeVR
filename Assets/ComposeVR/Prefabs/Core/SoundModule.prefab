@@ -228,7 +228,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1030283178923762}
   m_LocalRotation: {x: 1.4210853e-14, y: -0.7071068, z: 1.4210853e-14, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0.0297}
+  m_LocalPosition: {x: -0, y: 0, z: 0.0279}
   m_LocalScale: {x: 0.07810141, y: 0.11900365, z: 0.094673805}
   m_Children: []
   m_Father: {fileID: 4051622371851572}
@@ -280,7 +280,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1965577337930542}
   m_LocalRotation: {x: -2.281185e-15, y: -0.7071068, z: 2.5826502e-14, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: -0, z: 0.0119}
+  m_LocalPosition: {x: 0, y: -0, z: -0.0104}
   m_LocalScale: {x: 0.0737212, y: 0.053531095, z: 0.051085215}
   m_Children: []
   m_Father: {fileID: 4051622371851572}
@@ -347,7 +347,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1586048614035974}
   m_LocalRotation: {x: -0, y: 0.012851693, z: -0, w: 0.99991745}
-  m_LocalPosition: {x: -0.59570605, y: 0.5, z: 1.4829279}
+  m_LocalPosition: {x: 1.9450996, y: 3.056, z: -0.4593786}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4727844773649192}
@@ -629,7 +629,7 @@ MonoBehaviour:
   PlugStart: {fileID: 4215379520491632}
   PlugConnectionPoint: {fileID: 4258723983952294}
   ControllerDetectorVolume: {fileID: 4672822431426868}
-  ExtendDistance: 0.1
+  ExtendDistance: 0.175
   ExtendSpeed: 2.89
   ActivationWaitTime: 1
   primaryPlugAttach: {fileID: 0}
