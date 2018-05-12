@@ -183,7 +183,7 @@ namespace ComposeVR
             lockedPlugGrabber = null;
         }
 
+        protected virtual void OnReceptacleAvailable() { }
         protected abstract void OnPlugLocked();
-        protected abstract void OnReceptacleAvailable();
     }
 }
